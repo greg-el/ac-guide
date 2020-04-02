@@ -4,167 +4,98 @@ import re
 import calendar
 import json
 
-month_abbr = {
-    "Jan":1,
-    "Feb":2,
-    "Mar":3,
-    "April":4,
-    "Apr":4,
-    "May":5,
-    "June":6,
-    "July":7,
-    "Aug":8,
-    "Sept":9,
-    "Oct":10,
-    "Nov":11,
-    "Dec":12
-}
 
-url = "https://www.gamespot.com/articles/animal-crossing-new-horizons-fish-guide/1100-6474887/"
-r = requests.get(url)
-soup = BeautifulSoup(r.content, 'html.parser')
-test = soup.find_all("tbody")
-count = 0
-out = ""
-south = 0
-for item in test:
-    for tr in item.find_all("tr"):
-        td = tr.find_all("td")
-        #name
-        if td[0].text == "Anchovy" and not south:
-            print("\"northern\":[")
-            south = 1
-        elif td[0].text == "Anchovy":
-            print("], \"southern\":[")
 
-        out += f"\"name\": \"{td[0].text}\","
+out = {
+    "northern": {},
+    "southern": {}
+    }
 
-        #months
-        if td[1].text == "All year":
-                out += "\"months\": [{\"start\": 0, \"end\": 12}],"
-        elif " " not in td[1].text:
-            out += f"\"months\": [{{\"start\": {month_abbr[td[1].text]}, \"end\": {month_abbr[td[1].text]}}}],"
+fish_north = "fish-north"
+fish_south = "fish-south"
+bugs_url = "https://www.gamespot.com/articles/animal-crossing-new-horizons-bugs-guide-how-to-cat/1100-6475001/"
+
+
+def get_data(url, out):
+    soup = BeautifulSoup(open(url), 'html.parser')
+    test = soup.find_all("tr")
+    for item in test:
+        temp_dict = {}
+        td = item.find_all("td")
+
+        name = td[0].text.strip()
+        temp_dict['price'] = td[2].text.strip()
+        temp_dict['location'] = td[3].text.strip()
+        temp_dict['shadow'] = td[4].text.strip()
+
+        if td[5].text.strip() == "All day":
+            temp_dict['time'] = [i for i in range(24)]
         else:
-            if "," in td[1].text:
-                comma_split = td[1].text.split(",")
-                span_1 = comma_split[0]
-                span_2 = comma_split[1]
-                months_1 = span_1.split("-")
-                months_2 = span_2.split("-")
-                out += (f"\"months\": ["
-                        "{"
-                            f"\"start\": {month_abbr[months_1[0].strip()]},"
-                            f"\"end\": {month_abbr[months_1[1].strip()]}"
-                        "},"
-                        "{"
-                            f"\"start\": {month_abbr[months_2[0].strip()]},"
-                            f"\"end\": {month_abbr[months_2[1].strip()]}"
-                        "}],")
+            time = re.sub(" ", "", td[5].text)
+            if "&" in time:
+                periods = time.split("&")
+                regex = re.compile("(\d)(\w\w)-(\d)(\w\w)")
+                time_list = []
+                for item in periods:
+                    span = regex.match(item)
+                    start = int(span.group(1))
+                    end = int(span.group(3))
+
+                    if span.group(2) == "PM":
+                        start = int(span.group(1)) + 12
+                    if span.group(4) == "PM":
+                        end = int(span.group(3)) + 12
+
+                    if start > end:
+                        time_list = time_list + [x for x in range(start, 24)]
+                        time_list = time_list + [x for x in range(0, end)]
+                    else:
+                        time_list = time_list + [x for x in range(start, end)]
+
+                temp_dict['time'] = time_list
             else:
-                months = td[1].text.split("-")
-                out += f"\"months\": [{{\"start\":{month_abbr[months[0].strip()]}, \"end\": {month_abbr[months[1].strip()]}}}],"
+                time = re.sub(" ", "", td[5].text)
+                regex = re.compile("(\d)(\w\w)-(\d)(\w\w)")
+                span = regex.match(time)
+                time_list = []
+                start = int(span.group(1))
+                end = int(span.group(3))
 
-        #location
-        out += f"\"location\": \"{td[2].text}\","
+                if span.group(2) == "PM":
+                    start = int(span.group(1)) + 12
+                if span.group(4) == "PM":
+                    end = int(span.group(3)) + 12
 
-        #time
-        if td[3].text == "All day":
-                out += "\"time\": {\"start\": 0, \"end\": 24},"
+                if start > end:
+                    time_list = time_list + [x for x in range(start, 24)]
+                    time_list = time_list + [x for x in range(0, end)]
+                else:
+                    time_list = time_list + [x for x in range(start, end)]
+
+                temp_dict['time'] = time_list
+
+        months = []
+        for i in range(6, 18):
+            if td[i].text.strip() != "-":
+                months.append(i-6)
+
+        temp_dict['months'] = months
+
+        if url == "fish-north":
+            out['northern'][name] = temp_dict
         else:
-            hours = re.compile("(\d)\s(\w+)\s-\s(\d)\s(\w+)")
-            result = hours.match(td[3].text)
-            start = 0
-            end = 0
-            if result:
-                if result.group(2) == "PM":
-                    start = int(result.group(1))+12
-                    end = result.group(3)
-                elif result.group(4) == "PM":
-                    start = result.group(1)
-                    end = int(result.group(3))+12
-                out += f"\"time\": {{\"start\": {start}, \"end\": {end}}},"
+            out['southern'][name] = temp_dict
 
-        #price
-        out += f"\"price\": \"{td[4].text}\""
+    return out
 
-        print(f"{{{out}}},")
-        out = ""
-print("]}]}")
+    
 
+out = get_data(fish_north, out)
+out = get_data(fish_south, out)
 
-        #for td in tr.find_all("td"):
-        #    if count < 5:
-        #        if count == 0:
-        #            out += f"\"name\": {{\"{td.text}\"}}")
-        #        if count == 1:
-        #            if td.text == "All year":
-        #                out += "\"start\": 0, \"end\": 12")
-        #                count += 1
-        #            elif " " not in td.text:
-        #                out += f"\"months\": [{{\"start\": {month_abbr[td.text]}, \"end\": {month_abbr[td.text]}]")
-        #                count+=1
-        #            else:
-        #                if "," in td.text:
-        #                    comma_split = td.text.split(",")
-        #                    span_1 = comma_split[0]
-        #                    span_2 = comma_split[1]
-        #                    months_1 = span_1.split("-")
-        #                    months_2 = span_2.split("-")
-        #                    output = (f"\"months\": ["
-        #                            "{"
-        #                                f"\"start\": {month_abbr[months_1[0].strip()]},"
-        #                                f"\"end\": {month_abbr[months_1[1].strip()]}"
-        #                            "},"
-        #                            "{"
-        #                                f"\"start\": {month_abbr[months_2[0].strip()]},"
-        #                                f"\"end\": {month_abbr[months_2[1].strip()]}"
-        #                            "}],")
-        #                    out += output)
-        #                    count+=1
-        #                else:
-        #                    months = td.text.split("-")
-        #                    out += f"\"months\": [{{\"start\":{month_abbr[months[0].strip()]}, \"end\": {month_abbr[months[1].strip()]}}}]")
-        #                    count+=1
-        #        elif count == 2:
-        #            out += f"\"location\": \"{td.text}\"")
-        #            count+=1
-        #        elif count == 3:
-        #            if td.text == "All day":
-        #                out += "\"time\": { \"start\": 0, \"end\": 24}")
-        #                count += 1
-        #            else:
-        #                hours = re.compile("(\d)\s(\w+)\s-\s(\d)\s(\w+)")
-        #                result = hours.match(td.text)
-        #                start = 0
-        #                end = 0
-        #                if result:
-        #                    if result.group(2) == "PM":
-        #                        start = int(result.group(1))+12
-        #                        end = result.group(3)
-        #                    elif result.group(4) == "PM":
-        #                        start = result.group(1)
-        #                        end = int(result.group(3))+12
-        #                    out += f"\"time\": {{ \"start\": {start}, \"end\": {end}}}")
-        #                    count += 1
-        #        
-        #        else:
-        #            out += td.text)
-        #            count +=1
-        #    else:
-        #        print(out)
-        #        out = []
-        #        count = 1
-        #        out += td.text)
-                
+json_file = json.dumps(out)
 
-
-
-
-                
-                #out += td.text)
-                #count += 1
-
-            #else:
-
+with open('fish.json', 'w') as f:
+    json.dump(out, f)
 
 
