@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Animal Crossing</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
+    </head>
+    <body>
+        <div id="main-container">
+            <div id="header">
+                Animal Crossing
+            </div>
+            <div id="window-container">
+                <div id="tabs">
+                    <a href=# id="fish-button"><button class="tab">Fish</button></a>
+                    <a href=# id="bug-button"><button class="tab">Bugs</button></a>
+                </div>
+                <div id="data-wrapper">
+                    <!--
+
+                    <div class="fish-wrapper">
+                        <div class="fish-name">{{ name }}</div>
+                        <div class="fish-container">
+                            <div class='fish-icon'>Icon</div>
+                            <div class='fish-data'>
+                                <div class='fish_block'>{{ price }}</div>
+                                <div class='fish_block'>{{ location }}</div>
+                                <div class='fish_block'>{{ shadow }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    -->
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

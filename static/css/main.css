@@ -1,0 +1,64 @@
+body {
+    font-size: 13px;
+}
+
+#main-container {
+    display:flex;
+    flex-direction: column;
+}
+
+#tabs {
+    display:flex;
+    flex-direction: row;
+    margin:auto;
+}
+
+#data-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: auto;
+}
+
+#window-container {
+    display:flex;
+    flex-direction: column;
+    border: 5px solid red;
+    width: 80%;
+    margin: auto;
+}
+
+.tab {
+    width: 100px;
+    border: 5px solid green;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.fish-container {
+    display: flex;
+    flex-direction: row;
+    border: 5px solid cyan;
+    max-width: 200px;
+}
+
+.fish-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+}
+
+.fish-icon {
+    min-width: 50px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid green;
+}
+
+.fish-data {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+    width: 20em;
+    height: 3em;
+}
