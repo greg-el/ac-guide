@@ -28,7 +28,6 @@ def get_avaliable_bugs():
         bug_data = json.load(f)
 
     bugs = bug_data['northern']
-    print("You can catch:")
 
     for name, data in bugs.items():
         months = data['months']

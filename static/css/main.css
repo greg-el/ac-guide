@@ -1,5 +1,6 @@
 body {
     font-size: 13px;
+    background-color: #F1ECCC;
 }
 
 #main-container {
@@ -24,8 +25,14 @@ body {
     display:flex;
     flex-direction: column;
     border: 5px solid red;
+    background-color:#EEE3B7;
     width: 80%;
     margin: auto;
+}
+
+#header {
+    margin: auto;
+    font-size: 40px;
 }
 
 .tab {
@@ -35,30 +42,30 @@ body {
     padding-right: 1em;
 }
 
-.fish-container {
+.critter-container {
     display: flex;
     flex-direction: row;
     border: 5px solid cyan;
     max-width: 200px;
 }
 
-.fish-wrapper {
+.critter-wrapper {
     display: flex;
     flex-direction: column;
     padding: 1em;
 }
 
-.fish-icon {
+.critter-icon {
     min-width: 50px;
     width: 50px;
     height: 50px;
     border: 1px solid green;
+    margin-right: 5px;
 }
 
-.fish-data {
-    display: grid;
-    grid-gap: 5px;
-    grid-template-columns: repeat(2, 1fr);
+.critter-data {
+    display: flex;
+    flex-direction: column;
     width: 20em;
     height: 3em;
 }
