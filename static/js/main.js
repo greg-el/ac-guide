@@ -1,12 +1,11 @@
-const TAB_ACTIVE_COLOR = "rgb(238, 227, 183)"
-const TAB_INACTIVE_COLOR = "rgb(165, 172, 143)"
+ACTIVE_TAB = "fish";
 
 $(function() {
     $('a#fish-button').bind('click', function() {
         $.getJSON('/fish',
             function(data) {
-                $("#fish-button-style").css({"background-color":TAB_ACTIVE_COLOR})
-                $("#bug-button-style").css({"background-color":TAB_INACTIVE_COLOR})
+                ACTIVE_TAB = "fish"; 
+                setActiveTabIcon(ACTIVE_TAB);
                 $("#data-wrapper").empty()
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
@@ -57,8 +56,8 @@ $(function() {
     $('a#bug-button').bind('click', function() {
         $.getJSON('/bugs',
             function(data) {
-                $("#bug-button-style").css({"background-color":"#EEE3B7"})
-                $("#fish-button-style").css({"background-color":"#A5AC8F"})
+                ACTIVE_TAB = "bug"
+                setActiveTabIcon(ACTIVE_TAB);
                 $("#data-wrapper").empty()
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
@@ -134,22 +133,21 @@ function checkCookieExists() {
 
 function hemisphereCookieHandler() {
     document.getElementById("hemisphere-button").onclick = function() {
-        activeTab = getActiveTab()
         var cookie = getCookie("hemisphere");
         if (cookie == "north") {
             setHempisphereIcon("south");
             setCookie("hemisphere", "south", 365);
-            if (activeTab == "fish") {
+            if (ACTIVE_TAB == "fish") {
                 refreshFish();
-            } else if (activeTab == "bug") {
+            } else if (ACTIVE_TAB == "bug") {
                 refreshBugs();
             }
         } else if (cookie == "south") {
             setHempisphereIcon("north");
             setCookie("hemisphere", "north", 365);
-            if (activeTab == "fish") {
+            if (ACTIVE_TAB == "fish") {
                 refreshFish();
-            } else if (activeTab == "bug") {
+            } else if (ACTIVE_TAB == "bug") {
                 refreshBugs();
             }
         } else {
@@ -158,30 +156,40 @@ function hemisphereCookieHandler() {
     }
 }
 
-function getActiveTab() {
-    if ($("#fish-button-style").css("background-color") == TAB_ACTIVE_COLOR) {
-        return "fish";
-    }
-    if ($("#bug-button-style").css("background-color") == TAB_ACTIVE_COLOR) {
-        return "bug";
-    }
-}
 
 function setHempisphereIcon(hemisphere) {
     if (hemisphere == "north") {
-        $("#hemisphere-button-style").css({'background': 'url(./static/image/hemispheres/nhemisphere.png)'});
-
+        $("#nhemisphere-icon").css("display", "block")
+        $("#shemisphere-icon").css("display", "none");
     } else if (hemisphere == "south") {
-        $("#hemisphere-button-style").css({'background': 'url(./static/image/hemispheres/shemisphere.png)'});
+        $("#shemisphere-icon").css("display", "block")
+        $("#nhemisphere-icon").css("display", "none");
     } else {
         console.log("Can't change hemisphere button");
     }
-    $("#hemisphere-button-style").css({'background-size': 'cover'});
 }
+
+function setActiveTabIcon(tab) {
+    if (tab == "fish") {
+        $("#fish-dark-icon").css("display", "none")
+        $("#fish-light-icon").css("display", "block");
+        $("#bug-light-icon").css("display", "none");
+        $("#bug-dark-icon").css("display", "block")
+    } else if (tab == "bug") {
+        $("#bug-dark-icon").css("display", "none")
+        $("#bug-light-icon").css("display", "block");
+        $("#fish-light-icon").css("display", "none");
+        $("#fish-dark-icon").css("display", "block")
+    } else {
+        console.log("Error setting tab icon")
+    }
+}
+
+
 
 $(function() {
     checkCookieExists();
-    hemisphereCookieHandler();
     setHempisphereIcon(getCookie("hemisphere"));
+    hemisphereCookieHandler();
     document.getElementById("fish-button").click()
 });

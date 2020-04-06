@@ -5,16 +5,54 @@ body {
     background-size: 100px;
 }
 
+a {
+    outline: 0;
+ }
+
+#header {
+    margin: auto;
+    font-size: 40px;
+}
 
 #main-container {
     display:flex;
     flex-direction: column;
 }
 
+#window-container {
+    display:flex;
+    flex-direction: column;
+    width: 80%;
+    margin: auto;
+}
+
+#control-bar {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
 #tabs {
     display:flex;
     flex-direction: row;
     background-color: #3D9336;
+}
+
+#shemisphere-icon {
+    border: none;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    outline: none;
+}
+
+#nhemisphere-icon {
+    border: none;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    outline: none;
 }
 
 #data-wrapper {
@@ -25,46 +63,15 @@ body {
     background-color:#EEE3B7;
 }
 
-#window-container {
-    display:flex;
-    flex-direction: column;
-
-    width: 80%;
-    margin: auto;
-}
-
-#header {
-    margin: auto;
-    font-size: 40px;
-}
-
-#hemisphere-button-style {
-    border: none;
-    background-size: cover;
-    width: 50px;
-    height: 50px;
-    outline: none;
-}
-
-#control-bar {
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-
-}
 
 button::-moz-focus-inner {
     border: 0;
   }
 
 
-.tab {
-    width: 100px;
-    background-color: #F3F9DF;
-    padding-left: 1em;
-    padding-right: 1em;
-    border: none;
+.tab-icon {
+    width: 50px;
+    height: 50px;
 }
 
 .critter-container {

@@ -12,13 +12,30 @@
                 New Horizons Guide
             </div>
             <div id="window-container">
+                <div id="datetime">
+                    <div id="time"></div>
+                    <div id="date"></div>
+                </div>
                 <div id="control-bar">
                     <div id="tabs">
-                        <a href=# id="fish-button"><button id = "fish-button-style" class="tab">Fish</button></a>
-                        <a href=# id="bug-button"><button id="bug-button-style" class="tab">Bugs</button></a>
+                        <div id="fish-container">
+                            <a href=# id="fish-button">
+                                <img class="tab-icon" id="fish-dark-icon" src="{{ url_for('static', filename = 'image/bar/darkfishicon.png') }}" style="display:none;">
+                                <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fishicon.png') }}">
+                            </a>
+                        </div>
+                        <div id="bug-container">
+                            <a href=# id="bug-button">
+                                <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/darkbugicon.png') }}">
+                                <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bugicon.png') }}" style="display:none;">
+                            </a>
+                        </div>
                     </div>
                     <div id="hemisphere">
-                        <a href=# id="hemisphere-button"><button id="hemisphere-button-style"></button></a>
+                        <a href=# id="hemisphere-button">
+                            <img id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
+                            <img id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
+                        </a>
                     </div>
 
                 </div>
