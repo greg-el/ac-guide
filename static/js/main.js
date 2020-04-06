@@ -137,6 +137,7 @@ function hemisphereCookieHandler() {
         activeTab = getActiveTab()
         var cookie = getCookie("hemisphere");
         if (cookie == "north") {
+            setHempisphereIcon("south");
             setCookie("hemisphere", "south", 365);
             if (activeTab == "fish") {
                 refreshFish();
@@ -144,6 +145,7 @@ function hemisphereCookieHandler() {
                 refreshBugs();
             }
         } else if (cookie == "south") {
+            setHempisphereIcon("north");
             setCookie("hemisphere", "north", 365);
             if (activeTab == "fish") {
                 refreshFish();
@@ -165,7 +167,21 @@ function getActiveTab() {
     }
 }
 
+function setHempisphereIcon(hemisphere) {
+    if (hemisphere == "north") {
+        $("#hemisphere-button-style").css({'background': 'url(./static/image/hemispheres/nhemisphere.png)'});
+
+    } else if (hemisphere == "south") {
+        $("#hemisphere-button-style").css({'background': 'url(./static/image/hemispheres/shemisphere.png)'});
+    } else {
+        console.log("Can't change hemisphere button");
+    }
+    $("#hemisphere-button-style").css({'background-size': 'cover'});
+}
+
 $(function() {
     checkCookieExists();
     hemisphereCookieHandler();
+    setHempisphereIcon(getCookie("hemisphere"));
+    document.getElementById("fish-button").click()
 });

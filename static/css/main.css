@@ -1,7 +1,10 @@
 body {
     font-size: 13px;
-    background-color: #3D9336;
+    background-image: url("../image/acrepeat.jpg");
+    background-repeat: repeat;
+    background-size: 100px;
 }
+
 
 #main-container {
     display:flex;
@@ -19,13 +22,13 @@ body {
     flex-wrap: wrap;
     width: 100%;
     margin: auto;
+    background-color:#EEE3B7;
 }
 
 #window-container {
     display:flex;
     flex-direction: column;
-    border: 5px solid red;
-    background-color:#EEE3B7;
+
     width: 80%;
     margin: auto;
 }
@@ -34,6 +37,26 @@ body {
     margin: auto;
     font-size: 40px;
 }
+
+#hemisphere-button-style {
+    border: none;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    outline: none;
+}
+
+#control-bar {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+
+}
+
+button::-moz-focus-inner {
+    border: 0;
+  }
 
 
 .tab {
