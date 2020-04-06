@@ -1,6 +1,6 @@
 body {
     font-size: 13px;
-    background-color: #F1ECCC;
+    background-color: #3D9336;
 }
 
 #main-container {
@@ -11,7 +11,7 @@ body {
 #tabs {
     display:flex;
     flex-direction: row;
-    margin:auto;
+    background-color: #3D9336;
 }
 
 #data-wrapper {
@@ -35,17 +35,19 @@ body {
     font-size: 40px;
 }
 
+
 .tab {
     width: 100px;
-    border: 5px solid green;
+    background-color: #F3F9DF;
     padding-left: 1em;
     padding-right: 1em;
+    border: none;
 }
 
 .critter-container {
     display: flex;
     flex-direction: row;
-    border: 5px solid cyan;
+    border: 2px solid #BEB28A;
     max-width: 200px;
 }
 

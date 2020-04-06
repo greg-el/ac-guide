@@ -10,6 +10,7 @@ import json
 
 
 def get_fish_data(url, out):
+    FISH_ICON_BASE = "./static/image/fish/"
     soup = BeautifulSoup(open(url), 'html.parser')
     test = soup.find_all("tr")
     for item in test:
@@ -74,7 +75,9 @@ def get_fish_data(url, out):
 
         temp_dict['months'] = months
 
-        if url == "fish-north":
+        temp_dict['icon'] = FISH_ICON_BASE + "NH-Icon-" + name.replace(" ", "").replace("-", "").lower() + ".webp"
+
+        if url == "./data/fish-north":
             out['northern'][name] = temp_dict
         else:
             out['southern'][name] = temp_dict
@@ -161,8 +164,8 @@ def run_fish():
         "southern": {}
         }
 
-    fish_north = "fish-north"
-    fish_south = "fish-south"
+    fish_north = "./data/fish-north"
+    fish_south = "./data/fish-south"
 
     fish = get_fish_data(fish_north, out)
     fish = get_fish_data(fish_south, out)
@@ -191,4 +194,4 @@ def run_bugs():
         json.dump(bugs, f)
 
 
-run_bugs()
+run_fish()
