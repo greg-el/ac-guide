@@ -10,12 +10,15 @@ def get_avaliable_fish():
     with open('fish.json') as f:
         fish_data = json.load(f)
 
+
+
+
     if request.cookies.get('hemisphere') == "north":
         fish = fish_data['northern']
     elif request.cookies.get('hemisphere') == "south":
         fish = fish_data['southern']
     else:
-        print("something went wrong with cookies")
+        fish = fish_data['northern']
     
     for name, data in fish.items():
         months = data['months']
@@ -32,7 +35,12 @@ def get_avaliable_bugs():
     with open('bugs.json') as f:
         bug_data = json.load(f)
 
-    bugs = bug_data['northern']
+    if request.cookies.get('hemisphere') == "north":
+        bugs = bug_data['northern']
+    elif request.cookies.get('hemisphere') == "south":
+        bugs = bug_data['southern']
+    else:
+        bugs = bug_data['northern']
 
     for name, data in bugs.items():
         months = data['months']
