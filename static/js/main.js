@@ -15,9 +15,9 @@ $(function() {
                             $('<div/>', {'class': 'critter-container'}).append([
                                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                                 $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text': v.location}),
-                                        $('<div/>', {'class': 'critter-block', 'text': v.price}),
-                                        $('<div/>', {'class': 'critter-block', 'text': v.shadow})
+                                        $('<div/>', {'class': 'critter-block', 'text': "Location: " + v.location}),
+                                        $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price}),
+                                        $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
                                 ])
                             ])    
                         ])
@@ -50,7 +50,7 @@ function refreshFish() {
             })
         });
     return false;
-}
+};
 
 $(function() {
     $('a#bug-button').bind('click', function() {
@@ -100,14 +100,14 @@ function refreshBugs() {
         })
     });
 return false;
-}
+};
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
     var expires = "expires="+d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
+};
   
 function getCookie(cname) {
     var name = cname + "=";
@@ -122,14 +122,14 @@ function getCookie(cname) {
         }
     }
     return "";
-  }
+};
   
 function checkCookieExists() {
     var hempisphere = getCookie("hemisphere");
     if (hempisphere == "") {
         setCookie("hemisphere", "north", 365)
     }
- }
+};
 
 function hemisphereCookieHandler() {
     document.getElementById("hemisphere-button").onclick = function() {
@@ -154,8 +154,7 @@ function hemisphereCookieHandler() {
             alert("Can't find any cookies");
         }
     }
-}
-
+};
 
 function setHempisphereIcon(hemisphere) {
     if (hemisphere == "north") {
@@ -167,7 +166,7 @@ function setHempisphereIcon(hemisphere) {
     } else {
         console.log("Can't change hemisphere button");
     }
-}
+};
 
 function setActiveTabIcon(tab) {
     if (tab == "fish") {
@@ -183,13 +182,34 @@ function setActiveTabIcon(tab) {
     } else {
         console.log("Error setting tab icon")
     }
+};
+
+function datetime() {
+    var days = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var dayElem = document.getElementById("day")
+    var dateElem = document.getElementById("date")
+    var timeElem = document.getElementById("time")
+    var timeAMPM = document.getElementById("ampm")
+    var d = new Date();
+    var minutes = d.getMinutes()
+    var hours = d.getHours()
+    var date = d.getDate();
+    var amPm = hours >= 12 ? "PM" : "AM";
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes;
+    timeElem.textContent = strTime;
+    timeAMPM.textContent = amPm;
+    dayElem.textContent = days[d.getDay()];
+    dateElem.textContent = date + " " + months[d.getMonth()];
+    var t = setTimeout(datetime, 500);
 }
-
-
 
 $(function() {
     checkCookieExists();
     setHempisphereIcon(getCookie("hemisphere"));
     hemisphereCookieHandler();
-    document.getElementById("fish-button").click()
+    datetime();
+    document.getElementById("fish-button").click();
 });

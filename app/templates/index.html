@@ -5,6 +5,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
     <body>
         <div id="main-container">
@@ -12,32 +13,53 @@
                 New Horizons Guide
             </div>
             <div id="window-container">
-                <div id="datetime">
-                    <div id="time"></div>
-                    <div id="date"></div>
+                <div id="datetime-container">
+                    <div id="time-container">
+                        <div class="time-style" id="time"></div>
+                        <div class="time-style" id="ampm"></div>
+                    </div>
+                    <div class="time-divider"></div>
+                    <div id="date-container">
+                        <div class="oval">
+                            <div id="day"></div>
+                        </div>
+                        <div id="date"></div>
+                    </div>
+
                 </div>
                 <div id="control-bar">
                     <div id="tabs">
                         <div id="fish-container">
                             <a href=# id="fish-button">
-                                <img class="tab-icon" id="fish-dark-icon" src="{{ url_for('static', filename = 'image/bar/darkfishicon.png') }}" style="display:none;">
-                                <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fishicon.png') }}">
+                                <img class="tab-icon" id="fish-dark-icon" src="{{ url_for('static', filename = 'image/bar/fish-dark.png') }}" style="display:none;">
+                                <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fish-light.png') }}">
                             </a>
                         </div>
                         <div id="bug-container">
                             <a href=# id="bug-button">
-                                <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/darkbugicon.png') }}">
-                                <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bugicon.png') }}" style="display:none;">
+                                <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/bug-dark.png') }}">
+                                <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bug-light.png') }}" style="display:none;">
+                            </a>
+                        </div>
+                        <div id="birth-container">
+                            <a href=# id="birth-button">
+                                <img class="tab-icon" id="birth-dark-icon" src="{{ url_for('static', filename = 'image/bar/birthday-dark.png') }}" style="display:block;">
+                                <img class="tab-icon" id="birth-light-icon" src="{{ url_for('static', filename = 'image/bar/birthday-light.png') }}" style="display:none;">
+                            </a>
+                        </div>
+                        <div id="star-container">
+                            <a href=# id="star-button">
+                                <img class="tab-icon" id="star-dark-icon" src="{{ url_for('static', filename = 'image/bar/star-dark.png') }}" style="display:block;">
+                                <img class="tab-icon" id="star-light-icon" src="{{ url_for('static', filename = 'image/bar/star-light.png') }}" style="display:none;">
                             </a>
                         </div>
                     </div>
-                    <div id="hemisphere">
+                    <div id="hemisphere-container">
                         <a href=# id="hemisphere-button">
-                            <img id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
-                            <img id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
+                            <img class="hemisphere-icon" id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
+                            <img class="hemisphere-icon" id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
                         </a>
                     </div>
-
                 </div>
                 <div id="data-wrapper">
                 </div>
