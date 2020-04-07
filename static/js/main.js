@@ -1,4 +1,5 @@
 ACTIVE_TAB = "fish";
+CURRENT_HOUR = new Date().getHours() % 12;
 
 $(function() {
     $('a#fish-button').bind('click', function() {
@@ -40,9 +41,9 @@ function refreshFish() {
                         $('<div/>', {'class': 'critter-container'}).append([
                             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                             $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'critter-block', 'text': v.location}),
-                                    $('<div/>', {'class': 'critter-block', 'text': v.price}),
-                                    $('<div/>', {'class': 'critter-block', 'text': v.shadow})
+                                    $('<div/>', {'class': 'critter-block', 'text': "Location: " + v.location}),
+                                    $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price}),
+                                    $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
                             ])
                         ])    
                     ])
@@ -61,14 +62,15 @@ $(function() {
                 $("#data-wrapper").empty()
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
+                    console.log(v)
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
                             $('<div/>', {'class': 'critter-name', 'text':k}),
                             $('<div/>', {'class': 'critter-container'}).append([
-                                $('<div/>', {'class': 'critter-icon', 'text': 'icon'}),
+                                $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
                                 $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text': v.location}),
-                                        $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                        $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
+                                        $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
                                 ])
                             ])    
                         ])
@@ -89,10 +91,10 @@ function refreshBugs() {
                 $('<div/>', {'class': 'critter-wrapper'}).append([
                     $('<div/>', {'class': 'critter-name', 'text':k}),
                     $('<div/>', {'class': 'critter-container'}).append([
-                        $('<div/>', {'class': 'critter-icon', 'text': 'icon'}),
+                        $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
                         $('<div/>', {'class': 'critter-data'}).append([
-                                $('<div/>', {'class': 'critter-block', 'text': v.location}),
-                                $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
+                                $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
                         ])
                     ])    
                 ])
@@ -184,6 +186,15 @@ function setActiveTabIcon(tab) {
     }
 };
 
+function refreshCurrentTab() {
+    if (ACTIVE_TAB == "fish") {
+        refreshFish();
+    }
+    if (ACTIVE_TAB == "bug") {
+        refreshBugs();
+    }
+}
+
 function datetime() {
     var days = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -196,6 +207,7 @@ function datetime() {
     var hours = d.getHours()
     var date = d.getDate();
     var amPm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
     var strTime = hours + ':' + minutes;
@@ -203,6 +215,10 @@ function datetime() {
     timeAMPM.textContent = amPm;
     dayElem.textContent = days[d.getDay()];
     dateElem.textContent = date + " " + months[d.getMonth()];
+    if (CURRENT_HOUR != hours) {
+        refreshCurrentTab();
+        CURRENT_HOUR = hours;
+    }
     var t = setTimeout(datetime, 500);
 }
 

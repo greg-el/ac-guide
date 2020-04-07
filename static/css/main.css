@@ -20,8 +20,16 @@ a {
  }
 
 #header {
-    margin: auto;
-    font-size: 40px;
+    text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
+    font-size: 500%;
+}
+
+#new {
+    color: white;
+}
+
+#horizons {
+    color: #7CC9DD;
 }
 
 #main-container {
@@ -36,41 +44,44 @@ a {
     margin: auto;
 }
 
+#header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 #datetime-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding-left: 90%;
 }
-
 
 #time-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
     color: white;
     align-items: baseline;
+    line-height: 350%;
 }
 
 #time {
-    font-size: 80px;
+    font-size: 500%;
 }
 
 #ampm {
-    font-size: 40px;
+    font-size: 250%;
 }
 
 #date-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     color: white;
-    align-items: baseline;
-    padding-top: 5%;
+    align-items: center;
 }
 
 #day {
-    font-size: 20px;
+    font-size: 200%;
     display: flex;
     color: #008B44;
     justify-content: center;
@@ -78,14 +89,12 @@ a {
 }
 
 #date {
-    font-size: 25px;
+    font-size: 250%;
     display: flex;
     text-align: center;
-    padding-left: 38%;
 }
 
 .time-divider {
-    width: 230px;
     height: 4px;
     background: white; 
     border-radius: 25px;
@@ -96,8 +105,8 @@ a {
 }
 
 .oval {
-    width: 60px;
-    height: 30px;
+    width: 38%;
+    height: 60%;
     background: white;
     border-radius: 25px;
     display: flex;
@@ -128,6 +137,9 @@ a {
     width: 100%;
     margin: auto;
     background-color:#FAFACF;
+    border-right: #7A7057;
+    border-bottom: #7A7057;
+    border-width: 1px;
 }
 
 
@@ -142,7 +154,7 @@ a {
 
 .critter-name {
     padding-left: 4px;
-    line-height: 18.75px;
+    line-height: 135%;
 }
 
 .tab-icon {

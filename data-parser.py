@@ -3,14 +3,9 @@ import requests
 import re
 import calendar
 import json
-
-
-
-
-
+import urllib
 
 def get_fish_data(url, out):
-    FISH_ICON_BASE = "./static/image/fish/"
     soup = BeautifulSoup(open(url), 'html.parser')
     test = soup.find_all("tr")
     for item in test:
@@ -75,7 +70,7 @@ def get_fish_data(url, out):
 
         temp_dict['months'] = months
 
-        temp_dict['icon'] = FISH_ICON_BASE + "NH-Icon-" + name.replace(" ", "").replace("-", "").lower() + ".webp"
+        temp_dict['icon'] = "./static/image/fish/" + name.replace(" ", "").replace("-", "").lower() + ".webp"
 
         if url == "./data/fish-north":
             out['northern'][name] = temp_dict
@@ -150,12 +145,74 @@ def get_bug_data(url, out):
 
         temp_dict['months'] = months
 
+        temp_dict['icon'] = "./static/image/bugs/" + name.replace(" ", "").replace("-", "").lower() + ".webp"
+
         if url == "./data/bugs-north":
             out['northern'][name] = temp_dict
         else:
             out['southern'][name] = temp_dict
 
     return out
+
+
+def get_villager_data(out):
+    month_num = {
+        "January": 0,
+        "February": 1,
+        "March": 2,
+        "April": 3,
+        "May": 4,
+        "June": 5,
+        "July": 6,
+        "August": 7,
+        "September": 8,
+        "October": 9,
+        "November": 10,
+        "December": 11
+    }
+
+
+    soup = BeautifulSoup(open("./data/villagers"), 'html.parser')
+    test = soup.find_all("tr")
+    for item in test:
+        temp_dict = {}
+        td = item.find_all("td")
+
+        name = td[0].text.strip("\n")
+        gender_personality = td[2].text.strip().split(" ")
+        temp_dict['gender'] = "f" if gender_personality[0] == "\u2640" else "m"
+        temp_dict['personality'] = gender_personality[1]
+        temp_dict['species'] = td[3].text.strip()
+
+        birth_month_date = td[4].text.strip().split(" ")
+        temp_dict['month'] = month_num[birth_month_date[0]]
+        temp_dict['date'] = birth_month_date[1][:-2:]
+        temp_dict['catchphrase'] = td[5].text.strip().strip('"')
+
+        name.replace("SporkNACracklePAL", "Spork-Crackle")
+        name.replace("JacobNAJakeyPAL", "Jacob-Jakey")
+        temp_dict['icon'] = f"./static/image/villagers/{name}.webp"
+
+        out[name] = temp_dict
+
+    return out
+
+
+def save_villager_icons():
+    soup = BeautifulSoup(open("./data/villagers"), 'html.parser')
+    test = soup.find_all("tr")
+    for item in test:
+        temp_dict = {}
+        td = item.find_all("td")
+        name = td[0].text.strip("\n")
+        name.replace("SporkNACracklePAL", "Spork-Crackle")
+        name.replace("JacobNAJakeyPAL", "Jacob-Jakey")
+        for link in td[1].find_all("a", href=True):
+            try:
+                urllib.request.urlretrieve(link['href'], f"./static/image/villagers/{name}.webp")
+            except e:
+                print("Error downloading")
+
 
 
 def run_fish():
@@ -170,10 +227,9 @@ def run_fish():
     fish = get_fish_data(fish_north, out)
     fish = get_fish_data(fish_south, out)
 
-    json_file = json.dumps(fish)
-
     with open('fish.json', 'w') as f:
         json.dump(fish, f)
+
 
 def run_bugs():
     out = {
@@ -188,10 +244,17 @@ def run_bugs():
     bugs = get_bug_data(bugs_north, out)
     bugs = get_bug_data(bugs_south, out)
 
-    json_file = json.dumps(bugs)
-
     with open('bugs.json', 'w') as f:
         json.dump(bugs, f)
 
 
-run_fish()
+def run_villager():
+    out = {}
+    get_villager_data(out)
+    villagers = get_villager_data(out)
+
+    with open('villagers.json', 'w') as f:
+        json.dump(villagers, f)
+
+
+run_villager()
