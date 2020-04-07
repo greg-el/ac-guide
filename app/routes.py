@@ -1,6 +1,6 @@
 from flask import render_template
 from app import app
-from data import get_avaliable_bugs, get_avaliable_fish
+from data import get_avaliable_bugs, get_avaliable_fish, get_sorted_villagers
 
 @app.route('/')
 def index():
@@ -15,3 +15,6 @@ def bug_data():
 def fish_data():
     return get_avaliable_fish()
 
+@app.route('/villagers-sorted')
+def villager_data():
+    return get_sorted_villagers()

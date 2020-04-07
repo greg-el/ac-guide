@@ -104,6 +104,52 @@ function refreshBugs() {
 return false;
 };
 
+$(function() {
+    $('a#birth-button').bind('click', function() {
+        $.getJSON('/villagers-sorted',
+            function(data) {
+                ACTIVE_TAB = "birth"; 
+                setActiveTabIcon(ACTIVE_TAB);
+                $("#data-wrapper").empty()
+                var $elem = $(document.getElementById("data-wrapper"))
+                $.each(data, function(k, v) {
+                    console.log(v)
+                    $elem.append(
+                        $('<div/>', {'class': 'critter-wrapper'}).append([
+                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
+                            $('<div/>', {'class': 'critter-container'}).append([
+                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                                $('<div/>', {'class': 'critter-data'}).append([
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.gender}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.personality}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.species}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinal_suffix_of(v.date)}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  '"' + v.catchphrase + '"'})
+                                ])
+                            ])    
+                        ])
+                    ) 
+                })
+            });
+    return false;
+    });
+});
+
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -172,19 +218,52 @@ function setHempisphereIcon(hemisphere) {
 
 function setActiveTabIcon(tab) {
     if (tab == "fish") {
-        $("#fish-dark-icon").css("display", "none")
-        $("#fish-light-icon").css("display", "block");
-        $("#bug-light-icon").css("display", "none");
-        $("#bug-dark-icon").css("display", "block")
+        fishTabActive()
+        bugTabInactive()
+        birthTabInactive()
     } else if (tab == "bug") {
-        $("#bug-dark-icon").css("display", "none")
-        $("#bug-light-icon").css("display", "block");
-        $("#fish-light-icon").css("display", "none");
-        $("#fish-dark-icon").css("display", "block")
+        bugTabActive()
+        fishTabInactive()
+        birthTabInactive()
+    } else if (tab == "birth") {
+        bugTabInactive()
+        fishTabInactive()
+        birthTabActive()
     } else {
         console.log("Error setting tab icon")
     }
 };
+
+function bugTabActive() {
+    $("#bug-dark-icon").css("display", "none")
+    $("#bug-light-icon").css("display", "block");
+}
+
+function bugTabInactive() {
+    $("#bug-light-icon").css("display", "none");
+    $("#bug-dark-icon").css("display", "block")
+}
+
+function fishTabActive() {
+    $("#fish-dark-icon").css("display", "none")
+    $("#fish-light-icon").css("display", "block");
+}
+
+function fishTabInactive() {
+    $("#fish-light-icon").css("display", "none");
+    $("#fish-dark-icon").css("display", "block")
+}
+
+function birthTabInactive() {
+    $("#birth-light-icon").css("display", "none");
+    $("#birth-dark-icon").css("display", "block")
+}
+
+function birthTabActive() {
+    $("#birth-light-icon").css("display", "block");
+    $("#birth-dark-icon").css("display", "none")
+}
+
 
 function refreshCurrentTab() {
     if (ACTIVE_TAB == "fish") {
@@ -193,7 +272,12 @@ function refreshCurrentTab() {
     if (ACTIVE_TAB == "bug") {
         refreshBugs();
     }
+    if (ACTIVE_TAB == "birth") {
+        refreshBirthdays();
+    }
 }
+
+
 
 function datetime() {
     var days = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
