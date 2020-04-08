@@ -170,12 +170,13 @@ a {
     border-radius: 6px;
     max-width: 240px;
     max-height: 350px;
+    padding: 3px;
 }
 
 .critter-wrapper {
     display: flex;
     flex-direction: column;
-    padding: 1em;
+    padding: .5em;
 }
 
 .critter-icon {
@@ -188,6 +189,30 @@ a {
     flex-direction: column;
     justify-content: center;
     width: 20em;
+}
+
+.location-container {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.magnify-icon {
+    padding-right: 2px;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.price-container {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.bell-icon {
+    padding-right: 2px;
+    max-width: 20px;
+    max-height: 20px;
 }
 
 .critter-block {

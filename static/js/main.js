@@ -16,8 +16,14 @@ $(function() {
                             $('<div/>', {'class': 'critter-container'}).append([
                                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                                 $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text': "Location: " + v.location}),
-                                        $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price}),
+                                        $('<div/>', {'class': 'location-container'}).append([
+                                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/magnifyicon.png'}),
+                                            $('<div/>', {'class': 'critter-block', 'text': v.location})
+                                        ]),                                        
+                                        $('<div/>', {'class': 'price-container'}).append([
+                                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
+                                            $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                        ]),
                                         $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
                                 ])
                             ])    
@@ -41,8 +47,14 @@ function refreshFish() {
                         $('<div/>', {'class': 'critter-container'}).append([
                             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                             $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'critter-block', 'text': "Location: " + v.location}),
-                                    $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price}),
+                                    $('<div/>', {'class': 'location-container'}).append([
+                                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/magnifyicon.png'}),
+                                        $('<div/>', {'class': 'critter-block', 'text': v.location})
+                                    ]),                                        
+                                    $('<div/>', {'class': 'price-container'}).append([
+                                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
+                                        $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                    ]),
                                     $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
                             ])
                         ])    
