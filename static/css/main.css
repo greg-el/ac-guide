@@ -184,33 +184,41 @@ a {
     margin-right: 5px;
 }
 
+.data-text {
+    line-height: 20px;
+}
+
 .critter-data {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     width: 20em;
 }
 
-.location-container {
+.icon-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
 }
 
 .magnify-icon {
-    padding-right: 2px;
     max-width: 20px;
     max-height: 20px;
 }
 
-.price-container {
+.text-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
 }
 
 .bell-icon {
-    padding-right: 2px;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.shadow-icon {
     max-width: 20px;
     max-height: 20px;
 }
@@ -220,3 +228,33 @@ a {
     justify-content: center;
     align-items: center;
 }
+
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+  }
+  
+.active, .collapsible:hover {
+    background-color: #ccc;
+  }
+  
+  /* Style the collapsible content. Note: hidden by default */
+#collapsible-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90%;
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+  }

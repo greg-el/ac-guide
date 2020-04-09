@@ -3,7 +3,7 @@ CURRENT_HOUR = new Date().getHours() % 12;
 
 $(function() {
     $('a#fish-button').bind('click', function() {
-        $.getJSON('/fish',
+        $.getJSON('/fish/avaliable',
             function(data) {
                 ACTIVE_TAB = "fish"; 
                 setActiveTabIcon(ACTIVE_TAB);
@@ -16,15 +16,23 @@ $(function() {
                             $('<div/>', {'class': 'critter-container'}).append([
                                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                                 $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'location-container'}).append([
-                                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/magnifyicon.png'}),
-                                            $('<div/>', {'class': 'critter-block', 'text': v.location})
+                                        $('<div/>', {'class': 'icon-container'}).append([
+                                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Location'})
+                                            ),
+                                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Price'})
+                                            ),
+                                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
+                                            ),
                                         ]),                                        
-                                        $('<div/>', {'class': 'price-container'}).append([
-                                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
-                                            $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                        $('<div/>', {'class': 'text-container'}).append([
+                                            $('<div/>', {'class': 'data-text', 'text': v.location}),
+                                            $('<div/>', {'class': 'data-text', 'text': v.price}),
+                                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
                                         ]),
-                                        $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
+
                                 ])
                             ])    
                         ])
@@ -35,8 +43,67 @@ $(function() {
     });
 });
 
+$(function() {
+    if (ACTIVE_TAB == "fish") {
+        $('#collapse-button').bind('click', getUnavaliableFish().then(function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                //panel.style.maxHeight = "1000" + "px";
+            }
+        }))
+    }
+});
+     
+
+
+            
+
+    
+
+async function getUnavaliableFish() {
+    $.getJSON('/fish/unavaliable',
+            function(data) {
+                var $elem = $(document.getElementById("collapsible-content"))
+                $.each(data, function(k, v) {
+                    console.log(v)
+                    $elem.append(
+                        $('<div/>', {'class': 'critter-wrapper'}).append([
+                            $('<div/>', {'class': 'critter-name', 'text':k}),
+                            $('<div/>', {'class': 'critter-container'}).append([
+                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                                $('<div/>', {'class': 'critter-data'}).append([
+                                        $('<div/>', {'class': 'icon-container'}).append([
+                                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Location'})
+                                            ),
+                                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Price'})
+                                            ),
+                                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
+                                                $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
+                                            ),
+                                        ]),                                        
+                                        $('<div/>', {'class': 'text-container'}).append([
+                                            $('<div/>', {'class': 'data-text', 'text': v.location}),
+                                            $('<div/>', {'class': 'data-text', 'text': v.price}),
+                                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                                        ]),
+
+                                ])
+                            ])    
+                        ])
+                    ) 
+                })
+            });
+    return false;
+}
+
 function refreshFish() {            
-    $.getJSON('/fish',
+    $.getJSON('/fish/avaliable',
         function(data) {
             $("#data-wrapper").empty()
             var $elem = $(document.getElementById("data-wrapper"))
@@ -47,15 +114,23 @@ function refreshFish() {
                         $('<div/>', {'class': 'critter-container'}).append([
                             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                             $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'location-container'}).append([
-                                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/magnifyicon.png'}),
-                                        $('<div/>', {'class': 'critter-block', 'text': v.location})
+                                    $('<div/>', {'class': 'icon-container'}).append([
+                                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                            $('<span/>', {'class': 'tooltip', 'text': 'Location'})
+                                        ),
+                                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
+                                            $('<span/>', {'class': 'tooltip', 'text': 'Price'})
+                                        ),
+                                        $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
+                                            $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
+                                        ),
                                     ]),                                        
-                                    $('<div/>', {'class': 'price-container'}).append([
-                                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
-                                        $('<div/>', {'class': 'critter-block', 'text': v.price})
+                                    $('<div/>', {'class': 'text-container'}).append([
+                                        $('<div/>', {'class': 'data-text', 'text': v.location}),
+                                        $('<div/>', {'class': 'data-text', 'text': v.price}),
+                                        $('<div/>', {'class': 'data-text', 'text': v.shadow})
                                     ]),
-                                    $('<div/>', {'class': 'critter-block', 'text': "Shadow Size: " + v.shadow})
+
                             ])
                         ])    
                     ])
@@ -116,9 +191,9 @@ function refreshBugs() {
 return false;
 };
 
-$(function() {
+$(function() { //Birthdays tab button 
     $('a#birth-button').bind('click', function() {
-        $.getJSON('/villagers-sorted',
+        $.getJSON('/villagers-sorted/30',
             function(data) {
                 ACTIVE_TAB = "birth"; 
                 setActiveTabIcon(ACTIVE_TAB);
@@ -145,6 +220,12 @@ $(function() {
             });
     return false;
     });
+});
+
+$(function() {
+    $('#collapse-button').click(function() {
+       
+    })
 });
 
 function ordinal_suffix_of(i) {
@@ -230,52 +311,31 @@ function setHempisphereIcon(hemisphere) {
 
 function setActiveTabIcon(tab) {
     if (tab == "fish") {
-        fishTabActive()
-        bugTabInactive()
-        birthTabInactive()
+        makeTabIconActive("fish")
+        makeTabIconInactive("bug")
+        makeTabIconInactive("birth")
     } else if (tab == "bug") {
-        bugTabActive()
-        fishTabInactive()
-        birthTabInactive()
+        makeTabIconActive("bug")
+        makeTabIconInactive("fish")
+        makeTabIconInactive("birth")
     } else if (tab == "birth") {
-        bugTabInactive()
-        fishTabInactive()
-        birthTabActive()
+        makeTabIconActive("birth")
+        makeTabIconInactive("bug")
+        makeTabIconInactive("fish")
     } else {
         console.log("Error setting tab icon")
     }
 };
 
-function bugTabActive() {
-    $("#bug-dark-icon").css("display", "none")
-    $("#bug-light-icon").css("display", "block");
+function makeTabIconActive(tab) {
+    $("#" + tab + "-dark-icon").css("display", "none")
+    $("#" + tab + "-light-icon").css("display", "block");
 }
 
-function bugTabInactive() {
-    $("#bug-light-icon").css("display", "none");
-    $("#bug-dark-icon").css("display", "block")
+function makeTabIconInactive(tab) {
+    $("#" + tab + "-dark-icon").css("display", "block")
+    $("#" + tab + "-light-icon").css("display", "none");
 }
-
-function fishTabActive() {
-    $("#fish-dark-icon").css("display", "none")
-    $("#fish-light-icon").css("display", "block");
-}
-
-function fishTabInactive() {
-    $("#fish-light-icon").css("display", "none");
-    $("#fish-dark-icon").css("display", "block")
-}
-
-function birthTabInactive() {
-    $("#birth-light-icon").css("display", "none");
-    $("#birth-dark-icon").css("display", "block")
-}
-
-function birthTabActive() {
-    $("#birth-light-icon").css("display", "block");
-    $("#birth-dark-icon").css("display", "none")
-}
-
 
 function refreshCurrentTab() {
     if (ACTIVE_TAB == "fish") {
@@ -288,7 +348,6 @@ function refreshCurrentTab() {
         refreshBirthdays();
     }
 }
-
 
 
 function datetime() {
