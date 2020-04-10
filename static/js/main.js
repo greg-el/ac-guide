@@ -1,13 +1,20 @@
 ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;
 
-$(function() {
+/*
+FISH FUNCTIONS -----------------------------------------------------------------
+*/
+
+$(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
         $.getJSON('/fish/avaliable',
             function(data) {
                 ACTIVE_TAB = "fish"; 
                 setActiveTabIcon(ACTIVE_TAB);
+                $('#collapse-button').unbind("click");
+                assignCollapseable();
                 $("#data-wrapper").empty()
+                $("#collapsible-content").empty();
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
                     $elem.append(
@@ -43,33 +50,11 @@ $(function() {
     });
 });
 
-$(function() {
-    if (ACTIVE_TAB == "fish") {
-        $('#collapse-button').bind('click', getUnavaliableFish().then(function() {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.maxHeight) {
-                panel.style.maxHeight = null;
-            } else {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-                //panel.style.maxHeight = "1000" + "px";
-            }
-        }))
-    }
-});
-     
-
-
-            
-
-    
-
 async function getUnavaliableFish() {
     $.getJSON('/fish/unavaliable',
             function(data) {
                 var $elem = $(document.getElementById("collapsible-content"))
                 $.each(data, function(k, v) {
-                    console.log(v)
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
                             $('<div/>', {'class': 'critter-name', 'text':k}),
@@ -92,14 +77,12 @@ async function getUnavaliableFish() {
                                             $('<div/>', {'class': 'data-text', 'text': v.price}),
                                             $('<div/>', {'class': 'data-text', 'text': v.shadow})
                                         ]),
-
                                 ])
                             ])    
                         ])
                     ) 
                 })
             });
-    return false;
 }
 
 function refreshFish() {            
@@ -140,16 +123,23 @@ function refreshFish() {
     return false;
 };
 
-$(function() {
+
+/*
+BUG FUNCTIONS -----------------------------------------------------------------
+*/
+
+$(function() { //Bug tab click
     $('a#bug-button').bind('click', function() {
-        $.getJSON('/bugs',
+        $.getJSON('/bugs/avaliable',
             function(data) {
                 ACTIVE_TAB = "bug"
                 setActiveTabIcon(ACTIVE_TAB);
+                $('#collapse-button').unbind("click");
+                assignCollapseable();
                 $("#data-wrapper").empty()
+                $("#collapsible-content").empty();
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
-                    console.log(v)
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
                             $('<div/>', {'class': 'critter-name', 'text':k}),
@@ -168,8 +158,30 @@ $(function() {
     });
 });
 
+async function getUnavaliableBugs() {
+    $.getJSON('/bugs/unavaliable',
+        function(data) {
+            console.log(data)
+            var $elem = $(document.getElementById("collapsible-content"))
+            $.each(data, function(k, v) {
+                $elem.append(
+                    $('<div/>', {'class': 'critter-wrapper'}).append([
+                        $('<div/>', {'class': 'critter-name', 'text':k}),
+                        $('<div/>', {'class': 'critter-container'}).append([
+                            $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
+                            $('<div/>', {'class': 'critter-data'}).append([
+                                    $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
+                                    $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
+                            ])
+                        ])    
+                    ])
+                ) 
+            })
+        });
+};
+
 function refreshBugs() {
-    $.getJSON('/bugs',
+    $.getJSON('/bugs/avaliable',
     function(data) {
         $("#data-wrapper").empty()
         var $elem = $(document.getElementById("data-wrapper"))
@@ -191,13 +203,21 @@ function refreshBugs() {
 return false;
 };
 
-$(function() { //Birthdays tab button 
+/*
+BIRTHDAY FUNCTIONS -----------------------------------------------------------------
+*/
+
+
+$(function() { //Birthdays tab click 
     $('a#birth-button').bind('click', function() {
         $.getJSON('/villagers-sorted/30',
             function(data) {
                 ACTIVE_TAB = "birth"; 
                 setActiveTabIcon(ACTIVE_TAB);
+                $('#collapse-button').unbind("click");
+                assignCollapseable();
                 $("#data-wrapper").empty()
+                $("#collapsible-content").empty();
                 var $elem = $(document.getElementById("data-wrapper"))
                 $.each(data, function(k, v) {
                     console.log(v)
@@ -210,7 +230,7 @@ $(function() { //Birthdays tab button
                                         $('<div/>', {'class': 'critter-block', 'text':  v.gender}),
                                         $('<div/>', {'class': 'critter-block', 'text':  v.personality}),
                                         $('<div/>', {'class': 'critter-block', 'text':  v.species}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinal_suffix_of(v.date)}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)}),
                                         $('<div/>', {'class': 'critter-block', 'text':  '"' + v.catchphrase + '"'})
                                 ])
                             ])    
@@ -222,26 +242,35 @@ $(function() { //Birthdays tab button
     });
 });
 
-$(function() {
-    $('#collapse-button').click(function() {
-       
-    })
-});
+async function getBirthdaysAfterN() {
+        $.getJSON('/villagers-sorted-after/30',
+            function(data) {
+                var $elem = $(document.getElementById("collapsible-content"))
+                $.each(data, function(k, v) {
+                    $elem.append(
+                        $('<div/>', {'class': 'critter-wrapper'}).append([
+                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
+                            $('<div/>', {'class': 'critter-container'}).append([
+                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                                $('<div/>', {'class': 'critter-data'}).append([
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.gender}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.personality}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.species}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)}),
+                                        $('<div/>', {'class': 'critter-block', 'text':  '"' + v.catchphrase + '"'})
+                                ])
+                            ])    
+                        ])
+                    ) 
+                })
+    });
+};
 
-function ordinal_suffix_of(i) {
-    var j = i % 10,
-        k = i % 100;
-    if (j == 1 && k != 11) {
-        return i + "st";
-    }
-    if (j == 2 && k != 12) {
-        return i + "nd";
-    }
-    if (j == 3 && k != 13) {
-        return i + "rd";
-    }
-    return i + "th";
-}
+
+
+/*
+COOKIE FUNCTIONS -----------------------------------------------------------------
+*/
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -297,17 +326,9 @@ function hemisphereCookieHandler() {
     }
 };
 
-function setHempisphereIcon(hemisphere) {
-    if (hemisphere == "north") {
-        $("#nhemisphere-icon").css("display", "block")
-        $("#shemisphere-icon").css("display", "none");
-    } else if (hemisphere == "south") {
-        $("#shemisphere-icon").css("display", "block")
-        $("#nhemisphere-icon").css("display", "none");
-    } else {
-        console.log("Can't change hemisphere button");
-    }
-};
+/*
+TAB ICON FUNCTIONS -----------------------------------------------------------------
+*/
 
 function setActiveTabIcon(tab) {
     if (tab == "fish") {
@@ -348,6 +369,71 @@ function refreshCurrentTab() {
         refreshBirthdays();
     }
 }
+
+function ordinalSuffixOf(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+function setHempisphereIcon(hemisphere) {
+    if (hemisphere == "north") {
+        $("#nhemisphere-icon").css("display", "block")
+        $("#shemisphere-icon").css("display", "none");
+    } else if (hemisphere == "south") {
+        $("#shemisphere-icon").css("display", "block")
+        $("#nhemisphere-icon").css("display", "none");
+    } else {
+        console.log("Can't change hemisphere button");
+    }
+};
+
+
+
+function assignCollapseable() {
+    $('#collapse-button').bind('click', async function() {
+        if (ACTIVE_TAB == "fish") {
+            await getUnavaliableFish();
+            testCollapse();
+        } else if (ACTIVE_TAB == "bug") {
+            await getUnavaliableBugs();
+            testCollapse();
+        } else if (ACTIVE_TAB == "birth") {
+            await getBirthdaysAfterN();
+            testCollapse();
+        }
+    })
+};
+
+
+async function testCollapse() {
+    var elem = document.getElementById("collapse-button");
+    elem.classList.toggle("active");
+    var panel = elem.nextElementSibling;
+    if (panel.style.display === "flex") {
+      panel.style.display = "none";
+      $("#collapsible-content").empty();
+    } else {
+      panel.style.display = "flex";
+    }
+    //elem.classList.toggle("active");
+    //var panel = elem.nextElementSibling;
+    //if (panel.style.maxHeight) {
+    //    panel.style.maxHeight = null;
+    //} else {
+    //    panel.style.maxHeight = panel.scrollHeight + "px";
+    //    //panel.style.maxHeight = "1000" + "px";
+    //};
+};
 
 
 function datetime() {

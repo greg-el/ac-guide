@@ -68,6 +68,26 @@ def get_avaliable_bugs():
                 
     return jsonify(out)
 
+def get_unavaliable_bugs():
+    out = {}
+    with open('bugs.json') as f:
+        bug_data = json.load(f)
+
+    if request.cookies.get('hemisphere') == "north":
+        bugs = bug_data['northern']
+    elif request.cookies.get('hemisphere') == "south":
+        bugs = bug_data['southern']
+    else:
+        bugs = bug_data['northern']
+
+    for name, data in bugs.items():
+        months = data['months']
+        hours = data['time']
+        if MONTH not in months or hour not in hours:
+            out[name] = {'price': data['price'],'location': data['location'], 'icon': data['icon']}
+                
+    return jsonify(out)
+
 def get_sorted_villagers(): 
     with open('villagers-sorted.json') as f:
         villager_data = json.load(f)
@@ -85,3 +105,14 @@ def get_n_sorted_villagers(n):
 
     return jsonify(out)
 
+
+def get_n_after_sorted_villagers(n):
+    out = {}
+    with open('villagers-sorted.json') as f:
+        villager_data = json.load(f)
+
+    for i in range(n, len(villager_data)):
+        data = villager_data[str(i)]
+        out[i] = data
+
+    return jsonify(out)

@@ -230,10 +230,11 @@ a {
 }
 
 .collapsible {
-    background-color: #eee;
-    color: #444;
+    background-color: #7A7057;
+    color: #FAFACF;
+    font-size: 200%;
     cursor: pointer;
-    padding: 18px;
+
     width: 100%;
     border: none;
     text-align: left;
@@ -241,7 +242,7 @@ a {
   }
   
 .active, .collapsible:hover {
-    background-color: #ccc;
+    background-color: rgb(107, 98, 76);
   }
   
   /* Style the collapsible content. Note: hidden by default */
@@ -249,12 +250,9 @@ a {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    width: 90%;
-    padding: 0 18px;
-    background-color: white;
-    max-height: 0;
+    background-color: #FAFACF;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
   }
