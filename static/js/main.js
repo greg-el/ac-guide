@@ -12,6 +12,7 @@ $(function() {  //Fish tab click
                 ACTIVE_TAB = "fish"; 
                 setActiveTabIcon(ACTIVE_TAB);
                 $('#collapse-button').unbind("click");
+                $('#collapse-button').html("Unavaliable Fish")
                 assignCollapseable();
                 $("#data-wrapper").empty()
                 $("#collapsible-content").empty();
@@ -135,6 +136,7 @@ $(function() { //Bug tab click
                 ACTIVE_TAB = "bug"
                 setActiveTabIcon(ACTIVE_TAB);
                 $('#collapse-button').unbind("click");
+                $('#collapse-button').html("Unavaliable Bugs")
                 assignCollapseable();
                 $("#data-wrapper").empty()
                 $("#collapsible-content").empty();
@@ -215,6 +217,7 @@ $(function() { //Birthdays tab click
                 ACTIVE_TAB = "birth"; 
                 setActiveTabIcon(ACTIVE_TAB);
                 $('#collapse-button').unbind("click");
+                $('#collapse-button').html("Other Birthdays")
                 assignCollapseable();
                 $("#data-wrapper").empty()
                 $("#collapsible-content").empty();
