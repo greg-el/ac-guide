@@ -4,6 +4,7 @@
         <title>Animal Crossing</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/scrollTo/jquery.scrollTo.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
@@ -26,32 +27,30 @@
                             </div>
                         </div>
                 </div>
-                <div id="control-bar">
-                    <div id="tabs">
-                        <div id="fish-container">
-                            <a href=# id="fish-button">
-                                <img class="tab-icon" id="fish-dark-icon" src="{{ url_for('static', filename = 'image/bar/fish-dark.png') }}" style="display:none;">
-                                <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fish-light.png') }}">
-                            </a>
-                        </div>
-                        <div id="bug-container">
-                            <a href=# id="bug-button">
-                                <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/bug-dark.png') }}">
-                                <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bug-light.png') }}" style="display:none;">
-                            </a>
-                        </div>
-                        <div id="birth-container">
-                            <a href=# id="birth-button">
-                                <img class="tab-icon" id="birth-dark-icon" src="{{ url_for('static', filename = 'image/bar/birthday-dark.png') }}" style="display:block;">
-                                <img class="tab-icon" id="birth-light-icon" src="{{ url_for('static', filename = 'image/bar/birthday-light.png') }}" style="display:none;">
-                            </a>
-                        </div>
-                        <div id="star-container">
-                            <a href=# id="star-button">
-                                <img class="tab-icon" id="star-dark-icon" src="{{ url_for('static', filename = 'image/bar/star-dark.png') }}" style="display:block;">
-                                <img class="tab-icon" id="star-light-icon" src="{{ url_for('static', filename = 'image/bar/star-light.png') }}" style="display:none;">
-                            </a>
-                        </div>
+                <div id="tab-container">
+                    <div id="fish-container">
+                        <a href=# id="fish-button">
+                            <img class="tab-icon" id="fish-dark-icon" src="{{ url_for('static', filename = 'image/bar/fish-dark.png') }}" style="display:none;">
+                            <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fish-light.png') }}">
+                        </a>
+                    </div>
+                    <div id="bug-container">
+                        <a href=# id="bug-button">
+                            <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/bug-dark.png') }}">
+                            <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bug-light.png') }}" style="display:none;">
+                        </a>
+                    </div>
+                    <div id="birth-container">
+                        <a href=# id="birth-button">
+                            <img class="tab-icon" id="birth-dark-icon" src="{{ url_for('static', filename = 'image/bar/birthday-dark.png') }}" style="display:block;">
+                            <img class="tab-icon" id="birth-light-icon" src="{{ url_for('static', filename = 'image/bar/birthday-light.png') }}" style="display:none;">
+                        </a>
+                    </div>
+                    <div id="star-container">
+                        <a href=# id="star-button">
+                            <img class="tab-icon" id="star-dark-icon" src="{{ url_for('static', filename = 'image/bar/star-dark.png') }}" style="display:block;">
+                            <img class="tab-icon" id="star-light-icon" src="{{ url_for('static', filename = 'image/bar/star-light.png') }}" style="display:none;">
+                        </a>
                     </div>
                     <div id="hemisphere-container">
                         <a href=# id="hemisphere-button">
@@ -60,10 +59,21 @@
                         </a>
                     </div>
                 </div>
-                <div id="data-wrapper">
+
+                <div id="tabs">
+                    <div id="fish-tab" class="data-container">
+                        <div id="fish-data-wrapper" class="data-wrapper">
+                        </div>
+                        <button type="button" id='fish-collapse-button' class="collapsible">Unavaliable Fish</button>
+                        <div id="fish-collapsible-content"></div>
+                    </div>
+                    <div id="bug-tab" class="data-container">
+                        <div id="bug-data-wrapper" class="data-wrapper">
+                        </div>
+                        <button type="button" id='bug-collapse-button' class="collapsible">Unavaliable Bugs</button>
+                        <div id="bug-collapsible-content"></div>
+                    </div>
                 </div>
-                <button type="button" id='collapse-button' class="collapsible">Unavaliable Fish</button>
-                <div id="collapsible-content"></div>
             </div>
         </div>
     </body>

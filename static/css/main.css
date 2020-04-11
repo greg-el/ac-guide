@@ -115,22 +115,24 @@ a {
   }
 
 
-#control-bar {
+#tab-container {
     display:flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-    align-content: flex-end;
+    align-items: flex-start;
+    align-content: flex-start;
 }
 
 #tabs {
-    display:flex;
-    flex-direction: row;
-    align-items: flex-end;
-    align-content: flex-end;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 
-#data-wrapper {
+.data-container {
+    display: inline-block;
+}
+
+.data-wrapper {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -140,6 +142,13 @@ a {
     border-right: #7A7057;
     border-bottom: #7A7057;
     border-width: 1px;
+}
+
+
+
+#page-tab-container {
+    display: flex;
+    flex-direction: row;
 }
 
 .villager-name {

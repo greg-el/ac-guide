@@ -7,16 +7,24 @@ FISH FUNCTIONS -----------------------------------------------------------------
 
 $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
-        $.getJSON('/fish/avaliable',
+        ACTIVE_TAB = "fish"; 
+        setActiveTabIcon(ACTIVE_TAB);
+
+        if (isMobile()) {
+            $('#tabs').scrollTo($('#fish-tab'), 800)
+        } else {
+            $('#fish-tab').css('display', 'inline-block');
+            $('#bug-tab').css('display', 'none');
+        }
+        $('#fish-collapse-button').bind('click', testCollapse("fish"))
+    });
+    return false;
+});
+
+async function getFish() {
+    $.getJSON('/fish/avaliable',
             function(data) {
-                ACTIVE_TAB = "fish"; 
-                setActiveTabIcon(ACTIVE_TAB);
-                $('#collapse-button').unbind("click");
-                $('#collapse-button').html("Unavaliable Fish")
-                assignCollapseable();
-                $("#data-wrapper").empty()
-                $("#collapsible-content").empty();
-                var $elem = $(document.getElementById("data-wrapper"))
+                var $elem = $(document.getElementById("fish-data-wrapper"));
                 $.each(data, function(k, v) {
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -40,21 +48,18 @@ $(function() {  //Fish tab click
                                             $('<div/>', {'class': 'data-text', 'text': v.price}),
                                             $('<div/>', {'class': 'data-text', 'text': v.shadow})
                                         ]),
-
                                 ])
                             ])    
                         ])
                     ) 
                 })
             });
-    return false;
-    });
-});
+}
 
 async function getUnavaliableFish() {
     $.getJSON('/fish/unavaliable',
             function(data) {
-                var $elem = $(document.getElementById("collapsible-content"))
+                var $elem = $(document.getElementById("fish-collapsible-content"))
                 $.each(data, function(k, v) {
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -90,7 +95,7 @@ function refreshFish() {
     $.getJSON('/fish/avaliable',
         function(data) {
             $("#data-wrapper").empty()
-            var $elem = $(document.getElementById("data-wrapper"))
+            var $elem = $(document.getElementById("fish-data-wrapper"))
             $.each(data, function(k, v) {
                 $elem.append(
                     $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -131,40 +136,43 @@ BUG FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //Bug tab click
     $('a#bug-button').bind('click', function() {
-        $.getJSON('/bugs/avaliable',
-            function(data) {
-                ACTIVE_TAB = "bug"
-                setActiveTabIcon(ACTIVE_TAB);
-                $('#collapse-button').unbind("click");
-                $('#collapse-button').html("Unavaliable Bugs")
-                assignCollapseable();
-                $("#data-wrapper").empty()
-                $("#collapsible-content").empty();
-                var $elem = $(document.getElementById("data-wrapper"))
-                $.each(data, function(k, v) {
-                    $elem.append(
-                        $('<div/>', {'class': 'critter-wrapper'}).append([
-                            $('<div/>', {'class': 'critter-name', 'text':k}),
-                            $('<div/>', {'class': 'critter-container'}).append([
-                                $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
-                                $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
-                                        $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
-                                ])
-                            ])    
-                        ])
-                    ) 
-                })
-            });
-    return false;
+        ACTIVE_TAB = "bug"
+        setActiveTabIcon(ACTIVE_TAB);
+        if (isMobile()) {
+            $('#tabs').scrollTo($('#bug-tab'), 800)
+        } else {
+            $('#fish-tab').css('display', 'none');
+            $('#bug-tab').css('display', 'inline-block');
+        }
     });
+    return false;
 });
+
+async function getBugs() {
+    $.getJSON('/bugs/avaliable',
+    function(data) {
+        var $elem = $(document.getElementById("bug-data-wrapper"))
+        $.each(data, function(k, v) {
+            $elem.append(
+                $('<div/>', {'class': 'critter-wrapper'}).append([
+                    $('<div/>', {'class': 'critter-name', 'text':k}),
+                    $('<div/>', {'class': 'critter-container'}).append([
+                        $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
+                        $('<div/>', {'class': 'critter-data'}).append([
+                                $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
+                                $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
+                        ])
+                    ])    
+                ])
+            ) 
+        })
+    });
+}
 
 async function getUnavaliableBugs() {
     $.getJSON('/bugs/unavaliable',
         function(data) {
-            console.log(data)
-            var $elem = $(document.getElementById("collapsible-content"))
+            var $elem = $(document.getElementById("bug-collapsible-content"))
             $.each(data, function(k, v) {
                 $elem.append(
                     $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -186,7 +194,7 @@ function refreshBugs() {
     $.getJSON('/bugs/avaliable',
     function(data) {
         $("#data-wrapper").empty()
-        var $elem = $(document.getElementById("data-wrapper"))
+        var $elem = $(document.getElementById("bug-data-wrapper"))
         $.each(data, function(k, v) {
             $elem.append(
                 $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -414,24 +422,8 @@ function setHempisphereIcon(hemisphere) {
 
 
 
-function assignCollapseable() {
-    $('#collapse-button').bind('click', async function() {
-        if (ACTIVE_TAB == "fish") {
-            await getUnavaliableFish();
-            testCollapse();
-        } else if (ACTIVE_TAB == "bug") {
-            await getUnavaliableBugs();
-            testCollapse();
-        } else if (ACTIVE_TAB == "birth") {
-            await getBirthdaysAfterN();
-            testCollapse();
-        }
-    })
-};
-
-
-async function testCollapse() {
-    var elem = document.getElementById("collapse-button");
+async function testCollapse(tab) {
+    var elem = document.getElementById(tab + "-collapse-button");
     elem.classList.toggle("active");
     var panel = elem.nextElementSibling;
     if (panel.style.display === "flex") {
@@ -478,10 +470,19 @@ function datetime() {
     var t = setTimeout(datetime, 500);
 }
 
+function isMobile() {
+     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+        return true
+     } 
+     return false
+}
+
 $(function() {
     checkCookieExists();
     setHempisphereIcon(getCookie("hemisphere"));
     hemisphereCookieHandler();
     datetime();
-    document.getElementById("fish-button").click();
+    getFish();
+    getBugs();
+    //document.getElementById("fish-button").click();
 });
