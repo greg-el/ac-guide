@@ -225,19 +225,31 @@ $(function() { //Birthdays tab click
                 $.each(data, function(k, v) {
                     console.log(v)
                     $elem.append(
-                        $('<div/>', {'class': 'critter-wrapper'}).append([
-                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
-                            $('<div/>', {'class': 'critter-container'}).append([
-                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                                $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.gender}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.personality}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.species}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  '"' + v.catchphrase + '"'})
+                        $('<div/>', {'class': 'villager-wrapper'}).append([
+                            $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                            $('<div/>', {'class': 'villager-container'}).append([
+                                $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
+                                $('<div/>', {'class': 'villager-data'}).append([
+                                    $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
+                                    $('<div/>', {'class': 'villager-birthday-container'}).append([
+                                        $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                        $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
+                                    ])
+                                ]).append(
+                                    $('<div/>', {'class': 'villager-species-container'}).append([
+                                        $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                        $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                                    ])
+                                ).append(
+                                    $('<div/>', {'class': 'villager-personality-container'}).append([
+                                        $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                                        $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                                    ])
+                                ).append(
+                                        $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
+                                    )
                                 ])
-                            ])    
-                        ])
+                            ])
                     ) 
                 })
             });

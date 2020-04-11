@@ -182,7 +182,7 @@ def get_villager_data(out):
 
         name = td[0].text.strip("\n")
         gender_personality = td[2].text.strip().split(" ")
-        temp_dict['gender'] = "f" if gender_personality[0] == "\u2640" else "m"
+        temp_dict['gender'] = "./static/image/icons/femaleicon.png" if gender_personality[0] == "\u2640" else "./static/image/icons/maleicon.png"
         temp_dict['personality'] = gender_personality[1]
         temp_dict['species'] = td[3].text.strip()
 
@@ -289,9 +289,7 @@ def sorted_villager_gen():#Sorts villagers into birthdays ordered by closest to 
 
     count = 0
     for item in sorted_month:
-        print(item[4])
-        print(item[5])
-        out[count] = {'name': item[0], 'gender': item[1], 'personality': item[2], 'month': month_name[month_denormalisation[item[4]]], 'date': int(item[5]), 'catchphrase':item[6], 'icon':item[7]}
+        out[count] = {'name': item[0], 'gender': item[1], 'personality': item[2], 'species': item[3], 'month': month_name[month_denormalisation[item[4]]], 'date': int(item[5]), 'catchphrase':item[6], 'icon':item[7]}
         count+=1
 
     with open('villagers-sorted.json', 'w') as f:
@@ -340,3 +338,4 @@ def run_villager():
         json.dump(villagers, f)
 
 
+sorted_villager_gen()
