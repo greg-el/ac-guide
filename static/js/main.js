@@ -9,7 +9,7 @@ $(document).ready(function(){
       centerPadding: '0px',
       infinite: false,
       speed: 300,
-      touchThreshold: 10,
+      touchThreshold: 5,
       waitForAnimate: true,
       edgeFriction: 0.05
     });
