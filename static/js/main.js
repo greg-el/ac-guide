@@ -1,5 +1,26 @@
-ACTIVE_TAB = "fish";
+ACTIVE_TAB = 0;
 CURRENT_HOUR = new Date().getHours() % 12;
+
+$(document).ready(function(){
+    $('#tabs').slick({
+      dots: false,
+      arrows: false,
+      centerMode: true,
+      centerPadding: '0px',
+      infinite: false,
+      speed: 300,
+      touchThreshold: 10,
+      waitForAnimate: true,
+      edgeFriction: 0.05
+    });
+    $('#tabs').on('afterChange', function(slick, currentSlide){
+        setActiveTab(currentSlide.currentSlide)
+        setActiveTabIcon(currentSlide.currentSlide)
+      });
+});
+
+
+
 
 /*
 FISH FUNCTIONS -----------------------------------------------------------------
@@ -7,15 +28,9 @@ FISH FUNCTIONS -----------------------------------------------------------------
 
 $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
-        ACTIVE_TAB = "fish"; 
-        setActiveTabIcon(ACTIVE_TAB);
-
-        if (isMobile()) {
-            $('#tabs').scrollTo($('#fish-tab'), 800)
-        } else {
-            $('#fish-tab').css('display', 'inline-block');
-            $('#bug-tab').css('display', 'none');
-        }
+        $('#tabs').slick('slickGoTo',0);
+        setActiveTab();
+        setActiveTabIcon(getActiveTab());
         $('#fish-collapse-button').bind('click', testCollapse("fish"))
     });
     return false;
@@ -136,14 +151,9 @@ BUG FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //Bug tab click
     $('a#bug-button').bind('click', function() {
-        ACTIVE_TAB = "bug"
-        setActiveTabIcon(ACTIVE_TAB);
-        if (isMobile()) {
-            $('#tabs').scrollTo($('#bug-tab'), 800)
-        } else {
-            $('#fish-tab').css('display', 'none');
-            $('#bug-tab').css('display', 'inline-block');
-        }
+        $('#tabs').slick('slickGoTo',1);
+        setActiveTab();
+        setActiveTabIcon(getActiveTab());
     });
     return false;
 });
@@ -220,55 +230,54 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click 
     $('a#birth-button').bind('click', function() {
-        $.getJSON('/villagers-sorted/30',
-            function(data) {
-                ACTIVE_TAB = "birth"; 
-                setActiveTabIcon(ACTIVE_TAB);
-                $('#collapse-button').unbind("click");
-                $('#collapse-button').html("Other Birthdays")
-                assignCollapseable();
-                $("#data-wrapper").empty()
-                $("#collapsible-content").empty();
-                var $elem = $(document.getElementById("data-wrapper"))
-                $.each(data, function(k, v) {
-                    console.log(v)
-                    $elem.append(
-                        $('<div/>', {'class': 'villager-wrapper'}).append([
-                            $('<div/>', {'class': 'villager-name', 'text':v.name}),
-                            $('<div/>', {'class': 'villager-container'}).append([
-                                $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
-                                $('<div/>', {'class': 'villager-data'}).append([
-                                    $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
-                                    $('<div/>', {'class': 'villager-birthday-container'}).append([
-                                        $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                                        $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
-                                    ])
-                                ]).append(
-                                    $('<div/>', {'class': 'villager-species-container'}).append([
-                                        $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                                        $('<div/>', {'class': 'villager-block', 'text':  v.species})
-                                    ])
-                                ).append(
-                                    $('<div/>', {'class': 'villager-personality-container'}).append([
-                                        $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
-                                        $('<div/>', {'class': 'villager-block', 'text':  v.personality})
-                                    ])
-                                ).append(
-                                        $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
-                                    )
-                                ])
-                            ])
-                    ) 
-                })
-            });
-    return false;
+        $('#tabs').slick('slickGoTo',2);
+        setActiveTab();
+        setActiveTabIcon(getActiveTab());
     });
+    return false;
 });
+
+async function getBirthdays() {
+    $.getJSON('/villagers-sorted-after/30',
+        function(data) {
+        var $elem = $(document.getElementById("birth-data-wrapper"))
+        $.each(data, function(k, v) {
+            $elem.append(
+                $('<div/>', {'class': 'villager-wrapper'}).append([
+                    $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                    $('<div/>', {'class': 'villager-container'}).append([
+                        $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
+                        $('<div/>', {'class': 'villager-data'}).append([
+                            $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
+                            $('<div/>', {'class': 'villager-birthday-container'}).append([
+                                $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
+                            ])
+                        ]).append(
+                            $('<div/>', {'class': 'villager-species-container'}).append([
+                                $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                            ])
+                        ).append(
+                            $('<div/>', {'class': 'villager-personality-container'}).append([
+                                $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                                $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                            ])
+                        ).append(
+                                $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
+                        )
+                    ])
+                ])
+            ) 
+        });
+    });
+};
+        
 
 async function getBirthdaysAfterN() {
         $.getJSON('/villagers-sorted-after/30',
             function(data) {
-                var $elem = $(document.getElementById("collapsible-content"))
+                var $elem = $(document.getElementById("birth-collapsible-content"))
                 $.each(data, function(k, v) {
                     $elem.append(
                         $('<div/>', {'class': 'critter-wrapper'}).append([
@@ -330,17 +339,17 @@ function hemisphereCookieHandler() {
         if (cookie == "north") {
             setHempisphereIcon("south");
             setCookie("hemisphere", "south", 365);
-            if (ACTIVE_TAB == "fish") {
+            if (getActiveTab() == "fish") {
                 refreshFish();
-            } else if (ACTIVE_TAB == "bug") {
+            } else if (getActiveTab() == "bug") {
                 refreshBugs();
             }
         } else if (cookie == "south") {
             setHempisphereIcon("north");
             setCookie("hemisphere", "north", 365);
-            if (ACTIVE_TAB == "fish") {
+            if (getActiveTab() == "fish") {
                 refreshFish();
-            } else if (ACTIVE_TAB == "bug") {
+            } else if (getActiveTab() == "bug") {
                 refreshBugs();
             }
         } else {
@@ -353,19 +362,23 @@ function hemisphereCookieHandler() {
 TAB ICON FUNCTIONS -----------------------------------------------------------------
 */
 
-function setActiveTabIcon(tab) {
+function setActiveTabIcon() {
+    var tab = getActiveTab()
     if (tab == "fish") {
-        makeTabIconActive("fish")
-        makeTabIconInactive("bug")
-        makeTabIconInactive("birth")
+        console.log("fish")
+        makeTabIconActive("fish");
+        makeTabIconInactive("bug");
+        makeTabIconInactive("birth");
     } else if (tab == "bug") {
-        makeTabIconActive("bug")
-        makeTabIconInactive("fish")
-        makeTabIconInactive("birth")
+        console.log("bug")
+        makeTabIconActive("bug");
+        makeTabIconInactive("fish");
+        makeTabIconInactive("birth");
     } else if (tab == "birth") {
-        makeTabIconActive("birth")
-        makeTabIconInactive("bug")
-        makeTabIconInactive("fish")
+        console.log("birth")
+        makeTabIconActive("birth");
+        makeTabIconInactive("bug");
+        makeTabIconInactive("fish");
     } else {
         console.log("Error setting tab icon")
     }
@@ -382,13 +395,13 @@ function makeTabIconInactive(tab) {
 }
 
 function refreshCurrentTab() {
-    if (ACTIVE_TAB == "fish") {
+    if (getActiveTab() == "fish") {
         refreshFish();
     }
-    if (ACTIVE_TAB == "bug") {
+    if (getActiveTab() == "bug") {
         refreshBugs();
     }
-    if (ACTIVE_TAB == "birth") {
+    if (getActiveTab() == "birth") {
         refreshBirthdays();
     }
 }
@@ -477,6 +490,20 @@ function isMobile() {
      return false
 }
 
+function getActiveTab() {
+    if (ACTIVE_TAB == 0) {
+        return "fish";
+    } else if (ACTIVE_TAB == 1) {
+        return "bug";
+    } else if (ACTIVE_TAB == 2) {
+        return "birth";
+    }
+}
+
+function setActiveTab() {
+    ACTIVE_TAB = $('#tabs').slick('slickCurrentSlide');
+}
+
 $(function() {
     checkCookieExists();
     setHempisphereIcon(getCookie("hemisphere"));
@@ -484,5 +511,6 @@ $(function() {
     datetime();
     getFish();
     getBugs();
+    getBirthdays();
     //document.getElementById("fish-button").click();
 });

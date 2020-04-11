@@ -3,8 +3,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  
-
 body {
     font-size: 15px;
     background-image: url("../image/acrepeat.jpg");
@@ -18,6 +16,7 @@ body {
 a {
     outline: 0;
  }
+
 
 #header {
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
@@ -115,6 +114,8 @@ a {
   }
 
 
+
+
 #tab-container {
     display:flex;
     flex-direction: row;
@@ -122,11 +123,7 @@ a {
     align-content: flex-start;
 }
 
-#tabs {
-    overflow-x: hidden;
-    overflow-y: hidden;
-    white-space: nowrap;
-}
+
 
 .data-container {
     display: inline-block;
@@ -260,8 +257,8 @@ a {
     flex-direction: row;
     border: 3px solid #BEB28A;
     border-radius: 6px;
-    max-width: 240px;
-    max-height: 350px;
+    width: 200px;
+    height: 100px;
     padding: 3px;
 }
 

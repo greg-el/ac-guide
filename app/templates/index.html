@@ -4,7 +4,8 @@
         <title>Animal Crossing</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename = 'js/scrollTo/jquery.scrollTo.js') }}"></script>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
@@ -72,6 +73,12 @@
                         </div>
                         <button type="button" id='bug-collapse-button' class="collapsible">Unavaliable Bugs</button>
                         <div id="bug-collapsible-content"></div>
+                    </div>
+                    <div id="birth-tab" class="data-container">
+                        <div id="birth-data-wrapper" class="data-wrapper">
+                        </div>
+                        <button type="button" id='birth-collapse-button' class="collapsible">Later Birthdays</button>
+                        <div id="birth-collapsible-content"></div>
                     </div>
                 </div>
             </div>
