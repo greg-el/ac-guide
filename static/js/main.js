@@ -238,39 +238,40 @@ $(function() { //Birthdays tab click
 });
 
 async function getBirthdays() {
-    $.getJSON('/villagers-sorted-after/30',
+    $.getJSON('/villagers-sorted/30',
         function(data) {
-        var $elem = $(document.getElementById("birth-data-wrapper"))
-        $.each(data, function(k, v) {
-            $elem.append(
-                $('<div/>', {'class': 'villager-wrapper'}).append([
-                    $('<div/>', {'class': 'villager-name', 'text':v.name}),
-                    $('<div/>', {'class': 'villager-container'}).append([
-                        $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
-                        $('<div/>', {'class': 'villager-data'}).append([
-                            $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
-                            $('<div/>', {'class': 'villager-birthday-container'}).append([
-                                $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                                $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
-                            ])
-                        ]).append(
-                            $('<div/>', {'class': 'villager-species-container'}).append([
-                                $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                                $('<div/>', {'class': 'villager-block', 'text':  v.species})
-                            ])
-                        ).append(
-                            $('<div/>', {'class': 'villager-personality-container'}).append([
-                                $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
-                                $('<div/>', {'class': 'villager-block', 'text':  v.personality})
-                            ])
-                        ).append(
-                                $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
-                        )
+            var $elem = $(document.getElementById("birth-data-wrapper"))
+            $.each(data, function(k, v) {
+                $elem.append(
+                    $('<div/>', {'class': 'villager-wrapper'}).append([
+                        $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                        $('<div/>', {'class': 'villager-container'}).append([
+                            $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
+                            $('<div/>', {'class': 'villager-data'}).append([
+                                $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
+                                $('<div/>', {'class': 'villager-birthday-container'}).append([
+                                    $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                    $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
+                                ])
+                            ]).append(
+                                $('<div/>', {'class': 'villager-species-container'}).append([
+                                    $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                    $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                                ])
+                            ).append(
+                                $('<div/>', {'class': 'villager-personality-container'}).append([
+                                    $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                                    $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                                ])
+                            ).append(
+                                    $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
+                            )
+                        ])
                     ])
-                ])
-            ) 
+                ) 
+            });
         });
-    });
+    return true;
 };
         
 
@@ -295,6 +296,7 @@ async function getBirthdaysAfterN() {
                         ])
                     ) 
                 })
+        return false;
     });
 };
 
