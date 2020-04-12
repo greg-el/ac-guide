@@ -156,7 +156,7 @@ a {
 .villager-wrapper {
     display: flex;
     flex-direction: column;
-    max-width: 13%;
+    max-width: 28%;
     padding: .5em;
 }
 
