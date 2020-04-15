@@ -6,6 +6,18 @@ MONTH = datetime.datetime.today().month
 DATE = datetime.datetime.today().day
 hour = datetime.datetime.today().hour
 
+def get_all_fish():
+    out = {}
+    with open('fish.json') as f:
+        fish_data = json.load(f)
+
+    if request.cookies.get('hemisphere') == "north":
+        fish = fish_data['northern']
+    elif request.cookies.get('hemisphere') == "south":
+        fish = fish_data['southern']
+
+    return fish
+
 
 def get_avaliable_fish():
     out = {}

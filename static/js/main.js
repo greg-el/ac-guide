@@ -37,38 +37,85 @@ $(function() {  //Fish tab click
     return false;
 });
 
+async function generateFishHTML(element, k, v) {
+    if (typeof v.locationAlt != "undefined") {
+        element.append(
+            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+                $('<div/>', {'class': 'critter-name', 'text':k}),
+                $('<div/>', {'class': 'critter-container'}).append([
+                    $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                    $('<div/>', {'class': 'critter-data'}).append([
+                            $('<div/>', {'class': 'icon-container'}).append([
+                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Location'})
+                                ),
+                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'LocationAlt'})
+                                ),
+                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Price'})
+                                ),
+                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
+                                ),
+                            ]),                                        
+                            $('<div/>', {'class': 'text-container'}).append([
+                                $('<div/>', {'class': 'data-text', 'text': v.location}),
+                                $('<div/>', {'class': 'data-text', 'text': v.locationAlt}),
+                                $('<div/>', {'class': 'data-text', 'text': v.price}),
+                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                            ]),
+                    ])
+                ])    
+            ])
+        )
+    } else {
+        element.append(
+            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+                $('<div/>', {'class': 'critter-name', 'text':k}),
+                $('<div/>', {'class': 'critter-container'}).append([
+                    $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                    $('<div/>', {'class': 'critter-data'}).append([
+                            $('<div/>', {'class': 'icon-container'}).append([
+                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Location'})
+                                ),
+                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Price'})
+                                ),
+                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
+                                    $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
+                                ),
+                            ]),                                        
+                            $('<div/>', {'class': 'text-container'}).append([
+                                $('<div/>', {'class': 'data-text', 'text': v.location}),
+                                $('<div/>', {'class': 'data-text', 'text': v.price}),
+                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                            ]),
+                    ])
+                ])    
+            ])
+        )
+    }
+};
+
+async function getAllFish() {
+    $.getJSON('/fish/all',
+        function(data) {
+            var $elem = $(document.getElementById("fish-data-wrapper"));
+            $.each(data, function(k, v) {
+                generateFishHTML($elem, k, v);
+            })
+        });
+    return false;
+};
+
 async function getFish() {
-    console.log("hi")
     $.getJSON('/fish/avaliable',
         function(data) {
             var $elem = $(document.getElementById("fish-data-wrapper"));
             $.each(data, function(k, v) {
-                $elem.append(
-                    $('<div/>', {'class': 'critter-wrapper'}).append([
-                        $('<div/>', {'class': 'critter-name', 'text':k}),
-                        $('<div/>', {'class': 'critter-container'}).append([
-                            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                            $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'icon-container'}).append([
-                                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Location'})
-                                        ),
-                                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Price'})
-                                        ),
-                                        $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
-                                        ),
-                                    ]),                                        
-                                    $('<div/>', {'class': 'text-container'}).append([
-                                        $('<div/>', {'class': 'data-text', 'text': v.location}),
-                                        $('<div/>', {'class': 'data-text', 'text': v.price}),
-                                        $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                                    ]),
-                            ])
-                        ])    
-                    ])
-                ) 
+                generateFishHTML($elem, k, v);
             })
         });
     return false;
@@ -79,71 +126,19 @@ async function getUnavaliableFish() {
             function(data) {
                 var $elem = $(document.getElementById("fish-collapsible-content"))
                 $.each(data, function(k, v) {
-                    $elem.append(
-                        $('<div/>', {'class': 'critter-wrapper'}).append([
-                            $('<div/>', {'class': 'critter-name', 'text':k}),
-                            $('<div/>', {'class': 'critter-container'}).append([
-                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                                $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'icon-container'}).append([
-                                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                                $('<span/>', {'class': 'tooltip', 'text': 'Location'})
-                                            ),
-                                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
-                                                $('<span/>', {'class': 'tooltip', 'text': 'Price'})
-                                            ),
-                                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
-                                                $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
-                                            ),
-                                        ]),                                        
-                                        $('<div/>', {'class': 'text-container'}).append([
-                                            $('<div/>', {'class': 'data-text', 'text': v.location}),
-                                            $('<div/>', {'class': 'data-text', 'text': v.price}),
-                                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                                        ]),
-                                ])
-                            ])    
-                        ])
-                    ) 
-                })
+                    generateFishHTML($elem, k, v);
             });
-}
+    });
+};
 
 function refreshFish() {            
-    console.log("hi2")
     $.getJSON('/fish/avaliable',
         function(data) {
             $("#data-wrapper").empty()
             var $elem = $(document.getElementById("fish-data-wrapper"))
             $.each(data, function(k, v) {
-                $elem.append(
-                    $('<div/>', {'class': 'critter-wrapper'}).append([
-                        $('<div/>', {'class': 'critter-name', 'text':k}),
-                        $('<div/>', {'class': 'critter-container'}).append([
-                            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                            $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'icon-container'}).append([
-                                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Location'})
-                                        ),
-                                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Price'})
-                                        ),
-                                        $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
-                                            $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
-                                        ),
-                                    ]),                                        
-                                    $('<div/>', {'class': 'text-container'}).append([
-                                        $('<div/>', {'class': 'data-text', 'text': v.location}),
-                                        $('<div/>', {'class': 'data-text', 'text': v.price}),
-                                        $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                                    ]),
-
-                            ])
-                        ])    
-                    ])
-                ) 
-            })
+                generateFishHTML($elem, k, v);
+            });
         });
     return false;
 };
@@ -259,7 +254,7 @@ async function getBirthdays() {
                                 ])
                             ]).append(
                                 $('<div/>', {'class': 'villager-species-container'}).append([
-                                    $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                                    $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
                                     $('<div/>', {'class': 'villager-block', 'text':  v.species})
                                 ])
                             ).append(
@@ -278,7 +273,6 @@ async function getBirthdays() {
     return true;
 };
         
-
 async function getBirthdaysAfterN() {
         $.getJSON('/villagers-sorted-after/30',
             function(data) {
@@ -303,7 +297,6 @@ async function getBirthdaysAfterN() {
         return false;
     });
 };
-
 
 
 /*
@@ -399,6 +392,73 @@ function makeTabIconInactive(tab) {
     $("#" + tab + "-dark-icon").css("display", "block")
     $("#" + tab + "-light-icon").css("display", "none");
 }
+
+/*
+SEARCH BOX -----------------------------------------------------------------
+*/
+
+$(document).ready( () => {
+    $('#fish-search').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $.getJSON('/fish/all', function(data) { 
+            $.each(data, function(k, v) {
+                if (k.toLowerCase().includes(value)) {
+                    document.getElementById(k).style.display = "flex";
+                } else {
+                    document.getElementById(k).style.display = "none";
+                }
+            })
+        })
+    });
+    $('#fish-search').on('click', function() {
+        $('#fish-toggle').click();
+        checkboxFilterShowAll("fish");
+    });
+});
+
+
+/*
+CHECK BOX -----------------------------------------------------------------
+*/
+
+function checkboxFilterShowAll(tab) {
+    var $elemChildren = $("#fish-data-wrapper").children();
+    for (var i=0; i < $elemChildren.length; i++) {
+        $elemChildren[i].style.display = "flex";
+    }
+    
+}
+
+function checkboxFilterShowAvaliable(tab) {
+    var $alreadyChecked = [];
+    var $elemChildren = $("#fish-data-wrapper").children();
+    $.getJSON('/fish/avaliable', function(data) { 
+        $.each(data, function(k, v) {
+            for (var i=0; i < $elemChildren.length; i++) {
+                if (k == $elemChildren[i].id) {
+                    $elemChildren[i].style.display = "flex";
+                    $alreadyChecked.push($elemChildren[i].id);
+                    break;
+                } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
+                    $elemChildren[i].style.display = "none";
+                }
+            }
+        });
+    });
+};
+
+
+$(document).ready( () => {
+    $('#fish-toggle').on('click', function() {
+        if (this.checked) {
+            checkboxFilterShowAll("fish")
+        } else {
+            checkboxFilterShowAvaliable("fish")
+        };
+    });
+});
+
+
 
 function refreshCurrentTab() {
     if (getActiveTab() == "fish") {
@@ -515,7 +575,7 @@ $(function() {
     setHempisphereIcon(getCookie("hemisphere"));
     hemisphereCookieHandler();
     datetime();
-    getFish();
+    getAllFish();
     getBugs();
     getBirthdays();
     //document.getElementById("fish-button").click();

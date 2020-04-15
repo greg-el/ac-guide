@@ -16,7 +16,19 @@ def get_fish_data(url, out):
 
         name = td[0].text.strip()
         temp_dict['price'] = td[2].text.strip()
-        temp_dict['location'] = td[3].text.strip()
+
+        location_split = td[3].text.strip().split(")")
+        if len(location_split) == 1:
+            temp_dict['location'] = location_split[0].strip()
+        if len(location_split) == 2:
+            if location_split[1] == "":
+                temp_dict['location'] = location_split[0].strip() + ")"
+            else:
+                temp_dict['location'] = location_split[0].strip() + ")"
+                temp_dict['locationAlt'] = location_split[1].strip()
+
+
+
         temp_dict['shadow'] = td[4].text.strip()
 
         if td[5].text.strip() == "All day":
@@ -338,4 +350,4 @@ def run_villager():
         json.dump(villagers, f)
 
 
-sorted_villager_gen()
+run_fish()

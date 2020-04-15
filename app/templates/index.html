@@ -63,19 +63,26 @@
 
                 <div id="tabs">
                     <div id="fish-tab" class="data-container">
-                        <div id="fish-data-wrapper" class="data-wrapper">
+                        <div id="search-wrapper">
+                            <input type="text" class="search-box" id="fish-search"><span>Show All</span>
+                            <input type="checkbox" id="fish-toggle">
                         </div>
-                        <button type="button" id='fish-collapse-button' class="collapsible">Unavaliable Fish</button>
-                        <div id="fish-collapsible-content"></div>
+                        <div id="fish-data-wrapper" class="data-wrapper"></div>
                     </div>
                     <div id="bug-tab" class="data-container">
                         <div id="bug-data-wrapper" class="data-wrapper">
+                            <div>
+                                <input type="text" class="search-box" id="bug-search"><span>Show All</span>
+                            </div>
                         </div>
                         <button type="button" id='bug-collapse-button' class="collapsible">Unavaliable Bugs</button>
                         <div id="bug-collapsible-content"></div>
                     </div>
                     <div id="birth-tab" class="data-container">
                         <div id="birth-data-wrapper" class="data-wrapper">
+                            <div>
+                                <input type="text" class="search-box" id="villager-search"><span>Show All</span>
+                            </div>
                         </div>
                         <button type="button" id='birth-collapse-button' class="collapsible">Later Birthdays</button>
                         <div id="birth-collapsible-content"></div>

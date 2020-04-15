@@ -141,7 +141,19 @@ a {
     border-width: 1px;
 }
 
+#search-wrapper {
+    background-color: #FAFACF;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-top: 15px;
+    padding-left: 13%;
+}
 
+.search-box {
+    background-color: #7A7057;
+    color: #FAFACF;
+}
 
 #page-tab-container {
     display: flex;
@@ -255,10 +267,12 @@ a {
 .critter-container {
     display: flex;
     flex-direction: row;
+    flex-grow: 4;
     border: 3px solid #BEB28A;
     border-radius: 6px;
-    width: 200px;
-    height: 100px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 0 0 10em;
     padding: 3px;
 }
 
@@ -269,7 +283,9 @@ a {
 }
 
 .critter-icon {
-    width: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 0 0 10em;
     margin-right: 5px;
 }
 

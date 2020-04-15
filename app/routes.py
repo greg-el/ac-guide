@@ -1,25 +1,27 @@
 from flask import render_template
 from app import app
-from data import get_avaliable_bugs, get_avaliable_fish, get_sorted_villagers, get_n_sorted_villagers, get_n_after_sorted_villagers, get_unavaliable_fish, get_unavaliable_bugs
+from data import *
 
 @app.route('/')
 def index():
-    fish = get_avaliable_fish()
     return render_template('index.html')
 
-@app.route('/bugs/<string:avaliable>')
-def bug_data(avaliable):
-    if avaliable == "avaliable":
+@app.route('/bugs/<string:request>')
+def bug_data(request):
+    if request == "avaliable":
         return get_avaliable_bugs()
-    elif avaliable == "unavaliable":
+    elif request == "unavaliable":
         return get_unavaliable_bugs()
 
-@app.route('/fish/<string:avaliable>')
-def fish_data(avaliable):
-    if avaliable == "avaliable":
+
+@app.route('/fish/<string:request>')
+def fish_data(request):
+    if request == "avaliable":
         return get_avaliable_fish()
-    elif avaliable == "unavaliable":
+    elif request == "unavaliable":
         return get_unavaliable_fish()
+    elif request == "all":
+        return get_all_fish()
 
 @app.route('/villagers-sorted')
 def villager_data():
