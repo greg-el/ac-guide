@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <title>AC Guide Login Page</title>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/login.js') }}"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyCXghbVFFQiDpwJHHZpfT26RQD8mFG9mSU",
+            authDomain: "ac-guide-801f0.firebaseapp.com",
+            databaseURL: "https://ac-guide-801f0.firebaseio.com",
+            projectId: "ac-guide-801f0",
+            storageBucket: "ac-guide-801f0.appspot.com",
+            messagingSenderId: "24150608369",
+            appId: "1:24150608369:web:89ac123c19f7b128eb9c50",
+            measurementId: "G-Y03T79NKLT"
+        };
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        </script>
+</head>
+<body>
+    <div id="login-wrapper">
+        <input type="text" id="email">
+        <input type="text" id="password">
+        <input type="button" id="submit">
+    </div>
+</body>
