@@ -141,7 +141,7 @@ a {
     border-width: 1px;
 }
 
-#search-wrapper {
+.search-wrapper {
     background-color: #FAFACF;
     display: flex;
     flex-direction: row;
@@ -295,15 +295,25 @@ a {
 
 .critter-data {
     display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: baseline;
+}
+
+.icon-text {
+    display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: center;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .icon-container {
     display: flex;
     flex-direction: column;
-
 }
 
 .magnify-icon {
@@ -311,10 +321,9 @@ a {
     max-height: 20px;
 }
 
-.text-container {
-    display: flex;
-    flex-direction: column;
-
+.time-icon {
+    max-width: 20px;
+    max-height: 20px;
 }
 
 .bell-icon {
@@ -333,31 +342,5 @@ a {
     align-items: center;
 }
 
-.collapsible {
-    background-color: #7A7057;
-    color: #FAFACF;
-    font-size: 200%;
-    cursor: pointer;
 
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-  }
-  
-.active, .collapsible:hover {
-    background-color: rgb(107, 98, 76);
-  }
-  
-  /* Style the collapsible content. Note: hidden by default */
-#collapsible-content {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    background-color: #FAFACF;
-    overflow: hidden;
-    transition: max-height 0.2s ease-out;
-  }
 

@@ -38,33 +38,48 @@ $(function() {  //Fish tab click
 });
 
 async function generateFishHTML(element, k, v) {
-    if (typeof v.locationAlt != "undefined") {
+    var finalTime = "";
+    if (v.time.length == 24) {
+        finalTime = "All day";
+    } else {
+        var startTime = v.time[0];
+        var endTime = v.time[v.time.length-1];
+        var startAMPM = startTime >= 12 ? "PM" : "AM";
+        startTime = startTime % 12
+        startTime = startTime ? startTime : 12;
+        finalStart = startTime + startAMPM;
+
+        var endAMPM = endTime >= 12 ? "PM" : "AM";
+        endTime = endTime % 12
+        endTime = endTime ? endTime : 12;
+        finalEnd = endTime + endAMPM;
+
+        finalTime = finalStart + "-" + finalEnd;
+    }
+
+    if (typeof v.locationAlt == "undefined") {
         element.append(
             $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
                 $('<div/>', {'class': 'critter-name', 'text':k}),
                 $('<div/>', {'class': 'critter-container'}).append([
                     $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                     $('<div/>', {'class': 'critter-data'}).append([
-                            $('<div/>', {'class': 'icon-container'}).append([
-                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Location'})
-                                ),
-                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'LocationAlt'})
-                                ),
-                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Price'})
-                                ),
-                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
-                                ),
-                            ]),                                        
-                            $('<div/>', {'class': 'text-container'}).append([
-                                $('<div/>', {'class': 'data-text', 'text': v.location}),
-                                $('<div/>', {'class': 'data-text', 'text': v.locationAlt}),
-                                $('<div/>', {'class': 'data-text', 'text': v.price}),
-                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                        $('<div/>', {'class': 'location-container icon-text'}).append([
+                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.location})
                             ]),
+                        $('<div/>', {'class': 'bell-container icon-text'}).append([
+                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.price})
+                            ]),
+                        $('<div/>', {'class': 'time-container icon-text'}).append([
+                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': finalTime})
+                            ]),
+                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                        ])
                     ])
                 ])    
             ])
@@ -76,22 +91,26 @@ async function generateFishHTML(element, k, v) {
                 $('<div/>', {'class': 'critter-container'}).append([
                     $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                     $('<div/>', {'class': 'critter-data'}).append([
-                            $('<div/>', {'class': 'icon-container'}).append([
-                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Location'})
-                                ),
-                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Price'})
-                                ),
-                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}).append(
-                                    $('<span/>', {'class': 'tooltip', 'text': 'Shadow Size'})
-                                ),
-                            ]),                                        
-                            $('<div/>', {'class': 'text-container'}).append([
-                                $('<div/>', {'class': 'data-text', 'text': v.location}),
-                                $('<div/>', {'class': 'data-text', 'text': v.price}),
-                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                        $('<div/>', {'class': 'location-container icon-text'}).append([
+                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.location})
                             ]),
+                        $('<div/>', {'class': 'alt-location-container icon-text'}).append([
+                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/pin.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.locationAlt})
+                            ]),
+                        $('<div/>', {'class': 'time-container icon-text'}).append([
+                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': finalTime})
+                            ]),
+                        $('<div/>', {'class': 'bell-container icon-text'}).append([
+                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.price})
+                            ]),
+                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                        ])
                     ])
                 ])    
             ])
@@ -145,11 +164,11 @@ function refreshFish() {
 
 
 /*
-BUG FUNCTIONS -----------------------------------------------------------------
+bugs FUNCTIONS -----------------------------------------------------------------
 */
 
-$(function() { //Bug tab click
-    $('a#bug-button').bind('click', function() {
+$(function() { //bugs tab click
+    $('a#bugs-button').bind('click', function() {
         $('#tabs').slick('slickGoTo',1);
         setActiveTab();
         setActiveTabIcon(getActiveTab());
@@ -157,69 +176,85 @@ $(function() { //Bug tab click
     return false;
 });
 
-async function getBugs() {
-    $.getJSON('/bugs/avaliable',
-    function(data) {
-        var $elem = $(document.getElementById("bug-data-wrapper"))
-        $.each(data, function(k, v) {
-            $elem.append(
-                $('<div/>', {'class': 'critter-wrapper'}).append([
-                    $('<div/>', {'class': 'critter-name', 'text':k}),
-                    $('<div/>', {'class': 'critter-container'}).append([
-                        $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
-                        $('<div/>', {'class': 'critter-data'}).append([
-                                $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
-                                $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
-                        ])
-                    ])    
+function generateBugsHTML($elem, k, v) {
+    var finalTime = "";
+    if (v.time.length == 24) {
+        finalTime = "All day";
+    } else {
+        var startTime = v.time[0];
+        var endTime = v.time[v.time.length-1];
+        var startAMPM = startTime >= 12 ? "PM" : "AM";
+        startTime = startTime % 12
+        startTime = startTime ? startTime : 12;
+        finalStart = startTime + startAMPM;
+
+        var endAMPM = endTime >= 12 ? "PM" : "AM";
+        endTime = endTime % 12
+        endTime = endTime ? endTime : 12;
+        finalEnd = endTime + endAMPM;
+
+        finalTime = finalStart + "-" + finalEnd;
+    }
+    $elem.append(
+        $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+            $('<div/>', {'class': 'critter-name', 'text':k}),
+            $('<div/>', {'class': 'critter-container'}).append([
+                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                $('<div/>', {'class': 'critter-data'}).append([
+                    $('<div/>', {'class': 'location-container icon-text'}).append([
+                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
+                        $('<div/>', {'class': 'data-text', 'text': v.location})
+                        ]),
+                    $('<div/>', {'class': 'bell-container icon-text'}).append([
+                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
+                        $('<div/>', {'class': 'data-text', 'text': v.price})
+                        ]),
+                    $('<div/>', {'class': 'time-container icon-text'}).append([
+                        $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
+                        $('<div/>', {'class': 'data-text', 'text': finalTime})
+                    ])
                 ])
-            ) 
-        })
+            ])    
+        ])
+    )
+};
+
+async function getAllBugs() {
+    $.getJSON('/bugs/all', function(data) {
+        var $elem = $("#bugs-data-wrapper");
+        $.each(data, function(k, v) {
+            generateBugsHTML($elem, k, v);
+        });
     });
-}
+};
+
+async function getAvaliableBugs() {
+    $.getJSON('/bugs/avaliable', function(data) {
+        var $elem = $("#bugs-data-wrapper");
+        $.each(data, function(k, v) {
+            generateBugsHTML($elem, k, v);
+        });
+    });
+};
 
 async function getUnavaliableBugs() {
-    $.getJSON('/bugs/unavaliable',
-        function(data) {
-            var $elem = $(document.getElementById("bug-collapsible-content"))
-            $.each(data, function(k, v) {
-                $elem.append(
-                    $('<div/>', {'class': 'critter-wrapper'}).append([
-                        $('<div/>', {'class': 'critter-name', 'text':k}),
-                        $('<div/>', {'class': 'critter-container'}).append([
-                            $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
-                            $('<div/>', {'class': 'critter-data'}).append([
-                                    $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
-                                    $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
-                            ])
-                        ])    
-                    ])
-                ) 
-            })
-        });
+    $.getJSON('/bugs/unavaliable', function(data) {
+        var $elem = $("#bugs-collapsible-content");
+        $.each(data, function(k, v) {
+            generateBugsHTML($elem, k, v);
+        })
+    });
 };
 
 function refreshBugs() {
     $.getJSON('/bugs/avaliable',
     function(data) {
         $("#data-wrapper").empty()
-        var $elem = $(document.getElementById("bug-data-wrapper"))
+        var $elem = $(document.getElementById("bugs-data-wrapper"))
         $.each(data, function(k, v) {
-            $elem.append(
-                $('<div/>', {'class': 'critter-wrapper'}).append([
-                    $('<div/>', {'class': 'critter-name', 'text':k}),
-                    $('<div/>', {'class': 'critter-container'}).append([
-                        $('<img/>', {'class': 'critter-icon', 'src': v.icon}),
-                        $('<div/>', {'class': 'critter-data'}).append([
-                                $('<div/>', {'class': 'critter-block', 'text': "Location: " +v.location}),
-                                $('<div/>', {'class': 'critter-block', 'text': "Price: " + v.price})
-                        ])
-                    ])    
-                ])
-            ) 
+            generateBugsHTML($elem, k, v);
         })
     });
-return false;
 };
 
 /*
@@ -228,7 +263,7 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 
 $(function() { //Birthdays tab click 
-    $('a#birth-button').bind('click', function() {
+    $('a#villagers-button').bind('click', function() {
         $('#tabs').slick('slickGoTo',2);
         setActiveTab();
         setActiveTabIcon(getActiveTab());
@@ -236,65 +271,51 @@ $(function() { //Birthdays tab click
     return false;
 });
 
-async function getBirthdays() {
-    $.getJSON('/villagers-sorted/30',
-        function(data) {
-            var $elem = $(document.getElementById("birth-data-wrapper"))
-            $.each(data, function(k, v) {
-                $elem.append(
-                    $('<div/>', {'class': 'villager-wrapper'}).append([
-                        $('<div/>', {'class': 'villager-name', 'text':v.name}),
-                        $('<div/>', {'class': 'villager-container'}).append([
-                            $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
-                            $('<div/>', {'class': 'villager-data'}).append([
-                                $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
-                                $('<div/>', {'class': 'villager-birthday-container'}).append([
-                                    $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                                    $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
-                                ])
-                            ]).append(
-                                $('<div/>', {'class': 'villager-species-container'}).append([
-                                    $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
-                                    $('<div/>', {'class': 'villager-block', 'text':  v.species})
-                                ])
-                            ).append(
-                                $('<div/>', {'class': 'villager-personality-container'}).append([
-                                    $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
-                                    $('<div/>', {'class': 'villager-block', 'text':  v.personality})
-                                ])
-                            ).append(
-                                    $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
-                            )
-                        ])
+function generateVillagerHTML($elem, k, v) {
+    $elem.append(
+        $('<div/>', {'class': 'villager-wrapper'}).append([
+            $('<div/>', {'class': 'villager-name', 'text':v.name}),
+            $('<div/>', {'class': 'villager-container'}).append([
+                $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
+                $('<div/>', {'class': 'villager-data'}).append([
+                    $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
+                    $('<div/>', {'class': 'villager-birthday-container'}).append([
+                        $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
                     ])
-                ) 
-            });
+                ]).append(
+                    $('<div/>', {'class': 'villager-species-container'}).append([
+                        $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                    ])
+                ).append(
+                    $('<div/>', {'class': 'villager-personality-container'}).append([
+                        $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                    ])
+                ).append(
+                        $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
+                )
+            ])
+        ])
+    ) 
+};
+
+async function getVillagers() {
+    $.getJSON('/villagers-sorted/30', function(data) {
+        var $elem = $("#villager-data-wrapper");
+            $.each(data, function(k, v) {
+                generateVillagerHTML($elem, k, v);
         });
-    return true;
+    });
 };
         
 async function getBirthdaysAfterN() {
-        $.getJSON('/villagers-sorted-after/30',
-            function(data) {
-                var $elem = $(document.getElementById("birth-collapsible-content"))
-                $.each(data, function(k, v) {
-                    $elem.append(
-                        $('<div/>', {'class': 'critter-wrapper'}).append([
-                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
-                            $('<div/>', {'class': 'critter-container'}).append([
-                                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                                $('<div/>', {'class': 'critter-data'}).append([
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.gender}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.personality}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.species}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)}),
-                                        $('<div/>', {'class': 'critter-block', 'text':  '"' + v.catchphrase + '"'})
-                                ])
-                            ])    
-                        ])
-                    ) 
-                })
-        return false;
+    $.getJSON('/villagers-sorted-after/30',function(data) {
+        var $elem = $("#villager-data-wrapper");
+        $.each(data, function(k, v) {
+            generateVillagerHTML($elem, k , v);
+        });
     });
 };
 
@@ -340,7 +361,7 @@ function hemisphereCookieHandler() {
             setCookie("hemisphere", "south", 365);
             if (getActiveTab() == "fish") {
                 refreshFish();
-            } else if (getActiveTab() == "bug") {
+            } else if (getActiveTab() == "bugs") {
                 refreshBugs();
             }
         } else if (cookie == "south") {
@@ -348,7 +369,7 @@ function hemisphereCookieHandler() {
             setCookie("hemisphere", "north", 365);
             if (getActiveTab() == "fish") {
                 refreshFish();
-            } else if (getActiveTab() == "bug") {
+            } else if (getActiveTab() == "bugs") {
                 refreshBugs();
             }
         } else {
@@ -366,17 +387,17 @@ function setActiveTabIcon() {
     if (tab == "fish") {
         console.log("fish")
         makeTabIconActive("fish");
-        makeTabIconInactive("bug");
-        makeTabIconInactive("birth");
-    } else if (tab == "bug") {
-        console.log("bug")
-        makeTabIconActive("bug");
+        makeTabIconInactive("bugs");
+        makeTabIconInactive("villagers");
+    } else if (tab == "bugs") {
+        console.log("bugs")
+        makeTabIconActive("bugs");
         makeTabIconInactive("fish");
-        makeTabIconInactive("birth");
-    } else if (tab == "birth") {
-        console.log("birth")
-        makeTabIconActive("birth");
-        makeTabIconInactive("bug");
+        makeTabIconInactive("villagers");
+    } else if (tab == "villagers") {
+        console.log("villagers")
+        makeTabIconActive("villagers");
+        makeTabIconInactive("bugs");
         makeTabIconInactive("fish");
     } else {
         console.log("Error setting tab icon")
@@ -422,7 +443,7 @@ CHECK BOX -----------------------------------------------------------------
 */
 
 function checkboxFilterShowAll(tab) {
-    var $elemChildren = $("#fish-data-wrapper").children();
+    var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $elemChildren[i].style.display = "flex";
     }
@@ -431,8 +452,8 @@ function checkboxFilterShowAll(tab) {
 
 function checkboxFilterShowAvaliable(tab) {
     var $alreadyChecked = [];
-    var $elemChildren = $("#fish-data-wrapper").children();
-    $.getJSON('/fish/avaliable', function(data) { 
+    var $elemChildren = $("#" + tab + "-data-wrapper").children();
+    $.getJSON('/' + tab + '/avaliable', function(data) { 
         $.each(data, function(k, v) {
             for (var i=0; i < $elemChildren.length; i++) {
                 if (k == $elemChildren[i].id) {
@@ -456,18 +477,29 @@ $(document).ready( () => {
             checkboxFilterShowAvaliable("fish")
         };
     });
+    $('#bugs-toggle').on('click', function() {
+        if (this.checked) {
+            checkboxFilterShowAll("bugs")
+        } else {
+            checkboxFilterShowAvaliable("bugs")
+        };
+    });
 });
 
+
+/*
+OTHER -----------------------------------------------------------------
+*/
 
 
 function refreshCurrentTab() {
     if (getActiveTab() == "fish") {
         refreshFish();
     }
-    if (getActiveTab() == "bug") {
+    if (getActiveTab() == "bugs") {
         refreshBugs();
     }
-    if (getActiveTab() == "birth") {
+    if (getActiveTab() == "villagers") {
         refreshBirthdays();
     }
 }
@@ -497,28 +529,6 @@ function setHempisphereIcon(hemisphere) {
     } else {
         console.log("Can't change hemisphere button");
     }
-};
-
-
-
-async function testCollapse(tab) {
-    var elem = document.getElementById(tab + "-collapse-button");
-    elem.classList.toggle("active");
-    var panel = elem.nextElementSibling;
-    if (panel.style.display === "flex") {
-      panel.style.display = "none";
-      $("#collapsible-content").empty();
-    } else {
-      panel.style.display = "flex";
-    }
-    //elem.classList.toggle("active");
-    //var panel = elem.nextElementSibling;
-    //if (panel.style.maxHeight) {
-    //    panel.style.maxHeight = null;
-    //} else {
-    //    panel.style.maxHeight = panel.scrollHeight + "px";
-    //    //panel.style.maxHeight = "1000" + "px";
-    //};
 };
 
 
@@ -560,9 +570,9 @@ function getActiveTab() {
     if (ACTIVE_TAB == 0) {
         return "fish";
     } else if (ACTIVE_TAB == 1) {
-        return "bug";
+        return "bugs";
     } else if (ACTIVE_TAB == 2) {
-        return "birth";
+        return "villagers";
     }
 }
 
@@ -576,7 +586,7 @@ $(function() {
     hemisphereCookieHandler();
     datetime();
     getAllFish();
-    getBugs();
-    getBirthdays();
+    getAllBugs();
+    getVillagers();
     //document.getElementById("fish-button").click();
 });

@@ -60,6 +60,19 @@ def get_unavaliable_fish():
     return jsonify(out)
 
 
+def get_all_bugs():
+    out = {}
+    with open('bugs.json') as f:
+        bug_data = json.load(f)
+
+    if request.cookies.get('hemisphere') == "north":
+        bug = bug_data['northern']
+    elif request.cookies.get('hemisphere') == "south":
+        bug = bug_data['southern']
+
+    return bug
+
+
 def get_avaliable_bugs():
     out = {}
     with open('bugs.json') as f:

@@ -35,10 +35,10 @@
                             <img class="tab-icon" id="fish-light-icon" src="{{ url_for('static', filename = 'image/bar/fish-light.png') }}">
                         </a>
                     </div>
-                    <div id="bug-container">
-                        <a href=# id="bug-button">
-                            <img class="tab-icon" id="bug-dark-icon" src="{{ url_for('static', filename = 'image/bar/bug-dark.png') }}">
-                            <img class="tab-icon" id="bug-light-icon" src="{{ url_for('static', filename = 'image/bar/bug-light.png') }}" style="display:none;">
+                    <div id="bugs-container">
+                        <a href=# id="bugs-button">
+                            <img class="tab-icon" id="bugs-dark-icon" src="{{ url_for('static', filename = 'image/bar/bug-dark.png') }}">
+                            <img class="tab-icon" id="bugs-light-icon" src="{{ url_for('static', filename = 'image/bar/bug-light.png') }}" style="display:none;">
                         </a>
                     </div>
                     <div id="birth-container">
@@ -63,29 +63,25 @@
 
                 <div id="tabs">
                     <div id="fish-tab" class="data-container">
-                        <div id="search-wrapper">
+                        <div class="search-wrapper">
                             <input type="text" class="search-box" id="fish-search"><span>Show All</span>
                             <input type="checkbox" id="fish-toggle">
                         </div>
                         <div id="fish-data-wrapper" class="data-wrapper"></div>
                     </div>
-                    <div id="bug-tab" class="data-container">
-                        <div id="bug-data-wrapper" class="data-wrapper">
-                            <div>
-                                <input type="text" class="search-box" id="bug-search"><span>Show All</span>
-                            </div>
+                    <div id="bugs-tab" class="data-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-box" id="bugs-search"><span>Show All</span>
+                            <input type="checkbox" id="bugs-toggle">
                         </div>
-                        <button type="button" id='bug-collapse-button' class="collapsible">Unavaliable Bugs</button>
-                        <div id="bug-collapsible-content"></div>
+                        <div id="bugs-data-wrapper" class="data-wrapper"></div>
                     </div>
-                    <div id="birth-tab" class="data-container">
-                        <div id="birth-data-wrapper" class="data-wrapper">
-                            <div>
-                                <input type="text" class="search-box" id="villager-search"><span>Show All</span>
-                            </div>
+                    <div id="villager-tab" class="data-container">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-box" id="villager-search"><span>Show All</span>
+                            <input type="checkbox" id="villager-toggle">
                         </div>
-                        <button type="button" id='birth-collapse-button' class="collapsible">Later Birthdays</button>
-                        <div id="birth-collapsible-content"></div>
+                    <div id="villager-data-wrapper" class="data-wrapper"></div>
                     </div>
                 </div>
             </div>

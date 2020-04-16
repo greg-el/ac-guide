@@ -266,8 +266,6 @@ def sorted_villager_gen():#Sorts villagers into birthdays ordered by closest to 
     with open('villagers.json') as f:
         villager_data = json.load(f)
 
-    villager_data = villager_data
-
     villager_list = []
 
     for name, data in villager_data.items():

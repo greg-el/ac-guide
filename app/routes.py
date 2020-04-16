@@ -12,6 +12,8 @@ def bug_data(request):
         return get_avaliable_bugs()
     elif request == "unavaliable":
         return get_unavaliable_bugs()
+    elif request == "all":
+        return get_all_bugs()
 
 
 @app.route('/fish/<string:request>')
