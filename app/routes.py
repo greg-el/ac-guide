@@ -10,6 +10,11 @@ def index():
 def login():
     return render_template('login.html')
 
+#@app.route('/login/add/<string:uid>', methods=['POST'])
+#def add_user():
+
+
+
 @app.route('/bugs/<string:request>')
 def bug_data(request):
     if request == "avaliable":

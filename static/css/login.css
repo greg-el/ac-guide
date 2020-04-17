@@ -1,0 +1,24 @@
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+body {
+    font-size: 15px;
+    background-image: url("../image/acrepeat.jpg");
+    background-repeat: repeat;
+    background-size: 100px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 900;
+    color: #7A7057;
+}
+
+#login-wrapper {
+    background-color: #FAFACF;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    left: 50%;
+    top: 50%;
+    justify-content: center;
+}
