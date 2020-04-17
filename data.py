@@ -161,4 +161,3 @@ def get_n_after_sorted_villagers(n):
 #        json.dump(data, f)
 
     
-}
