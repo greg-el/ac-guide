@@ -194,7 +194,7 @@ a {
     justify-content: center;
     margin: auto;
     padding: 15px 15px 15px 15px;
-    background-color:#FAFACF;
+    background-color:#FBF6E3;
 }
 
 .search-wrapper {
@@ -222,11 +222,6 @@ a {
     flex-direction: row;
 }
 
-#fish-data-wrapper {
-    background: #FBF6E3;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-}
 
 
 .data-grid {
