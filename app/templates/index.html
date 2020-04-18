@@ -50,42 +50,44 @@
                 </div>
                 <div id="header"><span id="new">New</span><span id="horizons">Horizons</span></div>
             </div>
-            <div id="tab-bar">
-                <div id="tabs-container">
-                    <div id="fish-container" class="tab-container">
-                        <a href=# id="fish-button">
-                            <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
-                        </a>
+            <div id="window-wrapper">
+                <div id="tab-bar">
+                    <div id="tabs-container">
+                        <div id="fish-container" class="tab-container">
+                            <a href=# id="fish-button">
+                                <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
+                            </a>
+                        </div>
+                        <div id="bugs-container" class="tab-container" style="background-color: #5CB9AD;">
+                            <a href=# id="bugs-button">
+                                <object class="tab-icon" id="bug-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
+                            </a>
+                        </div>
+                        <div id="birth-container" class="tab-container" style="background-color: #5CB9AD;">
+                            <a href=# id="birth-button">
+                                <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5; background-color: #5CB9AD;"></object>
+                            </a>
+                        </div>
                     </div>
-                    <div id="bugs-container" class="tab-container" style="background-color: #5CB9AD;">
-                        <a href=# id="bugs-button">
-                            <object class="tab-icon" id="bug-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
-                        </a>
-                    </div>
-                    <div id="birth-container" class="tab-container" style="background-color: #5CB9AD;">
-                        <a href=# id="birth-button">
-                            <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5; background-color: #5CB9AD;"></object>
+                    <div id="hemisphere-container">
+                        <a href=# id="hemisphere-button">
+                            <img class="hemisphere-icon" id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
+                            <img class="hemisphere-icon" id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
                         </a>
                     </div>
                 </div>
-                <div id="hemisphere-container">
-                    <a href=# id="hemisphere-button">
-                        <img class="hemisphere-icon" id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
-                        <img class="hemisphere-icon" id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
-                    </a>
+                <div class="search-wrapper">
+                    <input type="text" class="search-box" id="fish-search" placeholder="Search...">
                 </div>
-            </div>
-            <div class="search-wrapper">
-                <input type="text" class="search-box" id="fish-search" placeholder="Search...">
-            </div>
-            <div id="fish-tab" class="data-container">
-                <div id="fish-data-wrapper" class="data-wrapper"></div>
-            </div>
-            <div id="bugs-tab" class="data-container">
-                <div id="bugs-data-wrapper" class="data-wrapper"></div>
-            </div>
-            <div id="villager-tab" class="data-container">
-                <div id="villager-data-wrapper" class="data-wrapper"></div>
+                <div id="fish-tab" class="data-container">
+                    <div id="fish-data-wrapper" class="data-wrapper"></div>
+                </div>
+                <div id="bugs-tab" class="data-container">
+                    <div id="bugs-data-wrapper" class="data-wrapper"></div>
+                </div>
+                <div id="villager-tab" class="data-container">
+                    <div id="villager-data-wrapper" class="data-wrapper"></div>
+                </div>
             </div>
         </div>
     </body>

@@ -209,8 +209,6 @@ a {
     flex-direction: row;
     justify-content: flex-start;
     padding: 8px;
-    box-shadow: 0px 0px 0px 1px rgba(0,0,0,0.3);
-    border-bottom: 1px solid #CCC6AE;
 }
 
 .search-box {
@@ -229,17 +227,38 @@ a {
     flex-direction: row;
 }
 
-.magnify-icon {
-    max-width: 20px;
-    max-height: 20px;
+#fish-data-wrapper {
+    background: #FBF6E3;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.critter-name {
-    padding-left: 4px;
-    line-height: 135%;
+
+.data-grid {
+    display: grid;
+    grid-template-rows: 32% 32% 32%;
+    grid-gap: 10px;
 }
 
-.critter-container {
+.name-container {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row: 1;
+    color: #FF4875;
+    border-bottom: 1px solid #B7B19B;
+    line-height: 125%;
+    font-size: 18px;
+    padding-bottom: 5px;
+}
+
+.icon-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+
+.critter-wrapper {
     display: flex;
     flex-direction: row;
     flex-grow: 4;
@@ -248,8 +267,8 @@ a {
     box-sizing: border-box;
     box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
     border-radius: 4px;
+    margin: 5px;
 }
-
 
 
 .critter-icon {
@@ -261,6 +280,11 @@ a {
 
 .data-text {
     line-height: 20px;
+    font-weight: normal;
+}
+
+.data-text-modifier {
+    font-size: 75%;
 }
 
 .critter-data {
@@ -270,11 +294,7 @@ a {
     align-items: baseline;
 }
 
-.icon-text {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
+
 
 .text-container {
     display: flex;

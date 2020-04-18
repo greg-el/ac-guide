@@ -57,62 +57,97 @@ async function generateFishHTML(element, k, v) {
         finalTime = finalStart + "-" + finalEnd;
     }
 
+    var finalLocation = {}
+
+    if (v.location.includes("(")) {
+        var locationSplit = v.location.split("(");
+        var location = locationSplit[0];
+        var locationModifier = locationSplit[1];
+        finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
+            $('<div/>', {'class': 'data-text', 'text': location}),
+            $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+        ]);
+    } else {
+        finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
+    }
+
     if (typeof v.locationAlt == "undefined") {
         element.append(
             $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
-                $('<div/>', {'class': 'critter-name', 'text':k}),
-                $('<div/>', {'class': 'critter-container'}).append([
-                    $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                    $('<div/>', {'class': 'critter-data'}).append([
-                        $('<div/>', {'class': 'location-container icon-text'}).append([
-                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.location})
-                            ]),
-                        $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.price})
-                            ]),
-                        $('<div/>', {'class': 'time-container icon-text'}).append([
-                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': finalTime})
-                            ]),
-                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                $('<div/>', {'class': 'critter-data'}).append([
+                    $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                        $('<div/>', {'class': 'data-grid'}).append([
+                            $('<div/>', {'class': 'name-container critter-name'}).append(
+                                $('<div/>', {'class': 'critter-name', 'text':k})
+                            ),
+                            $('<div/>', {'class': 'location-container icon-text'}).append([
+                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                                finalLocation
+                                ]),
+                            $('<div/>', {'class': 'bell-container icon-text'}).append([
+                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': v.price})
+                                ]),
+                            $('<div/>', {'class': 'time-container icon-text'}).append([
+                                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': finalTime})
+                                ]),
+                            $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                            ])
                         ])
                     ])
-                ])    
+                ])
             ])
         )
     } else {
+        var finalLocationAlt = {}
+
+        if (v.locationAlt.includes("(")) {
+            var locationAltSplit = v.locationAlt.split("(");
+            var locationAlt = locationAltSplit[0];
+            var locationAltModifier = locationAltSplit[1];
+            finalLocationAlt = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': locationAlt}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationAltModifier})
+            ]);
+        } else {
+            finalLocationAlt = $('<div/>', {'class': 'data-text', 'text': v.locationAlt});
+        }
         element.append(
             $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
-                $('<div/>', {'class': 'critter-name', 'text':k}),
-                $('<div/>', {'class': 'critter-container'}).append([
-                    $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                    $('<div/>', {'class': 'critter-data'}).append([
-                        $('<div/>', {'class': 'location-container icon-text'}).append([
-                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.location})
-                            ]),
-                        $('<div/>', {'class': 'alt-location-container icon-text'}).append([
-                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/pin.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.locationAlt})
-                            ]),
-                        $('<div/>', {'class': 'time-container icon-text'}).append([
-                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': finalTime})
-                            ]),
-                        $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.price})
-                            ]),
-                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/shadow.png'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                $('<div/>', {'class': 'critter-data'}).append([
+                    $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                        $('<div/>', {'class': 'data-grid'}).append([
+                            $('<div/>', {'class': 'name-container critter-name'}).append(
+                                $('<div/>', {'class': 'critter-name', 'text':k})
+                            ),
+                            $('<div/>', {'class': 'location-container icon-text'}).append([
+                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                                finalLocation
+                                ]),
+                            $('<div/>', {'class': 'alt-location-container icon-text'}).append([
+                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                                finalLocationAlt
+                                ]),
+                            $('<div/>', {'class': 'bell-container icon-text'}).append([
+                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': v.price})
+                                ]),
+                            $('<div/>', {'class': 'time-container icon-text'}).append([
+                                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': finalTime})
+                                ]),
+                            $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                            ])
                         ])
                     ])
-                ])    
+                ])
             ])
         )
     }
