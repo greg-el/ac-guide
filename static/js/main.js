@@ -519,20 +519,15 @@ function checkboxFilterShowAvaliable(tab) {
 
 
 $(document).ready( () => {
-    $('#fish-toggle').on('click', function() {
+    $('#avaliable-checkbox').on('click', function() {
         if (this.checked) {
-            checkboxFilterShowAll("fish")
+            checkboxFilterShowAvaliable("fish");
         } else {
-            checkboxFilterShowAvaliable("fish")
+
+            checkboxFilterShowAll("fish");
         };
     });
-    $('#bugs-toggle').on('click', function() {
-        if (this.checked) {
-            checkboxFilterShowAll("bugs")
-        } else {
-            checkboxFilterShowAvaliable("bugs")
-        };
-    });
+
 });
 
 
@@ -637,7 +632,7 @@ function getActiveTab() {
 }
 
 function setActiveTab() {
-    ACTIVE_TAB = $('#tabs').slick('slickCurrentSlide');
+    ACTIVE_TAB = getActiveTab();
 }
 
 $(function() {
@@ -648,5 +643,5 @@ $(function() {
     getAllFish();
     getAllBugs();
     getVillagers();
-    //document.getElementById("fish-button").click();
+    checkboxFilterShowAvaliable("fish");
 });
