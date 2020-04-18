@@ -58,17 +58,39 @@ async function generateFishHTML(element, k, v) {
     }
 
     var finalLocation = {}
+    var finalLocationAlt = {}
 
     if (v.location.includes("(")) {
         var locationSplit = v.location.split("(");
         var location = locationSplit[0];
         var locationModifier = locationSplit[1];
-        finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
-            $('<div/>', {'class': 'data-text', 'text': location}),
-            $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-        ]);
+        if (typeof v.locationAlt == "undefined") {
+            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': location}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+            ])
+        } else {
+            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': location.trim() + ","}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+            ])
+        }
     } else {
         finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
+    }
+
+    if (typeof v.locationAlt != "undefined") {
+        if (v.locationAlt.includes("(")) {
+            var locationAltSplit = v.locationAlt.split("(");
+            var locationAlt = locationAltSplit[0];
+            var locationAltModifier = locationAltSplit[1];
+            finalLocationAlt = $('<div/>', {'class': 'location-container-mod'}).append([
+                        $('<div/>', {'class': 'data-text', 'text': locationAlt}),
+                        $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationAltModifier})
+            ])
+        } else {
+            finalLocationAlt = $('<div/>', {'class': 'data-text', 'text': v.locationAlt});
+        }
     }
 
     if (typeof v.locationAlt == "undefined") {
@@ -103,19 +125,14 @@ async function generateFishHTML(element, k, v) {
             ])
         )
     } else {
-        var finalLocationAlt = {}
+        var locationHTML = [finalLocation, finalLocationAlt];
+        var comma = $('<div/>', {'class': 'data-text', 'text': ",", "style": "width:5px;"})
 
-        if (v.locationAlt.includes("(")) {
-            var locationAltSplit = v.locationAlt.split("(");
-            var locationAlt = locationAltSplit[0];
-            var locationAltModifier = locationAltSplit[1];
-            finalLocationAlt = $('<div/>', {'class': 'location-container-mod'}).append([
-                $('<div/>', {'class': 'data-text', 'text': locationAlt}),
-                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationAltModifier})
-            ]);
-        } else {
-            finalLocationAlt = $('<div/>', {'class': 'data-text', 'text': v.locationAlt});
-        }
+        if (v.location.includes("(")) {
+            locationHTML = [finalLocation, finalLocationAlt];
+        } 
+
+
         element.append(
             $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
@@ -125,14 +142,11 @@ async function generateFishHTML(element, k, v) {
                             $('<div/>', {'class': 'name-container critter-name'}).append(
                                 $('<div/>', {'class': 'critter-name', 'text':k})
                             ),
-                            $('<div/>', {'class': 'location-container icon-text'}).append([
+                            $('<div/>', {'class': 'location-container icon-text'}).append(
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
-                                finalLocation
-                                ]),
-                            $('<div/>', {'class': 'alt-location-container icon-text'}).append([
-                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/pin.svg'}),
-                                finalLocationAlt
-                                ]),
+                                locationHTML[0],
+                                locationHTML[1]
+                            ),
                             $('<div/>', {'class': 'bell-container icon-text'}).append([
                                 $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
                                 $('<div/>', {'class': 'data-text', 'text': v.price})
@@ -569,6 +583,7 @@ function setHempisphereIcon(hemisphere) {
 
 
 function datetime() {
+    var dayIcons = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     var days = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var dayElem = document.getElementById("day")
@@ -586,13 +601,22 @@ function datetime() {
     var strTime = hours + ':' + minutes;
     timeElem.textContent = strTime;
     timeAMPM.textContent = amPm;
-    dayElem.textContent = days[d.getDay()];
     dateElem.textContent = date + " " + months[d.getMonth()];
     if (CURRENT_HOUR != hours) {
         refreshCurrentTab();
         CURRENT_HOUR = hours;
     }
-    var t = setTimeout(datetime, 500);
+    var t = setTimeout(datetime, 1000);
+
+    if (dayElem.data === "") {
+        dayElem.data = "./static/image/icons/days/" + dayIcons[d.getDay()] + ".svg"
+    }
+
+
+    if (document.getElementById("day").data != dayElem.data) {
+        dayElem.data = "./static/image/icons/days/" + dayIcons[d.getDay()] + ".svg"
+    }
+    
 }
 
 function isMobile() {

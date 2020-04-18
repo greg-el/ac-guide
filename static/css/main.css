@@ -96,11 +96,8 @@ a {
 }
 
 #day {
-    font-size: 200%;
-    display: flex;
-    color: #008B44;
-    justify-content: center;
-    align-items: center;
+    height: 45px;
+
 }
 
 #date {
@@ -130,13 +127,17 @@ a {
   }
 
 
+#window-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+}
+
 #tab-bar {
     background-color: var(--tab-bar);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     border-radius: 10px 10px 0 0;
-    box-shadow: 0px 0px 0px 1px rgba(0,0,0,0.3)
 }
 
 #tabs-container {
@@ -171,7 +172,6 @@ a {
 #hemisphere-container {
     display: flex;
     background-color: #0B5464;
-    border-bottom: solid #4A948A;
     border-radius: 15px;
     height: 90%;
     margin: 4px;
@@ -187,20 +187,14 @@ a {
     outline: none;
 }
 
-.data-container {
-    display: inline-block;
-}
 
 .data-wrapper {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
     margin: auto;
+    padding: 15px 15px 15px 15px;
     background-color:#FAFACF;
-    border-right: #7A7057;
-    border-bottom: #7A7057;
-    border-width: 1px;
 }
 
 .search-wrapper {
@@ -220,6 +214,7 @@ a {
     box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
     margin-left: 10px;
     line-height: 125%;
+    height: 23px;
 }
 
 #page-tab-container {
@@ -285,6 +280,7 @@ a {
 
 .data-text-modifier {
     font-size: 75%;
+    margin-top: -10%;
 }
 
 .critter-data {
