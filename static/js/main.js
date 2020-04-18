@@ -2,23 +2,23 @@ ACTIVE_TAB = 0;
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 
-$(document).ready(function(){
-    $('#tabs').slick({
-      dots: false,
-      arrows: false,
-      centerMode: true,
-      centerPadding: '0px',
-      infinite: false,
-      speed: 300,
-      touchThreshold: 5,
-      waitForAnimate: true,
-      edgeFriction: 0.05,
-    });
-    $('#tabs').on('afterChange', function(slick, currentSlide){
-        setActiveTab(currentSlide.currentSlide)
-        setActiveTabIcon(currentSlide.currentSlide)
-      });
-});
+//$(document).ready(function(){
+//    $('#tabs').slick({
+//      dots: false,
+//      arrows: false,
+//      centerMode: true,
+//      centerPadding: '0px',
+//      infinite: false,
+//      speed: 300,
+//      touchThreshold: 5,
+//      waitForAnimate: true,
+//      edgeFriction: 0.05,
+//    });
+//    $('#tabs').on('afterChange', function(slick, currentSlide){
+//        setActiveTab(currentSlide.currentSlide)
+//        setActiveTabIcon(currentSlide.currentSlide)
+//      });
+//});
 
 
 

@@ -1,3 +1,11 @@
+:root {
+    --tab-bar: #5CB9AD;
+    --selected-tab: #32A4A4;
+    --light: #F9F6E3;
+    --dark: #C8BC9C;
+    --critter-name: #FF4875;
+}
+
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -5,7 +13,7 @@
   
 body {
     font-size: 15px;
-    background-image: url("../image/acrepeat.jpg");
+    background-image: url("../image/acrepeat-blur.jpg");
     background-repeat: repeat;
     background-size: 100px;
     font-family: 'Open Sans', sans-serif;
@@ -15,12 +23,18 @@ body {
 
 a {
     outline: 0;
+    justify-content: center;
+    display: flex;
  }
 
 
 #header {
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
     font-size: 500%;
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%,-5%);
 }
 
 #new {
@@ -31,9 +45,11 @@ a {
     color: #7CC9DD;
 }
 
-#main-container {
+#page-wrapper {
     display:flex;
     flex-direction: column;
+    width: 90%;
+    margin: 0 auto;
 }
 
 #window-container {
@@ -114,16 +130,45 @@ a {
   }
 
 
+#tab-bar {
+    background-color: var(--tab-bar);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0px 0px 0px 1px rgba(0,0,0,0.3)
+}
 
-
-#tab-container {
+#tabs-container {
     display:flex;
     flex-direction: row;
     align-items: flex-start;
     align-content: flex-start;
 }
 
+#tabs {
+    display: flex;
+    flex-direction: row;
+}
 
+.tab-container {
+    border-radius: 10px 10px 0 0;
+    background-color: var(--selected-tab);
+    padding: 0;
+    margin: 0;
+    height: 60px;
+    width: 65px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.tab-icon {
+    height: 65%;
+    width: 65%;
+}
 
 .data-container {
     display: inline-block;
@@ -142,17 +187,23 @@ a {
 }
 
 .search-wrapper {
-    background-color: #FAFACF;
+    background-color: #EEE4CB;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    padding-top: 15px;
-    padding-left: 13%;
+    padding: 8px;
+
 }
 
 .search-box {
-    background-color: #7A7057;
-    color: #FAFACF;
+    background-color: var(--light);
+    color: #C8BC9C;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #E2DFCE;
+    box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.3);
+    margin-left: 10px;
+    padding-bottom: 0.3%;
 }
 
 #page-tab-container {
@@ -258,11 +309,6 @@ a {
     line-height: 135%;
 }
 
-.tab-icon {
-    width: 50px;
-    height: 50px;
-    vertical-align: bottom;
-}
 
 .critter-container {
     display: flex;

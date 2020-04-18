@@ -3,7 +3,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+html, body {
+    height: 100%;
+}
+
 body {
+    margin: 0;
     font-size: 15px;
     background-image: url("../image/acrepeat.jpg");
     background-repeat: repeat;
@@ -13,12 +18,31 @@ body {
     color: #7A7057;
 }
 
+#body-wrapper {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #login-wrapper {
     background-color: #FAFACF;
     display: flex;
     flex-direction: column;
     width: 20%;
-    left: 50%;
-    top: 50%;
+    align-items: center;
     justify-content: center;
+    padding: 10px;
+    border-width: 3px;
+    border-color: #7A7057;
+}
+
+#login-header {
+    font-size: 25px;
+}
+
+.text-box {
+    width: 90%;
 }
