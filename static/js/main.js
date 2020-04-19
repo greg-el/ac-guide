@@ -1,4 +1,4 @@
-ACTIVE_TAB = 0;
+ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 
@@ -29,9 +29,8 @@ FISH FUNCTIONS -----------------------------------------------------------------
 
 $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
-        $('#tabs').slick('slickGoTo',0);
-        setActiveTab();
-        setActiveTabIcon(getActiveTab());
+        setActiveTab("fish");
+        setActiveTabIcon("fish");
         //$('#fish-collapse-button').bind('click', testCollapse("fish"))
     });
     return false;
@@ -217,10 +216,10 @@ bugs FUNCTIONS -----------------------------------------------------------------
 */
 
 $(function() { //bugs tab click
-    $('a#bugs-button').bind('click', function() {
-        $('#tabs').slick('slickGoTo',1);
-        setActiveTab();
-        setActiveTabIcon(getActiveTab());
+    $('a#bugs-button, #bug-icon').click(function() {
+        //$('#tabs').slick('slickGoTo',1);
+        setActiveTab("bugs");
+        setActiveTabIcon("bugs");
     });
     return false;
 });
@@ -431,8 +430,7 @@ function hemisphereCookieHandler() {
 TAB ICON FUNCTIONS -----------------------------------------------------------------
 */
 
-function setActiveTabIcon() {
-    var tab = getActiveTab()
+function setActiveTabIcon(tab) {
     if (tab == "fish") {
         console.log("fish")
         makeTabIconActive("fish");
@@ -454,13 +452,14 @@ function setActiveTabIcon() {
 };
 
 function makeTabIconActive(tab) {
-    $("#" + tab + "-dark-icon").css("display", "none")
-    $("#" + tab + "-light-icon").css("display", "block");
+    $('#' + tab + '-container').css('background-color', '#32A4A4');
+    $('#' + tab + '-icon').css('opacity', '1');
+
 }
 
 function makeTabIconInactive(tab) {
-    $("#" + tab + "-dark-icon").css("display", "block")
-    $("#" + tab + "-light-icon").css("display", "none");
+    $('#' + tab + '-container').css('background-color', '#5CB9AD');
+    $('#' + tab + '-icon').css('opacity', '0.5');
 }
 
 /*
@@ -620,25 +619,14 @@ function isMobile() {
 }
 
 function getActiveTab() {
-    if (ACTIVE_TAB == 0) {
-        return "fish";
-    } else if (ACTIVE_TAB == 1) {
-        return "bugs";
-    } else if (ACTIVE_TAB == 2) {
-        return "villagers";
-    }
+    return ACTIVE_TAB;
 }
 
-function setActiveTab() {
-    ACTIVE_TAB = getActiveTab();
+function setActiveTab(tab) {
+    ACTIVE_TAB = tab;
 }
 
-function switchTab() {
-    $('#bugs-container').on('click', function() {
-        $('#fish-container').css('background-color:', '#5CB9AD');
-        $('#fish-icon').css('opacity', '0.5');
-    });
-}
+
 
 $(function() {
     checkCookieExists();

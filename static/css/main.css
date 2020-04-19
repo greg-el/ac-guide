@@ -25,8 +25,13 @@ a {
     outline: 0;
     justify-content: center;
     display: flex;
+    height: 100%;
+    align-content: center;
  }
 
+ a object{
+    pointer-events: none;
+  }
 
 #header {
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
@@ -162,9 +167,11 @@ a {
 }
 
 .tab-icon {
-    height: 65%;
+    height: 100%;
     width: 65%;
 }
+
+
 
 #filter-wrapper {
     color: white;
