@@ -240,6 +240,8 @@ a {
 }
 
 .name-container {
+    display: flex;
+    flex-direction: row;
     grid-column-start: 1;
     grid-column-end: 3;
     grid-row: 1;
@@ -255,6 +257,8 @@ a {
     flex-direction: row;
     justify-content: flex-start;
 }
+
+
 
 
 .critter-wrapper {
@@ -284,7 +288,7 @@ a {
 
 .data-text-modifier {
     font-size: 75%;
-    margin-top: -10%;
+    margin-top: -5%;
 }
 
 .critter-data {

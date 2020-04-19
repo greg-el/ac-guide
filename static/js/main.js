@@ -20,7 +20,15 @@ CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 //      });
 //});
 
-
+$('.lazy').Lazy({
+    // your configuration goes here
+    scrollDirection: 'vertical',
+    effect: 'fadeIn',
+    visibleOnly: true,
+    onError: function(element) {
+        console.log('error loading ' + element.data('src'));
+    }
+});
 
 
 /*
@@ -31,6 +39,7 @@ $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
         setActiveTab("fish");
         setActiveTabIcon("fish");
+        showTab("fish");
         //$('#fish-collapse-button').bind('click', testCollapse("fish"))
     });
     return false;
@@ -125,7 +134,6 @@ async function generateFishHTML(element, k, v) {
         )
     } else {
         var locationHTML = [finalLocation, finalLocationAlt];
-        var comma = $('<div/>', {'class': 'data-text', 'text': ",", "style": "width:5px;"})
 
         if (v.location.includes("(")) {
             locationHTML = [finalLocation, finalLocationAlt];
@@ -220,6 +228,7 @@ $(function() { //bugs tab click
         //$('#tabs').slick('slickGoTo',1);
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
+        showTab("bugs")
     });
     return false;
 });
@@ -243,26 +252,50 @@ function generateBugsHTML($elem, k, v) {
 
         finalTime = finalStart + "-" + finalEnd;
     }
+
+    if (v.location.includes("(")) {
+        var locationSplit = v.location.split("(");
+        var location = locationSplit[0];
+        var locationModifier = locationSplit[1];
+        if (typeof v.locationAlt == "undefined") {
+            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': location}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+            ])
+        } else {
+            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': location.trim() + ","}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+            ])
+        }
+    } else {
+        finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
+    }
+
     $elem.append(
         $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
-            $('<div/>', {'class': 'critter-name', 'text':k}),
-            $('<div/>', {'class': 'critter-container'}).append([
-                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                $('<div/>', {'class': 'critter-data'}).append([
-                    $('<div/>', {'class': 'location-container icon-text'}).append([
-                        $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/pin.png'}),
-                        $('<div/>', {'class': 'data-text', 'text': v.location})
-                        ]),
-                    $('<div/>', {'class': 'bell-container icon-text'}).append([
-                        $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/bellicon.png'}),
-                        $('<div/>', {'class': 'data-text', 'text': v.price})
-                        ]),
-                    $('<div/>', {'class': 'time-container icon-text'}).append([
-                        $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/timericon.png'}),
-                        $('<div/>', {'class': 'data-text', 'text': finalTime})
+            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+            $('<div/>', {'class': 'critter-data'}).append([
+                $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                    $('<div/>', {'class': 'data-grid'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'critter-name', 'text':k})
+                        ),
+                        $('<div/>', {'class': 'location-container icon-text'}).append([
+                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                            finalLocation
+                            ]),
+                        $('<div/>', {'class': 'bell-container icon-text'}).append([
+                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.price})
+                            ]),
+                        $('<div/>', {'class': 'time-container icon-text'}).append([
+                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                            $('<div/>', {'class': 'data-text', 'text': finalTime})
+                            ])
                     ])
                 ])
-            ])    
+            ])
         ])
     )
 };
@@ -312,46 +345,51 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click 
     $('a#villagers-button').bind('click', function() {
-        $('#tabs').slick('slickGoTo',2);
-        setActiveTab();
-        setActiveTabIcon(getActiveTab());
+        setActiveTab("villagers");
+        setActiveTabIcon("villagers");
+        showTab("villagers");
     });
     return false;
 });
 
 function generateVillagerHTML($elem, k, v) {
+    var genderIcon = './static/image/icons/svg/female.svg';
+    if (v.gender == "m") {
+        genderIcon = './static/image/icons/svg/male.svg';
+    };
     $elem.append(
-        $('<div/>', {'class': 'villager-wrapper'}).append([
-            $('<div/>', {'class': 'villager-name', 'text':v.name}),
-            $('<div/>', {'class': 'villager-container'}).append([
-                $('<img/>', {'class': 'villager-icon', 'src':v.icon}),
-                $('<div/>', {'class': 'villager-data'}).append([
-                    $('<img/>', {'class': 'villager-gender-icon', 'src': v.gender}),
-                    $('<div/>', {'class': 'villager-birthday-container'}).append([
-                        $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
-                        $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
+        $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
+            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+            $('<div/>', {'class': 'critter-data'}).append([
+                $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                    $('<div/>', {'class': 'data-grid'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
+                            $('<img/>', {'class': 'villager-gender-icon', 'src': genderIcon})
+                        ),
+                        $('<div/>', {'class': 'birthday-container icon-text'}).append([
+                            $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                            $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
+                            ]),
+                        $('<div/>', {'class': 'villager-species-container'}).append([
+                            $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
+                            $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                        ]),
+                        $('<div/>', {'class': 'villager-personality-container'}).append([
+                            $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                            $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                        ]),
+                            $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
                     ])
-                ]).append(
-                    $('<div/>', {'class': 'villager-species-container'}).append([
-                        $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
-                        $('<div/>', {'class': 'villager-block', 'text':  v.species})
-                    ])
-                ).append(
-                    $('<div/>', {'class': 'villager-personality-container'}).append([
-                        $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
-                        $('<div/>', {'class': 'villager-block', 'text':  v.personality})
-                    ])
-                ).append(
-                        $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
-                )
+                ])
             ])
         ])
-    ) 
+    )
 };
 
 async function getVillagers() {
-    $.getJSON('/villagers-sorted/30', function(data) {
-        var $elem = $("#villager-data-wrapper");
+    $.getJSON('/villagers-sorted/100', function(data) {
+        var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
                 generateVillagerHTML($elem, k, v);
         });
@@ -425,6 +463,29 @@ function hemisphereCookieHandler() {
         }
     }
 };
+
+/*
+TAB VIEW FUNCTIONS -----------------------------------------------------------------
+*/
+
+function showTab(tab) {
+    if (tab == "fish") {  
+        $('#fish-tab').css('display', 'flex');
+        $('#bugs-tab').css('display', 'none');
+        $('#villagers-tab').css('display', 'none');
+    } else if (tab == "bugs") {
+        $('#fish-tab').css('display', 'none');
+        $('#bugs-tab').css('display', 'flex');
+        $('#villagers-tab').css('display', 'none');
+    } else if (tab == "villagers") {
+        $('#fish-tab').css('display', 'none');
+        $('#bugs-tab').css('display', 'none');
+        $('#villagers-tab').css('display', 'flex');
+    } else {
+        console.log("Error showing tab")
+    }
+};
+
 
 /*
 TAB ICON FUNCTIONS -----------------------------------------------------------------
@@ -521,8 +582,10 @@ $(document).ready( () => {
     $('#avaliable-checkbox').on('click', function() {
         if (this.checked) {
             checkboxFilterShowAvaliable("fish");
+            checkboxFilterShowAvaliable("bugs");
         } else {
             checkboxFilterShowAll("fish");
+            checkboxFilterShowAll("bugs");            
         };
     });
 
@@ -637,4 +700,5 @@ $(function() {
     getAllBugs();
     getVillagers();
     checkboxFilterShowAvaliable("fish");
+    showTab("fish");
 });

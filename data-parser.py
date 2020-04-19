@@ -194,7 +194,7 @@ def get_villager_data(out):
 
         name = td[0].text.strip("\n")
         gender_personality = td[2].text.strip().split(" ")
-        temp_dict['gender'] = "./static/image/icons/femaleicon.png" if gender_personality[0] == "\u2640" else "./static/image/icons/maleicon.png"
+        temp_dict['gender'] = "f" if gender_personality[0] == "\u2640" else "m"
         temp_dict['personality'] = gender_personality[1]
         temp_dict['species'] = td[3].text.strip()
 
@@ -348,4 +348,4 @@ def run_villager():
         json.dump(villagers, f)
 
 
-run_fish()
+sorted_villager_gen()

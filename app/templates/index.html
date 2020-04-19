@@ -26,6 +26,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
         <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
@@ -61,8 +62,8 @@
                                 <object class="tab-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
                             </a>
                         </div>
-                        <div id="birth-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <a href=# id="birth-button">
+                        <div id="villagers-container" class="tab-container" style="background-color: #5CB9AD;">
+                            <a href=# id="villagers-button">
                                 <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
                             </a>
                         </div>
@@ -86,11 +87,11 @@
                 <div id="fish-tab" class="data-container">
                     <div id="fish-data-wrapper" class="data-wrapper"></div>
                 </div>
-                <div id="bugs-tab" class="data-container">
-                    <div id="bugs-data-wrapper" class="data-wrapper" style="display: none;"></div>
+                <div id="bugs-tab" class="data-container" style="display: none;">
+                    <div id="bugs-data-wrapper" class="data-wrapper"></div>
                 </div>
-                <div id="villager-tab" class="data-container">
-                    <div id="villager-data-wrapper" class="data-wrapper" style="display: none;"></div>
+                <div id="villagers-tab" class="data-container" style="display: none;">
+                    <div id="villagers-data-wrapper" class="data-wrapper"></div>
                 </div>
             </div>
         </div>
