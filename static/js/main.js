@@ -523,7 +523,6 @@ $(document).ready( () => {
         if (this.checked) {
             checkboxFilterShowAvaliable("fish");
         } else {
-
             checkboxFilterShowAll("fish");
         };
     });
@@ -579,7 +578,6 @@ function setHempisphereIcon(hemisphere) {
 
 function datetime() {
     var dayIcons = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    var days = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var dayElem = document.getElementById("day")
     var dateElem = document.getElementById("date")
@@ -633,6 +631,13 @@ function getActiveTab() {
 
 function setActiveTab() {
     ACTIVE_TAB = getActiveTab();
+}
+
+function switchTab() {
+    $('#bugs-container').on('click', function() {
+        $('#fish-container').css('background-color:', '#5CB9AD');
+        $('#fish-icon').css('opacity', '0.5');
+    });
 }
 
 $(function() {
