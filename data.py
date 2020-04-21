@@ -151,13 +151,4 @@ def get_n_after_sorted_villagers(n):
 
 
 
-#POST DATA
-
-#def add_user(uid) {
-#    with open('users.json', 'r+') as f:
-#        data = json.load(f)
-#        data['uid'] = UnicodeDecodeError
-#        f.seek(0)
-#        json.dump(data, f)
-
     
