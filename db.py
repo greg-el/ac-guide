@@ -1,11 +1,11 @@
 import psycopg2
+import json
 
 def setup():
     try:
         conn = psycopg2.connect(dbname="ac-guide", user="postgres")
     except Exception as e:
         print(e)
-        exit(1)
 
     cur = conn.cursor()
 
@@ -18,12 +18,27 @@ def setup():
         """)
     except Exception as e:
         print(e)
-        exit(1)
 
     conn.commit()
     cur.close()
     conn.close()
 
+
+def add_test_data():
+    try:
+        conn = psycopg2.connect(dbname="ac-guide", user="postgres")
+    except Exception as e:
+        print(e)
+
+    cur = conn.cursor()
+    test_uid = "yfgCi6FUA0b0i26rWLEXUSuV7cu1"
+    with open("test_data.json", "r") as f:
+        json_data = json.dumps(json.load(f))
+
+    cur.execute("INSERT INTO inventory (uid, pocket) VALUES(%s, %s)", (test_uid, json_data))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def connect_to_db(db):
     conn = psycopg2.connect(db)
@@ -37,9 +52,7 @@ def add_to_db(cur, uid):
     except Exception as e:
         print(e)
         cur.close()
-        conn.close()
     cur.close()
-    conn.close()
 
 def update_inventory(cur, uid, pocket, state):
     try:
@@ -47,11 +60,8 @@ def update_inventory(cur, uid, pocket, state):
     except Exception as e:
         print(e)
         cur.close()
-        conn.close()
     out = cur.fetchone()
-    conn.commit()
     cur.close()
-    conn.close()
 
 
 def get_from_db(cur, uid):
@@ -59,12 +69,7 @@ def get_from_db(cur, uid):
         cur.execute("SELECT pocket FROM inventory WHERE uid = (%s)", (uid, ))
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
     out = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
     return out
 
 def remove_from_db(cur, uid):
@@ -73,7 +78,5 @@ def remove_from_db(cur, uid):
     except Exception as e:
         print(e)
         cur.close()
-        conn.close()
-    conn.commit()
     cur.close()
-    conn.close()
+
