@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2.extensions import AsIs
 import json
 
 def setup():
@@ -40,6 +41,7 @@ def add_test_data():
     cur.close()
     conn.close()
 
+
 def connect_to_db(db):
     conn = psycopg2.connect(db)
     cur = conn.cursor()
@@ -51,17 +53,19 @@ def add_to_db(cur, uid):
         cur.execute("INSERT INTO inventory (uid, pocket) VALUES (%s, %s)", (uid, pocket))
     except Exception as e:
         print(e)
-        cur.close()
-    cur.close()
+        return False
+    return True
 
-def update_inventory(cur, uid, pocket, state):
+
+def update_inventory(cur, uid, species, critter, value):
     try:
-        cur.execute("UPDATE inventory SET pocket = (%s) WHERE uid = (%s)", (pocket, uid))
+        cur.execute("""UPDATE inventory
+        SET pocket = jsonb_set(pocket, '{%s, %s}', '%s', FALSE) 
+        WHERE uid = (%s);""", (AsIs(species), AsIs(critter), value, uid))
     except Exception as e:
         print(e)
-        cur.close()
-    out = cur.fetchone()
-    cur.close()
+        return False
+    return True
 
 
 def get_from_db(cur, uid):
@@ -69,14 +73,16 @@ def get_from_db(cur, uid):
         cur.execute("SELECT pocket FROM inventory WHERE uid = (%s)", (uid, ))
     except Exception as e:
         print(e)
-    out = cur.fetchone()
+        return False
+    out = cur.fetchone()[0]
     return out
+
 
 def remove_from_db(cur, uid):
     try:
-        cur.execute("DELETE * FROM inventory WHERE uid = (%s)", (uid, ))
+        cur.execute("DELETE FROM inventory WHERE uid = (%s)", (uid, ))
     except Exception as e:
         print(e)
-        cur.close()
-    cur.close()
+        return False
+    return True
 
