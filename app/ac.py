@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSON
 import os
 
 
-app = Flask(__name__, static_folder='../static',instance_relative_config=True)
+app = Flask(__name__, static_folder='./static',instance_relative_config=True)
 app.config.from_object('config.DevelopmentConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
