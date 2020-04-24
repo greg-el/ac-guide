@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSONB
 import os
 
 
@@ -17,7 +17,7 @@ class InventoryModel(db.Model):
     __tablename__ = 'inventory'
 
     uid = db.Column(db.String(), primary_key=True)
-    pocket = db.Column(JSON)
+    pocket = db.Column(JSONB)
 
     def __init__(self):
         self.uid = uid
@@ -26,3 +26,5 @@ class InventoryModel(db.Model):
     def __repr__(self):
         return f"User {self.uid}"
     
+if __name__ == "__main__":
+    app.run()
