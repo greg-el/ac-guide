@@ -11,11 +11,12 @@ def index():
 def login():
     return render_template('login.html')
 
-@app.route('/add/<string:uid>', methods=['POST'])
+@app.route('/add/<string:uid>')
 def add_user(uid):
     add_to_db(uid)
+    return('', 204)
 
-@app.route('/get/<string:uid>', methods=['GET'])
+@app.route('/get/<string:uid>')
 def get_user_data(uid):
     return get_from_db(uid)
 

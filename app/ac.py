@@ -1,9 +1,6 @@
-from flask import Flask, request
-from flask_migrate import Migrate
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String
 import sqlalchemy.pool as pool
 import psycopg2
@@ -15,9 +12,6 @@ app.config.from_object('config.DevelopmentConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-#engine = create_engine(os.environ['DATABASE_URL'], pool_size=20, max_overflow=0)
-#Session = sessionmaker(bind=engine)
-#session = Session()
 def getconn():
     c = psycopg2.connect(os.environ['DATABASE_URL'])
     return c
