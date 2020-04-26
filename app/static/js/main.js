@@ -2,33 +2,16 @@ ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 
-//$(document).ready(function(){
-//    $('#tabs').slick({
-//      dots: false,
-//      arrows: false,
-//      centerMode: true,
-//      centerPadding: '0px',
-//      infinite: false,
-//      speed: 300,
-//      touchThreshold: 5,
-//      waitForAnimate: true,
-//      edgeFriction: 0.05,
-//    });
-//    $('#tabs').on('afterChange', function(slick, currentSlide){
-//        setActiveTab(currentSlide.currentSlide)
-//        setActiveTabIcon(currentSlide.currentSlide)
-//      });
-//});
+var user = firebase.auth().currentUser;
 
-$('.lazy').Lazy({
-    // your configuration goes here
-    scrollDirection: 'vertical',
-    effect: 'fadeIn',
-    visibleOnly: true,
-    onError: function(element) {
-        console.log('error loading ' + element.data('src'));
-    }
-});
+if (user) {
+    console.log(user)
+  // User is signed in.
+} else {
+    console.log("No one logged in")
+  // No user is signed in.
+}
+
 
 
 /*

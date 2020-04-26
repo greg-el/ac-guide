@@ -5,7 +5,7 @@ from ac import mypool
 
 
 def add_to_db(uid):
-    conn = mypool.connect()
+    conn = mypool.getconn()
     cur = conn.cursor()
     with open("./data/prod_default.json", "r") as f:
         pocket = json.load(f)
