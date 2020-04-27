@@ -1,8 +1,8 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Column, Integer, String
-import sqlalchemy.pool as pool
+
+import firebase_admin
+from firebase_admin import credentials
+
 import psycopg2.pool
 import psycopg2
 import os
@@ -10,9 +10,10 @@ import os
 
 app = Flask(__name__, static_folder='./static',instance_relative_config=True)
 app.config.from_object('config.DevelopmentConfig')
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-#db = SQLAlchemy(app)
+#Firebase init
+cred = credentials.Certificate(os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+ac_firebase = firebase_admin.initialize_app(cred)
 
 #def getconn():
 #    c = psycopg2.connect(os.environ['DATABASE_URL'])

@@ -2,17 +2,31 @@ ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 
-var user = firebase.auth().currentUser;
-
-if (user) {
-    console.log(user)
-  // User is signed in.
-} else {
-    console.log("No one logged in")
-  // No user is signed in.
-}
+/*
+FIREBASE FUNCTIONS -----------------------------------------------------------------
+*/
 
 
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        $('#logout').css('display', 'block');
+        $('#login-link').css('display', 'none');
+    } else {
+        $('#logout').css('display', 'none');
+        $('#login-link').css('display', 'block');
+        console.log("No one signed in");
+    }
+});
+
+$(document).ready(function() {
+    $('#logout').click(function() {
+        firebase.auth().signOut().then(function() {
+            console.log("signout successful");
+        }).catch(function(error) {
+            console.log(error.message)
+        })
+    })
+})
 
 /*
 FISH FUNCTIONS -----------------------------------------------------------------

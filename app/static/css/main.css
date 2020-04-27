@@ -61,6 +61,12 @@ a {
     border-radius: 10px 10px 10px 10px;
 }
 
+#login-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
 #header-container {
     display: flex;
     flex-direction: row;

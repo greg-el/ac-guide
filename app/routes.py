@@ -1,7 +1,21 @@
-from flask import render_template
+from flask import render_template, request
 from ac import app
 from data import *
 from db import *
+from ac import ac_firebase
+from firebase_admin import auth
+
+@app.route('/verify', methods=['POST', 'GET'])
+def verify_token():
+    try:
+        id_token = request.headers.get('token')
+        decoded_token = auth.verify_id_token(id_token, ac_firebase)
+        uid = decoded_token['uid']
+        return('', )
+    except Exception as e:
+        print(e)
+        return "failure"
+
 
 @app.route('/')
 def index():
