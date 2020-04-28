@@ -19,7 +19,7 @@ class TestDatabaseMethods(unittest.TestCase):
         """)
 
         self.test_uid = "yfgCi6FUA0b0i26rWLEXUSuV7cu1"
-        with open("prod_default.json", "r") as f:
+        with open("../app/data/prod_default.json", "r") as f:
             json_data = json.dumps(json.load(f))
 
         cur.execute("INSERT INTO inventory (uid, pocket) VALUES(%s, %s)", (self.test_uid, json_data))
@@ -31,7 +31,7 @@ class TestDatabaseMethods(unittest.TestCase):
         conn = psycopg2.connect(**self.postgres.dsn())
         cur = conn.cursor()
 
-        with open("default_pocket.json", "r") as f:
+        with open("../app/data/default_pocket.json", "r") as f:
             json_data = json.loads(f.readline())
 
         db_data = get_from_db(cur, "yfgCi6FUA0b0i26rWLEXUSuV7cu1")
