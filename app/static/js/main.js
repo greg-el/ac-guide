@@ -1,7 +1,7 @@
 ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
-
+checked_fish = []
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -43,6 +43,8 @@ $(function() {  //Fish tab click
 });
 
 async function generateFishHTML(element, k, v) {
+    kLower = k.replace(/\s+/g, '').toLowerCase();
+
     var finalTime = "";
     if (v.time.length == 24) {
         finalTime = "All day";
@@ -100,13 +102,14 @@ async function generateFishHTML(element, k, v) {
 
     if (typeof v.locationAlt == "undefined") {
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+            $('<div/>', {'class': 'critter-wrapper', 'id':kLower}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':k})
+                                $('<div/>', {'class': 'critter-name', 'text':k}),
+                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': kLower+'-checkbox'})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append([
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -138,13 +141,14 @@ async function generateFishHTML(element, k, v) {
 
 
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+            $('<div/>', {'class': 'critter-wrapper', 'id':kLower}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':k})
+                                $('<div/>', {'class': 'critter-name', 'text':k}),
+                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': kLower+'-checkbox'})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append(
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -169,6 +173,12 @@ async function generateFishHTML(element, k, v) {
             ])
         )
     }
+
+    $('#'+kLower+'-checkbox').click(function() {
+        critterContainer = this.id.slice(0, -9);
+        checked_fish.push($('#'+critterContainer));
+        console.log(checked_fish)
+    });
 };
 
 async function getAllFish() {
@@ -545,7 +555,7 @@ $(document).ready( () => {
 
 
 /*
-CHECK BOX -----------------------------------------------------------------
+SHOW ALL CHECK BOX -----------------------------------------------------------------
 */
 
 function checkboxFilterShowAll(tab) {
@@ -561,8 +571,9 @@ function checkboxFilterShowAvaliable(tab) {
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     $.getJSON('/' + tab + '/avaliable', function(data) { 
         $.each(data, function(k, v) {
+            var kLower = k.replace(/\s+/g, '').toLowerCase();
             for (var i=0; i < $elemChildren.length; i++) {
-                if (k == $elemChildren[i].id) {
+                if (kLower == $elemChildren[i].id) {
                     $elemChildren[i].style.display = "flex";
                     $alreadyChecked.push($elemChildren[i].id);
                     break;
@@ -577,6 +588,9 @@ function checkboxFilterShowAvaliable(tab) {
 
 $(document).ready( () => {
     $('#avaliable-checkbox').on('click', function() {
+        if ($('#caught-checkbox').checked) {
+            $('#caught-checkbox').prop('checked', false);
+        }
         if (this.checked) {
             checkboxFilterShowAvaliable("fish");
             checkboxFilterShowAvaliable("bugs");
@@ -585,10 +599,37 @@ $(document).ready( () => {
             checkboxFilterShowAll("bugs");            
         };
     });
-
 });
 
+/*
+FILTER CAUGHT CHECKBOX -----------------------------------------------------------------
+*/
 
+
+function showCaughtFish() {
+    for (var i=0; i<checked_fish.length; i++) {
+        console.log(checked_fish[i])
+        checked_fish[i].css('display', 'flex');
+    }
+}
+
+function hideCaughtFish() {
+    for (var i=0; i<checked_fish.length; i++) {
+        console.log(checked_fish[i])
+        checked_fish[i].css('display', 'none');
+    }
+}
+
+$(document).ready( () => {
+    $('#caught-checkbox').on('click', function() {
+        if (this.checked) {
+            showCaughtFish();
+        } else {
+
+            hideCaughtFish();
+        };
+    });
+});
 
 /*
 OTHER -----------------------------------------------------------------

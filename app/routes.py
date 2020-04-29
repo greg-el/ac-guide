@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, Response
 from ac import app
 from data import *
 from db import *
@@ -11,10 +11,10 @@ def verify_token():
         id_token = request.headers.get('token')
         decoded_token = auth.verify_id_token(id_token, ac_firebase)
         uid = decoded_token['uid']
-        return('', )
+        return "200"
     except Exception as e:
         print(e)
-        return "failure"
+        return "401"
 
 
 @app.route('/')
@@ -25,14 +25,32 @@ def index():
 def login():
     return render_template('login.html')
 
-@app.route('/add/<string:uid>')
-def add_user(uid):
-    add_to_db(uid)
-    return('', 204)
+@app.route('/add')
+def add_user():
+    uid = False
+    try:
+        id_token = request.headers.get('token')
+        decoded_token = auth.verify_id_token(id_token, ac_firebase)
+        uid = decoded_token['uid']
+    except Exception as e:
+        print(e)
+        return "401"
+    if uid:
+        add_to_db(uid)
+        return "200"
 
-@app.route('/get/<string:uid>')
-def get_user_data(uid):
-    return get_from_db(uid)
+@app.route('/get')
+def get_user_data():
+    uid = False
+    try:
+        id_token = request.headers.get('token')
+        decoded_token = auth.verify_id_token(id_token, ac_firebase)
+        uid = decoded_token['uid']
+    except Exception as e:
+        print(e)
+        return "401"
+    if uid:
+        return get_from_db(uid)
 
 @app.route('/remove/<string:uid>', methods=['POST'])
 def remove_user(uid):

@@ -2,13 +2,20 @@ function createUser(email, password) {
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
         firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
             $.ajax({
-                url: "/verify/"+user.id,
+                url: "/verify",
                 headers: {
                     token: idToken
                 },
-                dataType: 'json',
                 success: function(data) {
-                    console.log(data);
+                    $.ajax({
+                        url: "/add",
+                        headers: {
+                            token: idToken
+                        },
+                        success: function(data) {
+                            console.log("Successfully added user")
+                        }
+                    })
                 }
             })
         })
@@ -23,14 +30,13 @@ function createUser(email, password) {
 function loginUser(email, password) {
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
         firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-
             $.ajax({
                 url: "/verify",
                 headers: {
                     token: idToken
                 },
                 success: function(data) {
-                    console.log(data);
+                    console.log(user)
                 }
             })
         })

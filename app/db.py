@@ -15,7 +15,7 @@ def add_to_db(uid):
     conn.commit()
     conn.close()
 
-def update_inventory(cur, uid, species, critter, value):
+def update_inventory(uid, species, critter, value):
     conn = mypool.connect()
     cur = conn.cursor()
     cur.execute("""UPDATE inventory
