@@ -177,7 +177,6 @@ async function generateFishHTML(element, k, v) {
     $('#'+kLower+'-checkbox').click(function() {
         critterContainer = this.id.slice(0, -9);
         checked_fish.push($('#'+critterContainer));
-        console.log(checked_fish)
     });
 };
 
@@ -539,17 +538,18 @@ $(document).ready( () => {
         var value = $(this).val().toLowerCase();
         $.getJSON('/fish/all', function(data) { 
             $.each(data, function(k, v) {
-                if (k.toLowerCase().includes(value)) {
-                    document.getElementById(k).style.display = "flex";
+                var kLower = k.replace(/\s+/g, '').toLowerCase();
+                if (kLower.includes(value)) {
+                    document.getElementById(kLower).style.display = "flex";
                 } else {
-                    document.getElementById(k).style.display = "none";
+                    document.getElementById(kLower).style.display = "none";
                 }
             })
         })
     });
     $('#fish-search').on('click', function() {
         $('#fish-toggle').click();
-        checkboxFilterShowAll("fish");
+        showAll("fish");
     });
 });
 
@@ -558,45 +558,50 @@ $(document).ready( () => {
 SHOW ALL CHECK BOX -----------------------------------------------------------------
 */
 
-function checkboxFilterShowAll(tab) {
+async function markAll(tab) {
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
-        $elemChildren[i].style.display = "flex";
+        $("#" + $elemChildren[i].id).addClass('_all_filter');
     }
-    
 }
 
-function checkboxFilterShowAvaliable(tab) {
+async function unMarkAll(tab) {
+    var $elemChildren = $("#" + tab + "-data-wrapper").children();
+    for (var i=0; i < $elemChildren.length; i++) {
+        $("#" + $elemChildren[i].id).removeClass('_all_filter');
+    }
+}
+
+async function markAvailiable(tab) {
     var $alreadyChecked = [];
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
-    $.getJSON('/' + tab + '/avaliable', function(data) { 
+    $.getJSON('/' + tab + '/avaliable', function(data) {
         $.each(data, function(k, v) {
             var kLower = k.replace(/\s+/g, '').toLowerCase();
             for (var i=0; i < $elemChildren.length; i++) {
                 if (kLower == $elemChildren[i].id) {
-                    $elemChildren[i].style.display = "flex";
+                    $("#" + $elemChildren[i].id).removeClass('_all_filter');
                     $alreadyChecked.push($elemChildren[i].id);
                     break;
                 } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
-                    $elemChildren[i].style.display = "none";
+                    $("#" + $elemChildren[i].id).addClass('_all_filter');
                 }
             }
         });
-    });
+    }).done(function() {classFilterManager(tab)});
+    
 };
 
 
 $(document).ready( () => {
-    $('#avaliable-checkbox').on('click', function() {
+    $('#availiable-checkbox').on('click', function() {
         if ($('#caught-checkbox').checked) {
             $('#caught-checkbox').prop('checked', false);
         }
         if (this.checked) {
-            checkboxFilterShowAvaliable("fish");
-            checkboxFilterShowAvaliable("bugs");
+            markAvailiable("fish");
         } else {
-            checkboxFilterShowAll("fish");
-            checkboxFilterShowAll("bugs");            
+            unMarkAll("fish").then(() => classFilterManager("fish"))
         };
     });
 });
@@ -606,34 +611,47 @@ FILTER CAUGHT CHECKBOX ---------------------------------------------------------
 */
 
 
-function showCaughtFish() {
+async function showCaughtFish() {
     for (var i=0; i<checked_fish.length; i++) {
-        console.log(checked_fish[i])
-        checked_fish[i].css('display', 'flex');
+        var fishLower = checked_fish[i][0].id.replace(/\s+/g, '').toLowerCase();
+        $('#'+fishLower).removeClass("_caught_filter");
     }
 }
 
-function hideCaughtFish() {
+async function hideCaughtFish() {
     for (var i=0; i<checked_fish.length; i++) {
-        console.log(checked_fish[i])
-        checked_fish[i].css('display', 'none');
+        var fishLower = checked_fish[i][0].id.replace(/\s+/g, '').toLowerCase();
+        $('#'+fishLower).addClass("_caught_filter");
     }
 }
 
 $(document).ready( () => {
     $('#caught-checkbox').on('click', function() {
-        if (this.checked) {
-            showCaughtFish();
+        if (!this.checked) {
+            showCaughtFish().then(() => classFilterManager("fish"));
         } else {
-
-            hideCaughtFish();
-        };
-    });
+            hideCaughtFish().then(() => classFilterManager("fish"));
+        }
+    })
 });
+        
 
 /*
 OTHER -----------------------------------------------------------------
 */
+
+function classFilterManager(tab) {
+    var $elemChildren = $("#" + tab + "-data-wrapper").children();
+    for (var i=0; i < $elemChildren.length; i++) {
+        $elemClasses = Array.from($elemChildren[i].classList);
+        console.log($elemClasses)
+        if ($elemClasses.includes("_caught_filter") || $elemClasses.includes("_all_filter")) {
+            $elemChildren[i].style.display = "none";
+        } else {
+            $elemChildren[i].style.display = "flex";
+        }
+    }
+}
 
 
 function refreshCurrentTab() {
@@ -737,6 +755,5 @@ $(function() {
     getAllFish();
     getAllBugs();
     getVillagers();
-    checkboxFilterShowAvaliable("fish");
     showTab("fish");
 });
