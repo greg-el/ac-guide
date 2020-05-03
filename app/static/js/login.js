@@ -19,7 +19,7 @@ function createUser(email, password) {
                 }
             })
         })
-        //window.location.replace("/");
+        window.location.replace("/");
     }).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -40,7 +40,7 @@ function loginUser(email, password) {
                 }
             })
         })
-        //window.location.replace("/");
+        window.location.replace("/");
     }).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;

@@ -56,27 +56,40 @@ def get_user_data():
 def remove_user(uid):
     remove_from_db(uid)
 
-@app.route('/update/<string:uid>/<string:pocket>/<string:value>', methods=['POST'])
-def update_user_data(uid, pocket):
-    update_inventory(uid, pocket, value)
+@app.route('/update', methods=['POST'])
+def update_user_data():
+    uid = False
+    try:
+        species = request.headers.get('species')
+        critter = request.headers.get('critter')
+        value = rquest.headers.get('value')
+        decoded_token = auth.verify_id_token(id_token, ac_firebase)
+        uid = decoded_token['uid']
+    except Exception as e:
+        print(e)
+        return "401"
+    if uid:
+        update_inventory(uid, species, critter, value)
+        return "200"
+    
 
 
 @app.route('/bugs/<string:request>')
 def bug_data(request):
-    if request == "avaliable":
-        return get_avaliable_bugs()
-    elif request == "unavaliable":
-        return get_unavaliable_bugs()
+    if request == "available":
+        return get_available_bugs()
+    elif request == "unavailable":
+        return get_unavailable_bugs()
     elif request == "all":
         return get_all_bugs()
 
 
 @app.route('/fish/<string:request>')
 def fish_data(request):
-    if request == "avaliable":
-        return get_avaliable_fish()
-    elif request == "unavaliable":
-        return get_unavaliable_fish()
+    if request == "available":
+        return get_available_fish()
+    elif request == "unavailable":
+        return get_unavailable_fish()
     elif request == "all":
         return get_all_fish()
 

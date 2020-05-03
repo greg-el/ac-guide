@@ -1,7 +1,6 @@
 ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
-checked_fish = []
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -37,7 +36,6 @@ $(function() {  //Fish tab click
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
-        //$('#fish-collapse-button').bind('click', testCollapse("fish"))
     });
     return false;
 });
@@ -175,8 +173,37 @@ async function generateFishHTML(element, k, v) {
     }
 
     $('#'+kLower+'-checkbox').click(function() {
-        critterContainer = this.id.slice(0, -9);
-        checked_fish.push($('#'+critterContainer));
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                if (!$('#'+kLower+'-checkbox')[0].checked) {
+                    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                        $.ajax({
+                            url: "/verify",
+                            headers: {
+                                token: idToken
+                            },
+                            success: function(data) {
+                                $.ajax({
+                                    url: "/update",
+                                    headers: {
+                                        species: "fish",
+                                        critter: this.kLower,
+                                        value: "0"
+                                    },
+                                    success: function(data) {
+                                        console.log("Successfully changed value")
+                                    }
+                                })
+                            }
+                        })
+                    })
+                } else {
+                    console.log("somethin went wrong")
+                }
+            } else {
+              console.log("No one signed in")
+            }
+          });
     });
 };
 
@@ -192,7 +219,7 @@ async function getAllFish() {
 };
 
 async function getFish() {
-    $.getJSON('/fish/avaliable',
+    $.getJSON('/fish/available',
         function(data) {
             var $elem = $(document.getElementById("fish-data-wrapper"));
             $.each(data, function(k, v) {
@@ -202,8 +229,8 @@ async function getFish() {
     return false;
 };
 
-async function getUnavaliableFish() {
-    $.getJSON('/fish/unavaliable',
+async function getUnavailableFish() {
+    $.getJSON('/fish/unavailable',
             function(data) {
                 var $elem = $(document.getElementById("fish-collapsible-content"))
                 $.each(data, function(k, v) {
@@ -213,7 +240,7 @@ async function getUnavaliableFish() {
 };
 
 function refreshFish() {            
-    $.getJSON('/fish/avaliable',
+    $.getJSON('/fish/available',
         function(data) {
             $("#data-wrapper").empty()
             var $elem = $(document.getElementById("fish-data-wrapper"))
@@ -231,12 +258,10 @@ bugs FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //bugs tab click
     $('a#bugs-button, #bug-icon').click(function() {
-        //$('#tabs').slick('slickGoTo',1);
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
         showTab("bugs")
     });
-    return false;
 });
 
 function generateBugsHTML($elem, k, v) {
@@ -285,7 +310,7 @@ function generateBugsHTML($elem, k, v) {
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':k})
+                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
                         ),
                         $('<div/>', {'class': 'location-container icon-text'}).append([
                             $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -304,6 +329,10 @@ function generateBugsHTML($elem, k, v) {
             ])
         ])
     )
+    $('#'+kLower+'-checkbox').click(function() {
+        critterContainer = this.id.slice(0, -9);
+        checked_fish.push($('#'+critterContainer));
+    });
 };
 
 async function getAllBugs() {
@@ -316,7 +345,7 @@ async function getAllBugs() {
 };
 
 async function getAvaliableBugs() {
-    $.getJSON('/bugs/avaliable', function(data) {
+    $.getJSON('/bugs/available', function(data) {
         var $elem = $("#bugs-data-wrapper");
         $.each(data, function(k, v) {
             generateBugsHTML($elem, k, v);
@@ -324,17 +353,9 @@ async function getAvaliableBugs() {
     });
 };
 
-async function getUnavaliableBugs() {
-    $.getJSON('/bugs/unavaliable', function(data) {
-        var $elem = $("#bugs-collapsible-content");
-        $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v);
-        })
-    });
-};
 
 function refreshBugs() {
-    $.getJSON('/bugs/avaliable',
+    $.getJSON('/bugs/available',
     function(data) {
         $("#data-wrapper").empty()
         var $elem = $(document.getElementById("bugs-data-wrapper"))
@@ -438,6 +459,7 @@ function getCookie(cname) {
     return "";
 };
   
+
 function checkCookieExists() {
     var hempisphere = getCookie("hemisphere");
     if (hempisphere == "") {
@@ -451,18 +473,22 @@ function hemisphereCookieHandler() {
         if (cookie == "north") {
             setHempisphereIcon("south");
             setCookie("hemisphere", "south", 365);
-            if (getActiveTab() == "fish") {
-                refreshFish();
-            } else if (getActiveTab() == "bugs") {
-                refreshBugs();
+            if ($('#availiable-checkbox')[0].checked) {
+                if (getActiveTab() == "fish") {
+                    markAvailiable("fish");
+                } else if (getActiveTab() == "bugs") {
+                    markAvailiable("bugs");
+                }
             }
         } else if (cookie == "south") {
             setHempisphereIcon("north");
             setCookie("hemisphere", "north", 365);
-            if (getActiveTab() == "fish") {
-                refreshFish();
-            } else if (getActiveTab() == "bugs") {
-                refreshBugs();
+            if ($('#availiable-checkbox')[0].checked) {
+                if (getActiveTab() == "fish") {
+                    markAvailiable("fish");
+                } else if (getActiveTab() == "bugs") {
+                    markAvailiable("bugs");
+                }
             }
         } else {
             alert("Can't find any cookies");
@@ -575,7 +601,7 @@ async function unMarkAll(tab) {
 async function markAvailiable(tab) {
     var $alreadyChecked = [];
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
-    $.getJSON('/' + tab + '/avaliable', function(data) {
+    $.getJSON('/' + tab + '/available', function(data) {
         $.each(data, function(k, v) {
             var kLower = k.replace(/\s+/g, '').toLowerCase();
             for (var i=0; i < $elemChildren.length; i++) {
@@ -589,7 +615,6 @@ async function markAvailiable(tab) {
             }
         });
     }).done(function() {classFilterManager(tab)});
-    
 };
 
 
@@ -599,9 +624,9 @@ $(document).ready( () => {
             $('#caught-checkbox').prop('checked', false);
         }
         if (this.checked) {
-            markAvailiable("fish");
+            markAvailiable(getActiveTab());
         } else {
-            unMarkAll("fish").then(() => classFilterManager("fish"))
+            unMarkAll(getActiveTab()).then(() => classFilterManager(getActiveTab()))
         };
     });
 });
@@ -644,7 +669,6 @@ function classFilterManager(tab) {
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $elemClasses = Array.from($elemChildren[i].classList);
-        console.log($elemClasses)
         if ($elemClasses.includes("_caught_filter") || $elemClasses.includes("_all_filter")) {
             $elemChildren[i].style.display = "none";
         } else {
