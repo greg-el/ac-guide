@@ -14,7 +14,8 @@ def get_fish_data(url, out):
         temp_dict = {}
         td = item.find_all("td")
 
-        name = td[0].text.strip()
+        temp_dict['name_formatted'] = td[0].text.strip()
+        name = re.sub("[\'\s-]", '', td[0].text.strip()).lower()
         temp_dict['price'] = td[2].text.strip()
 
         location_split = td[3].text.strip().split(")")
@@ -84,9 +85,9 @@ def get_fish_data(url, out):
 
         temp_dict['months'] = months
 
-        temp_dict['icon'] = "./static/image/fish/" + name.replace(" ", "").replace("-", "").lower() + ".webp"
+        temp_dict['icon'] = "./static/image/fish/" + name + ".webp"
 
-        if url == "./data/fish-north":
+        if url == "./fish-north":
             out['northern'][name] = temp_dict
         else:
             out['southern'][name] = temp_dict
@@ -101,7 +102,8 @@ def get_bug_data(url, out):
         temp_dict = {}
         td = item.find_all("td")
 
-        name = td[0].text.strip()
+        temp_dict['name_formatted'] = td[0].text.strip()
+        name = re.sub("[\'\s-]", '', td[0].text.strip()).lower()
         temp_dict['price'] = td[2].text.strip()
         temp_dict['location'] = td[3].text.strip()
 
@@ -132,7 +134,6 @@ def get_bug_data(url, out):
                 temp_dict['time'] = time_list
             else:
                 time = re.sub(" ", "", td[4].text)
-                print(time)
                 regex = re.compile("(\d+)(\w\w)-(\d+)(\w\w)")
                 span = regex.match(time)
                 time_list = []
@@ -159,9 +160,9 @@ def get_bug_data(url, out):
 
         temp_dict['months'] = months
 
-        temp_dict['icon'] = "./static/image/bugs/" + name.replace(" ", "").replace("-", "").lower() + ".webp"
+        temp_dict['icon'] = "./static/image/bugs/" + name + ".webp"
 
-        if url == "./data/bugs-north":
+        if url == "./bugs-north":
             out['northern'][name] = temp_dict
         else:
             out['southern'][name] = temp_dict
@@ -312,13 +313,13 @@ def run_fish():
         "southern": {}
         }
 
-    fish_north = "./data/fish-north"
-    fish_south = "./data/fish-south"
+    fish_north = "./fish-north"
+    fish_south = "./fish-south"
 
     fish = get_fish_data(fish_north, out)
     fish = get_fish_data(fish_south, out)
 
-    with open('fish.json', 'w') as f:
+    with open('../app/data/fish.json', 'w') as f:
         json.dump(fish, f)
 
 
@@ -328,14 +329,14 @@ def run_bugs():
     "southern": {}
     }
 
-    bugs_north = "./data/bugs-north"
-    bugs_south = "./data/bugs-south"
+    bugs_north = "./bugs-north"
+    bugs_south = "./bugs-south"
 
 
     bugs = get_bug_data(bugs_north, out)
     bugs = get_bug_data(bugs_south, out)
 
-    with open('bugs.json', 'w') as f:
+    with open('../app/data/bugs.json', 'w') as f:
         json.dump(bugs, f)
 
 
@@ -348,4 +349,4 @@ def run_villager():
         json.dump(villagers, f)
 
 
-sorted_villager_gen()
+run_fish()
