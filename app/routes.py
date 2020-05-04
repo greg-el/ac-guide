@@ -5,6 +5,8 @@ from db import *
 from ac import ac_firebase
 from firebase_admin import auth
 
+
+
 @app.route('/verify', methods=['POST', 'GET'])
 def verify_token():
     try:
@@ -50,25 +52,32 @@ def get_user_data():
         print(e)
         return "401"
     if uid:
-        return get_from_db(uid)
+        try:
+            data = get_from_db(uid)
+            return data
+        except NoSuchUidError as e:
+            data = {'detail': 'The UID request does not exist in the database.'}
+            return jsonify(data), 400
 
 @app.route('/remove/<string:uid>', methods=['POST'])
 def remove_user(uid):
     remove_from_db(uid)
 
-@app.route('/update', methods=['POST'])
+@app.route('/update', methods=['POST', 'GET'])
 def update_user_data():
     uid = False
     try:
-        species = request.headers.get('species')
-        critter = request.headers.get('critter')
-        value = rquest.headers.get('value')
+        id_token = request.headers.get('token')
         decoded_token = auth.verify_id_token(id_token, ac_firebase)
         uid = decoded_token['uid']
     except Exception as e:
         print(e)
         return "401"
     if uid:
+        species = request.headers.get('species')
+        critter = request.headers.get('critter')
+        value = request.headers.get('value')
+        print(uid, species, critter, value)
         update_inventory(uid, species, critter, value)
         return "200"
     

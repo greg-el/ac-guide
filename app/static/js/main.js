@@ -40,9 +40,7 @@ $(function() {  //Fish tab click
     return false;
 });
 
-async function generateFishHTML(element, k, v) {
-    kLower = k.replace(/\s+/g, '').toLowerCase();
-
+function getCritterTime(v) {
     var finalTime = "";
     if (v.time.length == 24) {
         finalTime = "All day";
@@ -61,10 +59,11 @@ async function generateFishHTML(element, k, v) {
 
         finalTime = finalStart + "-" + finalEnd;
     }
+    return finalTime
+}
 
+function getCritterLocation(v) {
     var finalLocation = {}
-    var finalLocationAlt = {}
-
     if (v.location.includes("(")) {
         var locationSplit = v.location.split("(");
         var location = locationSplit[0];
@@ -83,7 +82,13 @@ async function generateFishHTML(element, k, v) {
     } else {
         finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
     }
+    return finalLocation;
+}
 
+
+
+function getCritterLocationAlt(v) {
+    var finalLocationAlt = {}
     if (typeof v.locationAlt != "undefined") {
         if (v.locationAlt.includes("(")) {
             var locationAltSplit = v.locationAlt.split("(");
@@ -97,17 +102,50 @@ async function generateFishHTML(element, k, v) {
             finalLocationAlt = $('<div/>', {'class': 'data-text', 'text': v.locationAlt});
         }
     }
+    return finalLocationAlt;
+}
 
+function getUserDict() {
+    return new Promise(function(resolve, reject) {
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                    $.ajax({
+                        url: "/get",
+                        headers: {
+                            token: idToken,
+                        },
+                        success: function(data) {
+                            console.log("got data");
+                            resolve(data);
+                        },
+                        error: function(data) {
+                            resolve(false)
+                        }
+                    })
+                })
+            } else {
+                reject(new Error("No user"));
+            }
+        })
+    })
+};
+
+function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
+    var isChecked = false;
+    if (userDict && userDict.fish.hasOwnProperty(k)) {
+        isChecked = true;
+    }
     if (typeof v.locationAlt == "undefined") {
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':kLower}).append([
+            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':k}),
-                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': kLower+'-checkbox'})
+                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
+                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox', 'checked': isChecked})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append([
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -139,14 +177,14 @@ async function generateFishHTML(element, k, v) {
 
 
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':kLower}).append([
+            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':k}),
-                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': kLower+'-checkbox'})
+                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
+                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox'})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append(
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -171,35 +209,36 @@ async function generateFishHTML(element, k, v) {
             ])
         )
     }
+}
 
-    $('#'+kLower+'-checkbox').click(function() {
+async function generateFishHTML(element, k, v, userDict) {
+
+    var finalTime = getCritterTime(v);
+    var finalLocation = getCritterLocation(v);
+    var finalLocationAlt = getCritterLocationAlt(v);
+    createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict);
+
+
+    $('#'+k+'-checkbox').click(function() {
+        var thisCheckbox = this;
+        console.log(thisCheckbox)
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                if (!$('#'+kLower+'-checkbox')[0].checked) {
-                    firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-                        $.ajax({
-                            url: "/verify",
-                            headers: {
-                                token: idToken
-                            },
-                            success: function(data) {
-                                $.ajax({
-                                    url: "/update",
-                                    headers: {
-                                        species: "fish",
-                                        critter: this.kLower,
-                                        value: "0"
-                                    },
-                                    success: function(data) {
-                                        console.log("Successfully changed value")
-                                    }
-                                })
-                            }
-                        })
-                    })
-                } else {
-                    console.log("somethin went wrong")
+                var updateValue = false;
+                if (thisCheckbox.checked) {
+                    updateValue = true; 
                 }
+                firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                    $.ajax({
+                        url: "/update",
+                        headers: {
+                            token: idToken,
+                            species: "fish",
+                            critter: thisCheckbox.parentElement.parentElement.parentElement.parentElement.parentElement.id,
+                            value: updateValue
+                        },
+                    })
+                })
             } else {
               console.log("No one signed in")
             }
@@ -208,13 +247,14 @@ async function generateFishHTML(element, k, v) {
 };
 
 async function getAllFish() {
-    $.getJSON('/fish/all',
-        function(data) {
-            var $elem = $(document.getElementById("fish-data-wrapper"));
-            $.each(data, function(k, v) {
-                generateFishHTML($elem, k, v);
-            })
-        });
+    var userDict = await getUserDict();
+    console.log(userDict)
+    $.getJSON('/fish/all', function(data) {
+        var $elem = $(document.getElementById("fish-data-wrapper"));
+        $.each(data, function(k, v) {
+            generateFishHTML($elem, k, v, userDict);
+        })
+    });
     return false;
 };
 
@@ -329,7 +369,7 @@ function generateBugsHTML($elem, k, v) {
             ])
         ])
     )
-    $('#'+kLower+'-checkbox').click(function() {
+    $('#'+k+'-checkbox').click(function() {
         critterContainer = this.id.slice(0, -9);
         checked_fish.push($('#'+critterContainer));
     });
