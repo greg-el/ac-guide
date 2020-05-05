@@ -13,13 +13,13 @@ function createUser(email, password) {
                             token: idToken
                         },
                         success: function(data) {
-                            console.log("Successfully added user")
+                            console.log("Successfully added user");
+                            window.location.replace("/");
                         }
                     })
                 }
             })
         })
-        window.location.replace("/");
     }).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -36,11 +36,11 @@ function loginUser(email, password) {
                     token: idToken
                 },
                 success: function(data) {
-                    console.log(user)
+                    console.log(user);
+                    window.location.replace("/");
                 }
             })
         })
-        window.location.replace("/");
     }).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;

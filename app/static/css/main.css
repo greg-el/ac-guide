@@ -281,7 +281,9 @@ a {
     flex-direction: row;
 }
 
-
+.data-container {
+    background-color: var(--light);
+}
 
 .data-grid {
     display: grid;

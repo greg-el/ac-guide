@@ -15,8 +15,9 @@ def add_to_db(uid):
 
     pocket = json.dumps(pocket)
     cur.execute("INSERT INTO inventory (uid, pocket) VALUES (%s, %s)", (uid, pocket))
+    cur.close()
     conn.commit()
-    putconn(conn)
+    mypool.putconn(conn)
 
 def update_inventory(uid, species, critter, value):
     conn = mypool.getconn()
@@ -25,7 +26,7 @@ def update_inventory(uid, species, critter, value):
     SET pocket = jsonb_set(pocket, '{%s, %s}', '%s', TRUE) 
     WHERE uid = (%s);""", (AsIs(species), AsIs(critter), AsIs(value), uid))
     conn.commit()
-    putconn(conn)
+    mypool.putconn(conn)
 
 
 
@@ -33,13 +34,12 @@ def get_from_db(uid):
     conn = mypool.getconn()
     cur = conn.cursor()
     cur.execute("SELECT pocket FROM inventory WHERE uid = (%s)", (uid, ))
-    if not cur.fetchone():
-        raise NoSuchUidError
-
-
     data = cur.fetchone()[0]
+    if data == None:
+        raise NoSuchUidError
+    
     cur.close()
-    putconn(conn)
+    mypool.putconn(conn)
     return data
 
     
@@ -48,4 +48,4 @@ def remove_from_db(uid):
     cur = conn.cursor()
     cur.execute("DELETE FROM inventory WHERE uid = (%s)", (uid, ))
     conn.commit()
-    putconn(conn)
+    mypool.putconn(conn)

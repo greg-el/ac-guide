@@ -6,6 +6,7 @@ FIREBASE FUNCTIONS -------------------------------------------------------------
 */
 
 
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         $('#logout').css('display', 'block');
@@ -26,6 +27,36 @@ $(document).ready(function() {
         })
     })
 })
+
+function getCaught(species) {
+    return new Promise(function(resolve, reject) {
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                    $.ajax({
+                        url: "/get",
+                        headers: {
+                            token: idToken,
+                        },
+                        success: function(data) {
+                            console.log("got data");
+                            if (species == "fish") {
+                                resolve(data.fish);
+                            } else if (species == "bugs") {
+                                resolve(data.bugs)
+                            }
+                        },
+                        error: function(data) {
+                            reject(new Error("UID not in database"))
+                        }
+                    })
+                })
+            } else {
+                reject(new Error("No user"));
+            }
+        })
+    })
+};
 
 /*
 FISH FUNCTIONS -----------------------------------------------------------------
@@ -105,35 +136,11 @@ function getCritterLocationAlt(v) {
     return finalLocationAlt;
 }
 
-function getUserDict() {
-    return new Promise(function(resolve, reject) {
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-                    $.ajax({
-                        url: "/get",
-                        headers: {
-                            token: idToken,
-                        },
-                        success: function(data) {
-                            console.log("got data");
-                            resolve(data);
-                        },
-                        error: function(data) {
-                            resolve(false)
-                        }
-                    })
-                })
-            } else {
-                reject(new Error("No user"));
-            }
-        })
-    })
-};
+
 
 function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
     var isChecked = false;
-    if (userDict && userDict.fish.hasOwnProperty(k)) {
+    if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = true;
     }
     if (typeof v.locationAlt == "undefined") {
@@ -247,14 +254,25 @@ async function generateFishHTML(element, k, v, userDict) {
 };
 
 async function getAllFish() {
-    var userDict = await getUserDict();
-    console.log(userDict)
+    var userDict = false;
+    try {
+        userDict = await getCaught("fish");
+    } catch(err) {
+        console.log(err)
+    }
     $.getJSON('/fish/all', function(data) {
         var $elem = $(document.getElementById("fish-data-wrapper"));
         $.each(data, function(k, v) {
             generateFishHTML($elem, k, v, userDict);
         })
-    });
+    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+        if ($('#caught-checkbox')[0].checked) {
+            hideCaughtCritters().then(() => classFilterManager("fish"));
+        }else {
+            console.log("its not ticked")
+            showCaughtCritters().then(() => classFilterManager("fish"));
+        }
+    })
     return false;
 };
 
@@ -600,24 +618,26 @@ SEARCH BOX -----------------------------------------------------------------
 */
 
 $(document).ready( () => {
-    $('#fish-search').on('keyup', function() {
-        var value = $(this).val().toLowerCase();
-        $.getJSON('/fish/all', function(data) { 
-            $.each(data, function(k, v) {
-                var kLower = k.replace(/\s+/g, '').toLowerCase();
-                if (kLower.includes(value)) {
-                    document.getElementById(kLower).style.display = "flex";
-                } else {
-                    document.getElementById(kLower).style.display = "none";
-                }
-            })
-        })
-    });
-    $('#fish-search').on('click', function() {
-        $('#fish-toggle').click();
-        showAll("fish");
-    });
-});
+    $('#search').on('keyup', function() {
+        $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
+        for (var i=0; i<$critterChildren.length; i++) {
+            if (!$critterChildren[i].id.includes(this.value)) {
+                $($critterChildren[i]).addClass('_search_filter');
+            } else {
+                $($critterChildren[i]).removeClass('_search_filter');
+            }
+        }
+        classFilterManager(getActiveTab());
+    })
+    $('#search').on('blur', function() {
+        this.value = "";
+        $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
+        for (var i=0; i<$critterChildren.length; i++) {
+            $($critterChildren[i]).removeClass('_search_filter');
+        }
+        classFilterManager(getActiveTab());
+    })
+})
 
 
 /*
@@ -625,6 +645,7 @@ SHOW ALL CHECK BOX -------------------------------------------------------------
 */
 
 async function markAll(tab) {
+    
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $("#" + $elemChildren[i].id).addClass('_all_filter');
@@ -676,26 +697,31 @@ FILTER CAUGHT CHECKBOX ---------------------------------------------------------
 */
 
 
-async function showCaughtFish() {
-    for (var i=0; i<checked_fish.length; i++) {
-        var fishLower = checked_fish[i][0].id.replace(/\s+/g, '').toLowerCase();
-        $('#'+fishLower).removeClass("_caught_filter");
+
+async function showCaughtCritters() {
+    var $checkboxes = $(".critter-checkbox");
+    for (var i=0; i<$checkboxes.length; i++) {
+        if ($checkboxes[i].checked) {
+            $($checkboxes[i]).parents().eq(4).removeClass("_caught_filter");
+        }
     }
 }
 
-async function hideCaughtFish() {
-    for (var i=0; i<checked_fish.length; i++) {
-        var fishLower = checked_fish[i][0].id.replace(/\s+/g, '').toLowerCase();
-        $('#'+fishLower).addClass("_caught_filter");
+async function hideCaughtCritters() {
+    var $checkboxes = $(".critter-checkbox");
+    for (var i=0; i<$checkboxes.length; i++) {
+        if ($checkboxes[i].checked) {
+            $($checkboxes[i]).parents().eq(4).addClass("_caught_filter");
+        }
     }
 }
 
 $(document).ready( () => {
     $('#caught-checkbox').on('click', function() {
         if (!this.checked) {
-            showCaughtFish().then(() => classFilterManager("fish"));
+            showCaughtCritters().then(() => classFilterManager("fish"));
         } else {
-            hideCaughtFish().then(() => classFilterManager("fish"));
+            hideCaughtCritters().then(() => classFilterManager("fish"));
         }
     })
 });
@@ -709,7 +735,9 @@ function classFilterManager(tab) {
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $elemClasses = Array.from($elemChildren[i].classList);
-        if ($elemClasses.includes("_caught_filter") || $elemClasses.includes("_all_filter")) {
+        if ($elemClasses.includes("_caught_filter") ||
+         $elemClasses.includes("_all_filter") ||
+         $elemClasses.includes("_search_filter")) {
             $elemChildren[i].style.display = "none";
         } else {
             $elemChildren[i].style.display = "flex";
