@@ -102,13 +102,14 @@ def fish_data(request):
     elif request == "all":
         return get_all_fish()
 
-@app.route('/villagers-sorted')
-def villager_data():
-    return get_sorted_villagers()
 
-@app.route('/villagers-sorted/<int:n>')
-def villager_data_n(n):
-    return get_n_sorted_villagers(n)
+@app.route('/villagers-sorted', methods=['POST', 'GET'])
+def villager_data_n():
+    n = request.headers.get("n")
+    day = request.headers.get("day")
+    month = request.headers.get("month")
+    print(n, day, month)
+    return get_n_sorted_villagers(int(month), int(day), int(n))
 
 @app.route('/villagers-sorted-after/<int:n>')
 def villager_data_after_n(n):

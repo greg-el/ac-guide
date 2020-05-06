@@ -141,7 +141,7 @@ function getCritterLocationAlt(v) {
 function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
-        isChecked = true;
+        isChecked = userDict[k];
     }
     if (typeof v.locationAlt == "undefined") {
         element.append(
@@ -322,43 +322,13 @@ $(function() { //bugs tab click
     });
 });
 
-function generateBugsHTML($elem, k, v) {
-    var finalTime = "";
-    if (v.time.length == 24) {
-        finalTime = "All day";
-    } else {
-        var startTime = v.time[0];
-        var endTime = v.time[v.time.length-1];
-        var startAMPM = startTime >= 12 ? "PM" : "AM";
-        startTime = startTime % 12
-        startTime = startTime ? startTime : 12;
-        finalStart = startTime + startAMPM;
+function generateBugsHTML($elem, k, v, userDict) {
+    var finalTime = getCritterTime(v);
+    var finalLocation = getCritterLocation(v);
 
-        var endAMPM = endTime >= 12 ? "PM" : "AM";
-        endTime = endTime % 12
-        endTime = endTime ? endTime : 12;
-        finalEnd = endTime + endAMPM;
-
-        finalTime = finalStart + "-" + finalEnd;
-    }
-
-    if (v.location.includes("(")) {
-        var locationSplit = v.location.split("(");
-        var location = locationSplit[0];
-        var locationModifier = locationSplit[1];
-        if (typeof v.locationAlt == "undefined") {
-            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
-                $('<div/>', {'class': 'data-text', 'text': location}),
-                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-            ])
-        } else {
-            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
-                $('<div/>', {'class': 'data-text', 'text': location.trim() + ","}),
-                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-            ])
-        }
-    } else {
-        finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
+    var isChecked = false;
+    if (userDict && userDict.hasOwnProperty(k)) {
+        isChecked = userDict[k];
     }
 
     $elem.append(
@@ -368,7 +338,8 @@ function generateBugsHTML($elem, k, v) {
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
+                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
+                            $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox', 'checked': isChecked})
                         ),
                         $('<div/>', {'class': 'location-container icon-text'}).append([
                             $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -387,18 +358,53 @@ function generateBugsHTML($elem, k, v) {
             ])
         ])
     )
+
     $('#'+k+'-checkbox').click(function() {
-        critterContainer = this.id.slice(0, -9);
-        checked_fish.push($('#'+critterContainer));
+        var thisCheckbox = this;
+        console.log(thisCheckbox)
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                var updateValue = false;
+                if (thisCheckbox.checked) {
+                    updateValue = true; 
+                }
+                firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                    $.ajax({
+                        url: "/update",
+                        headers: {
+                            token: idToken,
+                            species: "bugs",
+                            critter: thisCheckbox.parentElement.parentElement.parentElement.parentElement.parentElement.id,
+                            value: updateValue
+                        },
+                    })
+                })
+            } else {
+              console.log("No one signed in")
+            }
+          });
     });
 };
 
 async function getAllBugs() {
+    var userDict = false;
+    try {
+        userDict = await getCaught("bugs");
+    } catch(err) {
+        console.log(err)
+    }
     $.getJSON('/bugs/all', function(data) {
         var $elem = $("#bugs-data-wrapper");
         $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v);
+            generateBugsHTML($elem, k, v, userDict);
         });
+    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+        if ($('#caught-checkbox')[0].checked) {
+            hideCaughtCritters().then(() => classFilterManager("bugs"));
+        }else {
+            console.log("its not ticked")
+            showCaughtCritters().then(() => classFilterManager("bugs"));
+        }
     });
 };
 
@@ -442,6 +448,7 @@ function generateVillagerHTML($elem, k, v) {
     if (v.gender == "m") {
         genderIcon = './static/image/icons/svg/male.svg';
     };
+    console.log(v)
     $elem.append(
         $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
@@ -453,15 +460,15 @@ function generateVillagerHTML($elem, k, v) {
                             $('<img/>', {'class': 'villager-gender-icon', 'src': genderIcon})
                         ),
                         $('<div/>', {'class': 'birthday-container icon-text'}).append([
-                            $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/birthdayicon.png'}),
+                            $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/svg/cake.svg'}),
                             $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
                             ]),
                         $('<div/>', {'class': 'villager-species-container'}).append([
-                            $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/pawicon.png'}),
+                            $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/svg/paw.svg'}),
                             $('<div/>', {'class': 'villager-block', 'text':  v.species})
                         ]),
                         $('<div/>', {'class': 'villager-personality-container'}).append([
-                            $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/personalityicon.png'}),
+                            $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/svg/star.svg'}),
                             $('<div/>', {'class': 'villager-block', 'text':  v.personality})
                         ]),
                             $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
@@ -472,14 +479,30 @@ function generateVillagerHTML($elem, k, v) {
     )
 };
 
+
 async function getVillagers() {
-    $.getJSON('/villagers-sorted/100', function(data) {
-        var $elem = $("#villagers-data-wrapper");
+    var date = new Date();
+    var m = date.getMonth()+1;
+    var d = date.getDate();
+    $.ajax({
+        url: '/villagers-sorted',
+        dataType: 'json',
+        headers: {
+            n: 100,
+            day: d,
+            month: m
+        },
+        success: function(data) {
+            var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
-                generateVillagerHTML($elem, k, v);
-        });
-    });
-};
+                generateVillagerHTML($elem, k , v);
+            })
+        },
+        error: function(data) {
+            console.log(data)
+        }
+    })
+}
         
 async function getBirthdaysAfterN() {
     $.getJSON('/villagers-sorted-after/30',function(data) {
@@ -645,7 +668,6 @@ SHOW ALL CHECK BOX -------------------------------------------------------------
 */
 
 async function markAll(tab) {
-    
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $("#" + $elemChildren[i].id).addClass('_all_filter');
@@ -719,9 +741,9 @@ async function hideCaughtCritters() {
 $(document).ready( () => {
     $('#caught-checkbox').on('click', function() {
         if (!this.checked) {
-            showCaughtCritters().then(() => classFilterManager("fish"));
+            showCaughtCritters().then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
         } else {
-            hideCaughtCritters().then(() => classFilterManager("fish"));
+            hideCaughtCritters().then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
         }
     })
 });
