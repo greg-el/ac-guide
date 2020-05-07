@@ -21,7 +21,7 @@ cred = credentials.Certificate({"type": "service_account",
 ac_firebase = firebase_admin.initialize_app(cred)
 
 
-mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, database=os.environ['DATABASE_URL'], sslmode='require', host='127.0.0.1')
+mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, database=os.environ['DATABASE_URL'], sslmode='require')
 
 import routes
 
