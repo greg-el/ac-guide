@@ -6,7 +6,6 @@ from ac import mypool
 class NoSuchUidError(Exception):
     pass
 
-
 def add_to_db(uid):
     conn = mypool.getconn()
     cur = conn.cursor()

@@ -19,11 +19,8 @@ cred = credentials.Certificate({"type": "service_account",
 "token_uri": "https://oauth2.googleapis.com/token"})
 ac_firebase = firebase_admin.initialize_app(cred)
 
-#def getconn():
-#    c = psycopg2.connect(os.environ['DATABASE_URL'])
-#    return c
 
-mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, database="acguide")
+mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, database="acguide", sslmode='require')
 
 import routes
 
