@@ -146,7 +146,7 @@ function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocatio
     if (typeof v.locationAlt == "undefined") {
         element.append(
             $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
-                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+                $('<img/>', {'class': 'critter-icon', 'src':v.icon, 'loading':'lazy'}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
@@ -255,25 +255,42 @@ async function generateFishHTML(element, k, v, userDict) {
 
 async function getAllFish() {
     var userDict = false;
-    try {
-        userDict = await getCaught("fish");
-    } catch(err) {
-        console.log(err)
-    }
-    $.getJSON('/fish/all', function(data) {
-        var $elem = $(document.getElementById("fish-data-wrapper"));
-        $.each(data, function(k, v) {
-            generateFishHTML($elem, k, v, userDict);
-        })
-    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
-        if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters().then(() => classFilterManager("fish"));
-        }else {
-            console.log("its not ticked")
-            showCaughtCritters().then(() => classFilterManager("fish"));
+    firebase.auth().onAuthStateChanged(async function(user) {
+        if (user) {
+            try {
+                userDict = await getCaught("fish");
+                $.getJSON('/fish/all', function(data) {
+                    var $elem = $(document.getElementById("fish-data-wrapper"));
+                    $.each(data, function(k, v) {
+                        generateFishHTML($elem, k, v, userDict);
+                    })
+                }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+                    if ($('#caught-checkbox')[0].checked) {
+                        hideCaughtCritters().then(() => classFilterManager("fish"));
+                    }else {
+                        console.log("its not ticked")
+                        showCaughtCritters().then(() => classFilterManager("fish"));
+                    }
+                })
+            } catch(err) {
+                console.log(err)
+            }
+        } else {
+            $.getJSON('/fish/all', function(data) {
+                var $elem = $(document.getElementById("fish-data-wrapper"));
+                $.each(data, function(k, v) {
+                    generateFishHTML($elem, k, v, userDict);
+                })
+            }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+                if ($('#caught-checkbox')[0].checked) {
+                    hideCaughtCritters().then(() => classFilterManager("fish"));
+                }else {
+                    console.log("its not ticked")
+                    showCaughtCritters().then(() => classFilterManager("fish"));
+                }
+            })
         }
     })
-    return false;
 };
 
 async function getFish() {
@@ -375,24 +392,43 @@ function generateBugsHTML($elem, k, v, userDict) {
 
 async function getAllBugs() {
     var userDict = false;
-    try {
-        userDict = await getCaught("bugs");
-    } catch(err) {
-        console.log(err)
-    }
-    $.getJSON('/bugs/all', function(data) {
-        var $elem = $("#bugs-data-wrapper");
-        $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v, userDict);
-        });
-    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
-        if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters().then(() => classFilterManager("bugs"));
-        }else {
-            console.log("its not ticked")
-            showCaughtCritters().then(() => classFilterManager("bugs"));
+    firebase.auth().onAuthStateChanged(async function(user) {
+        if (user) {
+            try {
+                userDict = await getCaught("bugs");
+                $.getJSON('/bugs/all', function(data) {
+                    var $elem = $("#bugs-data-wrapper");
+                    $.each(data, function(k, v) {
+                        generateBugsHTML($elem, k, v, userDict);
+                    });
+                }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+                    if ($('#caught-checkbox')[0].checked) {
+                        hideCaughtCritters().then(() => classFilterManager("bugs"));
+                    }else {
+                        console.log("its not ticked")
+                        showCaughtCritters().then(() => classFilterManager("bugs"));
+                    }
+                });
+            } catch(err) {
+                console.log(err)
+            }
+        } else {
+            $.getJSON('/bugs/all', function(data) {
+                var $elem = $("#bugs-data-wrapper");
+                $.each(data, function(k, v) {
+                    generateBugsHTML($elem, k, v, userDict);
+                });
+            }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+                if ($('#caught-checkbox')[0].checked) {
+                    hideCaughtCritters().then(() => classFilterManager("bugs"));
+                }else {
+                    console.log("its not ticked")
+                    showCaughtCritters().then(() => classFilterManager("bugs"));
+                }
+            });
         }
-    });
+    })
+    
 };
 
 async function getAvaliableBugs() {
