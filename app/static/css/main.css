@@ -331,6 +331,8 @@ a {
     flex-shrink: 0;
     flex-basis: 0 0 10em;
     margin-right: 5px;
+    height: 128px;
+    width: 128px;
 }
 
 .data-text {
