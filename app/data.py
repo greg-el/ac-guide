@@ -34,7 +34,7 @@ def get_available_fish():
     for name, data in fish.items():
         months = data['months']
         hours = data['time']
-        if MONTH in months and hour in hours:
+        if MONTH in months and hour in hours: #TODO need to make these all dynamic, just getting from static time atm
                 out[name] = {'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
 
     return jsonify(out)

@@ -16,6 +16,7 @@ app.config.from_object('config.DevelopmentConfig')
 cred = credentials.Certificate({"type": "service_account",
 "private_key": os.environ['PRIVATE_KEY'].replace('\\n', '\n'),
 "client_email": os.environ['CLIENT_EMAIL'],
+"project_id": os.environ['PROJECT_ID'],
 "token_uri": "https://oauth2.googleapis.com/token"})
 ac_firebase = firebase_admin.initialize_app(cred)
 
