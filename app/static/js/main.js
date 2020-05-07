@@ -277,36 +277,23 @@ async function getAllFish() {
 };
 
 async function getFish() {
-    $.getJSON('/fish/available',
-        function(data) {
+    var date = new Date();
+    var h = date.getHours();
+    var m = date.getMonth()+1;
+    $.ajax({
+        url: '/fish/available',
+        dataType: 'json',
+        headers: {
+            hour: h,
+            month: m
+        },
+        success: function(data) {
             var $elem = $(document.getElementById("fish-data-wrapper"));
             $.each(data, function(k, v) {
                 generateFishHTML($elem, k, v);
             })
-        });
-    return false;
-};
-
-async function getUnavailableFish() {
-    $.getJSON('/fish/unavailable',
-            function(data) {
-                var $elem = $(document.getElementById("fish-collapsible-content"))
-                $.each(data, function(k, v) {
-                    generateFishHTML($elem, k, v);
-            });
-    });
-};
-
-function refreshFish() {            
-    $.getJSON('/fish/available',
-        function(data) {
-            $("#data-wrapper").empty()
-            var $elem = $(document.getElementById("fish-data-wrapper"))
-            $.each(data, function(k, v) {
-                generateFishHTML($elem, k, v);
-            });
-        });
-    return false;
+        }
+    })
 };
 
 
@@ -682,23 +669,36 @@ async function unMarkAll(tab) {
 }
 
 async function markAvailiable(tab) {
+    var date = new Date();
+    var h = date.getHours();
+    var m = date.getMonth()+1;
     var $alreadyChecked = [];
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
-    $.getJSON('/' + tab + '/available', function(data) {
-        $.each(data, function(k, v) {
-            var kLower = k.replace(/\s+/g, '').toLowerCase();
-            for (var i=0; i < $elemChildren.length; i++) {
-                if (kLower == $elemChildren[i].id) {
-                    $("#" + $elemChildren[i].id).removeClass('_all_filter');
-                    $alreadyChecked.push($elemChildren[i].id);
-                    break;
-                } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
-                    $("#" + $elemChildren[i].id).addClass('_all_filter');
+    $.ajax({
+        url: '/' + tab + '/available',
+        dataType: 'json',
+        headers: {
+            hour: h,
+            month: m
+        },
+        success: function(data) {
+            $.each(data, function(k, v) {
+                for (var i=0; i < $elemChildren.length; i++) {
+                    if (k == $elemChildren[i].id) {
+                        $("#" + $elemChildren[i].id).removeClass('_all_filter');
+                        $alreadyChecked.push($elemChildren[i].id);
+                        break;
+                    } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
+                        console.log($elemChildren[i])
+                        $("#" + $elemChildren[i].id).addClass('_all_filter');
+                    }
                 }
-            }
-        });
-    }).done(function() {classFilterManager(tab)});
+            })
+            classFilterManager(tab);
+        }
+    })
 };
+
 
 
 $(document).ready( () => {

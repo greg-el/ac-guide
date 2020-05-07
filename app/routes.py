@@ -83,23 +83,31 @@ def update_user_data():
     
 
 
-@app.route('/bugs/<string:request>')
-def bug_data(request):
-    if request == "available":
-        return get_available_bugs()
-    elif request == "unavailable":
-        return get_unavailable_bugs()
-    elif request == "all":
+@app.route('/bugs/<string:call>')
+def bug_data(call):
+    if call == "available":
+        hour = int(request.headers.get("hour"))
+        month = int(request.headers.get("month"))
+        return get_available_bugs(hour=hour, month=month)
+    elif call == "unavailable":
+        hour = int(request.headers.get("hour"))
+        month = int(request.headers.get("month"))
+        return get_unavailable_bugs(hour=hour, month=month)
+    elif call == "all":
         return get_all_bugs()
 
 
-@app.route('/fish/<string:request>')
-def fish_data(request):
-    if request == "available":
-        return get_available_fish()
-    elif request == "unavailable":
-        return get_unavailable_fish()
-    elif request == "all":
+@app.route('/fish/<string:call>')
+def fish_data(call):
+    if call == "available":
+        hour = int(request.headers.get("hour"))
+        month = int(request.headers.get("month"))
+        return get_available_fish(hour=hour, month=month)
+    elif call == "unavailable":
+        hour = int(request.headers.get("hour"))
+        month = int(request.headers.get("month"))
+        return get_unavailable_fish(hour=hour, month=month)
+    elif call == "all":
         return get_all_fish()
 
 

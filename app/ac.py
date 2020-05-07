@@ -2,7 +2,6 @@ from flask import Flask
 
 import firebase_admin
 from firebase_admin import credentials
-from psycopg2.extensions import parse_dsn
 import psycopg2.pool
 import psycopg2
 import os

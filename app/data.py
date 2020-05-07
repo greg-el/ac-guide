@@ -19,7 +19,7 @@ def get_all_fish():
     return fish
 
 
-def get_available_fish():
+def get_available_fish(hour, month):
     out = {}
     with open('data/fish.json') as f:
         fish_data = json.load(f)
@@ -34,13 +34,13 @@ def get_available_fish():
     for name, data in fish.items():
         months = data['months']
         hours = data['time']
-        if MONTH in months and hour in hours: #TODO need to make these all dynamic, just getting from static time atm
-                out[name] = {'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
+        if month in months and hour in hours: #TODO need to make these all dynamic, just getting from static time atm
+                out[name] = {'name_formatted':data['name_formatted'], 'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
 
     return jsonify(out)
 
 
-def get_unavailable_fish():
+def get_unavailable_fish(hour, month):
     out = {}
     with open('data/fish.json') as f:
         fish_data = json.load(f)
@@ -55,7 +55,7 @@ def get_unavailable_fish():
     for name, data in fish.items():
         months = data['months']
         hours = data['time']
-        if MONTH not in months or hour not in hours:
+        if month not in months or hour not in hours:
                 out[name] = {'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
 
     return jsonify(out)
@@ -74,7 +74,7 @@ def get_all_bugs():
     return bug
 
 
-def get_available_bugs():
+def get_available_bugs(hour, month):
     out = {}
     with open('data/bugs.json') as f:
         bug_data = json.load(f)
@@ -89,13 +89,13 @@ def get_available_bugs():
     for name, data in bugs.items():
         months = data['months']
         hours = data['time']
-        if MONTH in months and hour in hours:
+        if month in months and hour in hours:
             out[name] = {'price': data['price'],'location': data['location'], 'icon': data['icon']}
                 
     return jsonify(out)
 
 
-def get_unavailable_bugs():
+def get_unavailable_bugs(hour, month):
     out = {}
     with open('data/bugs.json') as f:
         bug_data = json.load(f)
@@ -110,7 +110,7 @@ def get_unavailable_bugs():
     for name, data in bugs.items():
         months = data['months']
         hours = data['time']
-        if MONTH not in months or hour not in hours:
+        if month not in months or hour not in hours:
             out[name] = {'price': data['price'],'location': data['location'], 'icon': data['icon']}
                 
     return jsonify(out)
