@@ -251,7 +251,6 @@ a {
     flex-wrap: wrap;
     justify-content: center;
     margin: auto;
-    padding: 15px 15px 15px 15px;
     border-radius: 0 0 10px 10px;
     background-color:#FBF6E3;
 }
@@ -283,6 +282,8 @@ a {
 
 .data-container {
     background-color: var(--light);
+    padding: 5px 5px 5px 5px;
+    border-radius: 0 0 10px 10px;
 }
 
 .data-grid {
@@ -304,6 +305,14 @@ a {
     padding-bottom: 5px;
 }
 
+._name_long {
+    max-width: 450px;
+}
+
+._name_short {
+    max-width: 380px;
+}
+
 .icon-text {
     display: flex;
     flex-direction: row;
@@ -311,19 +320,24 @@ a {
 }
 
 
-
-
 .critter-wrapper {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+    align-items: center;
+    justify-content: center;
     background: #F9F6E3;
     border: 1px solid #E2DFCE;
     box-sizing: border-box;
     box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
     border-radius: 4px;
     margin: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
 }
+
+
 
 
 .critter-icon {

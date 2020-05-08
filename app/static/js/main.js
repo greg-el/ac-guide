@@ -138,21 +138,29 @@ function getCritterLocationAlt(v) {
 
 
 
-function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
+async function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
+    var opacity = '100%';
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = userDict[k];
+        opacity = '40%';
     }
+    var nameLength = '_name_short'
+    if (k.length > 18) {
+        nameLength = '_name_long'
+    }
+
+    var tooltip = 'Click to mark as caught or uncaught';
+
     if (typeof v.locationAlt == "undefined") {
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+            $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'style': 'opacity: ' + opacity, 'title': tooltip}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon, 'loading':'lazy'}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
-                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox', 'checked': isChecked})
+                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append([
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -184,14 +192,13 @@ function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocatio
 
 
         element.append(
-            $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+            $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'style': 'opacity: ' + opacity, 'title': tooltip}).append([
                 $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
                 $('<div/>', {'class': 'critter-data'}).append([
                     $('<div/>', {'class': 'critter-data-wrapper'}).append([
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
-                                $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox'})
+                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
                             ),
                             $('<div/>', {'class': 'location-container icon-text'}).append(
                                 $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -223,25 +230,31 @@ async function generateFishHTML(element, k, v, userDict) {
     var finalTime = getCritterTime(v);
     var finalLocation = getCritterLocation(v);
     var finalLocationAlt = getCritterLocationAlt(v);
-    createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict);
+    createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict).then(function() {
+        classFilterManager("fish");
+    })
 
 
-    $('#'+k+'-checkbox').click(function() {
-        var thisCheckbox = this;
-        console.log(thisCheckbox)
+    $('#'+k).click(function() {
+        var $thisCritter = $(this)[0]
+        if ($($thisCritter).attr('data-checked') == 'true') {
+            updateValue = 'false'; 
+            $($thisCritter).css('opacity', '100%');
+        }
+        if ($($thisCritter).attr('data-checked') == 'false') {
+            updateValue = 'true';
+            $($thisCritter).css('opacity', '40%')
+        }
+        $($thisCritter).attr('data-checked', updateValue);
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                var updateValue = false;
-                if (thisCheckbox.checked) {
-                    updateValue = true; 
-                }
                 firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
                     $.ajax({
                         url: "/update",
                         headers: {
                             token: idToken,
                             species: "fish",
-                            critter: thisCheckbox.parentElement.parentElement.parentElement.parentElement.parentElement.id,
+                            critter: $thisCritter.id,
                             value: updateValue
                         },
                     })
@@ -335,15 +348,21 @@ function generateBugsHTML($elem, k, v, userDict) {
         isChecked = userDict[k];
     }
 
+    var nameLength = '_name_short'
+    if (k.length > 18) {
+        nameLength = '_name_long'
+    }
+
+    var tooltip = 'Click to mark as caught or uncaught';
+
     $elem.append(
-        $('<div/>', {'class': 'critter-wrapper', 'id':k}).append([
+        $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
-                            $('<input/>', {'type': 'checkbox', 'class': 'critter-checkbox', 'id': k+'-checkbox', 'checked': isChecked})
+                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
                         ),
                         $('<div/>', {'class': 'location-container icon-text'}).append([
                             $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -363,22 +382,27 @@ function generateBugsHTML($elem, k, v, userDict) {
         ])
     )
 
-    $('#'+k+'-checkbox').click(function() {
-        var thisCheckbox = this;
-        console.log(thisCheckbox)
+    $('#'+k).click(function() {
+        var $thisCritter = $(this)[0]
+        if ($($thisCritter).attr('data-checked') == 'true') {
+            updateValue = 'false';
+            $($thisCritter).css('opacity', '100%');
+        }
+        if ($($thisCritter).attr('data-checked') == 'false') {
+            updateValue = 'true';
+            $($thisCritter).css('opacity', '40%');
+
+        }
+        $($thisCritter).attr('data-checked', updateValue);
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                var updateValue = false;
-                if (thisCheckbox.checked) {
-                    updateValue = true; 
-                }
                 firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
                     $.ajax({
                         url: "/update",
                         headers: {
                             token: idToken,
                             species: "bugs",
-                            critter: thisCheckbox.parentElement.parentElement.parentElement.parentElement.parentElement.id,
+                            critter: $thisCritter.id,
                             value: updateValue
                         },
                     })
@@ -401,7 +425,7 @@ async function getAllBugs() {
                     $.each(data, function(k, v) {
                         generateBugsHTML($elem, k, v, userDict);
                     });
-                }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+                }).done(function() { //Hides/shows checked off fish on page load depending on if the global hide is checked or not
                     if ($('#caught-checkbox')[0].checked) {
                         hideCaughtCritters().then(() => classFilterManager("bugs"));
                     }else {
@@ -471,7 +495,6 @@ function generateVillagerHTML($elem, k, v) {
     if (v.gender == "m") {
         genderIcon = './static/image/icons/svg/male.svg';
     };
-    console.log(v)
     $elem.append(
         $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
             $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
@@ -757,19 +780,31 @@ FILTER CAUGHT CHECKBOX ---------------------------------------------------------
 
 
 async function showCaughtCritters() {
-    var $checkboxes = $(".critter-checkbox");
-    for (var i=0; i<$checkboxes.length; i++) {
-        if ($checkboxes[i].checked) {
-            $($checkboxes[i]).parents().eq(4).removeClass("_caught_filter");
+    var $elemChildren = $("#fish-data-wrapper").children();
+    for (var i=0; i<$elemChildren.length; i++) {
+        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
+            $('#' + $elemChildren[i].id).removeClass("_caught_filter");
+        }
+    }
+    var $elemChildren = $("#bugs-data-wrapper").children();
+    for (var i=0; i<$elemChildren.length; i++) {
+        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
+            $('#' + $elemChildren[i].id).removeClass("_caught_filter");
         }
     }
 }
 
 async function hideCaughtCritters() {
-    var $checkboxes = $(".critter-checkbox");
-    for (var i=0; i<$checkboxes.length; i++) {
-        if ($checkboxes[i].checked) {
-            $($checkboxes[i]).parents().eq(4).addClass("_caught_filter");
+    var $elemChildren = $("#fish-data-wrapper").children();
+    for (var i=0; i<$elemChildren.length; i++) {
+        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
+            $('#' + $elemChildren[i].id).addClass("_caught_filter");
+        }
+    }
+    var $elemChildren = $("#bugs-data-wrapper").children();
+    for (var i=0; i<$elemChildren.length; i++) {
+        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
+            $('#' + $elemChildren[i].id).addClass("_caught_filter");
         }
     }
 }
@@ -796,9 +831,11 @@ function classFilterManager(tab) {
         if ($elemClasses.includes("_caught_filter") ||
          $elemClasses.includes("_all_filter") ||
          $elemClasses.includes("_search_filter")) {
-            $elemChildren[i].style.display = "none";
+            //$elemChildren[i].style.display = "none";
+            $('#' + $elemChildren[i].id).fadeOut(500)
         } else {
-            $elemChildren[i].style.display = "flex";
+            $('#' + $elemChildren[i].id).fadeIn(500)
+            //$elemChildren[i].style.display = "flex";
         }
     }
 }
