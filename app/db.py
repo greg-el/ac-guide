@@ -1,13 +1,13 @@
 import psycopg2
 from psycopg2.extensions import AsIs
 import json
-from ac import mypool
+
 
 class NoSuchUidError(Exception):
     pass
 
-def add_to_db(uid):
-    conn = mypool.getconn()
+
+def add_to_db(conn, uid):
     cur = conn.cursor()
     with open("./data/prod_default.json", "r") as f:
         pocket = json.load(f)
@@ -16,21 +16,17 @@ def add_to_db(uid):
     cur.execute("INSERT INTO inventory (uid, pocket) VALUES (%s, %s)", (uid, pocket))
     cur.close()
     conn.commit()
-    mypool.putconn(conn)
 
-def update_inventory(uid, species, critter, value):
-    conn = mypool.getconn()
+
+def update_inventory(conn, uid, species, critter, value):
     cur = conn.cursor()
     cur.execute("""UPDATE inventory
     SET pocket = jsonb_set(pocket, '{%s, %s}', '%s', TRUE) 
     WHERE uid = (%s);""", (AsIs(species), AsIs(critter), AsIs(value), uid))
     conn.commit()
-    mypool.putconn(conn)
 
 
-
-def get_from_db(uid):
-    conn = mypool.getconn()
+def get_from_db(conn, uid):
     cur = conn.cursor()
     cur.execute("SELECT pocket FROM inventory WHERE uid = (%s)", (uid, ))
     data = cur.fetchone()[0]
@@ -38,13 +34,11 @@ def get_from_db(uid):
         raise NoSuchUidError
     
     cur.close()
-    mypool.putconn(conn)
     return data
 
-    
-def remove_from_db(uid):
-    conn = mypool.connect()
+
+def remove_from_db(conn, uid):
     cur = conn.cursor()
     cur.execute("DELETE FROM inventory WHERE uid = (%s)", (uid, ))
     conn.commit()
-    mypool.putconn(conn)
+    

@@ -4,7 +4,7 @@ from data import *
 from db import *
 from ac import ac_firebase
 from firebase_admin import auth
-
+from ac import mypool
 
 
 @app.route('/verify', methods=['POST', 'GET'])
@@ -29,6 +29,7 @@ def login():
 
 @app.route('/add')
 def add_user():
+    
     uid = False
     try:
         id_token = request.headers.get('token')
@@ -38,7 +39,9 @@ def add_user():
         print(e)
         return "401"
     if uid:
-        add_to_db(uid)
+        conn = mypool.getconn()
+        add_to_db(conn, uid)
+        mypool.putconn(conn)
         return "200"
 
 @app.route('/get')
@@ -53,7 +56,9 @@ def get_user_data():
         return "401"
     if uid:
         try:
-            data = get_from_db(uid)
+            conn = mypool.getconn()
+            data = get_from_db(conn, uid)
+            mypool.putconn(conn)
             return data
         except NoSuchUidError as e:
             data = {'detail': 'The UID request does not exist in the database.'}
@@ -77,8 +82,9 @@ def update_user_data():
         species = request.headers.get('species')
         critter = request.headers.get('critter')
         value = request.headers.get('value')
-        print(uid, species, critter, value)
-        update_inventory(uid, species, critter, value)
+        conn = mypool.getconn()
+        update_inventory(conn, uid, species, critter, value)
+        mypool.putconn(conn)
         return "200"
     
 
@@ -116,7 +122,6 @@ def villager_data_n():
     n = request.headers.get("n")
     day = request.headers.get("day")
     month = request.headers.get("month")
-    print(n, day, month)
     return get_n_sorted_villagers(int(month), int(day), int(n))
 
 @app.route('/villagers-sorted-after/<int:n>')
