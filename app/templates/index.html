@@ -53,6 +53,11 @@
             <div id="window-wrapper">
                 <div id="tab-bar">
                     <div id="tabs-container">
+                        <div id="chores-container" class="tab-container" style="background-color: #5CB9AD;">
+                            <a href=# id="chores-button">
+                                <object class="tab-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
+                            </a>
+                        </div>
                         <div id="fish-container" class="tab-container">
                             <a href=# id="fish-button">
                                 <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
@@ -88,6 +93,81 @@
                 </div>
                 <div class="search-wrapper">
                     <input type="text" class="search-box" id="search" placeholder="  Search...">
+                </div>
+                <div id="chores-tab" class="data-container" style="display:none;">
+                    <div id="chores-data-wrapper" class="data-wrapper">
+                        <div id="rocks-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>Rocks</span>
+                            </div>
+                            <div id="rock-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper">
+                                    <img id="rock0" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="rock1" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="rock2" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="rock3" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="rock4" src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="fossils-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>Fossils</span>
+                            </div>
+                            <div id="fossil-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper">
+                                    <img id="fossil0" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="fossil1" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="fossil2" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                </div>
+                                <div class="chore-wrapper">
+                                    <img id="fossil4" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="turnips-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>Turnips</span>
+                            </div>
+                            <div id="turnip-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper">
+                                    <img id="turnip" src="{{ url_for('static', filename = 'image/chores/acturnip.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bottles-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>DIY Recipe</span>
+                            </div>
+                            <div id="bottle-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper">
+                                    <img id="bottle" src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="crack-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>Crack</span>
+                            </div>
+                            <div id="crack-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper">
+                                    <img id="crack" src="{{ url_for('static', filename = 'image/chores/accrack.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="fish-tab" class="data-container">
                     <div id="fish-data-wrapper" class="data-wrapper"></div>

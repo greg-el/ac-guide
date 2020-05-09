@@ -59,6 +59,20 @@ function getCaught(species) {
 };
 
 /*
+CHORES FUNCTIONS -----------------------------------------------------------------
+*/
+
+$(function() {  //Fish tab click
+    $('a#chores-button').bind('click', function() {
+        setActiveTab("chores");
+        setActiveTabIcon("chores");
+        showTab("chores");
+        console.log("hi")
+    });
+    return false;
+});
+
+/*
 FISH FUNCTIONS -----------------------------------------------------------------
 */
 
@@ -71,13 +85,16 @@ $(function() {  //Fish tab click
     return false;
 });
 
-function getCritterTime(v) {
-    var finalTime = "";
-    if (v.time.length == 24) {
-        finalTime = "All day";
+function getCritterTime(v, altTime) {
+    var timeHTML = "";
+    if (v.length == 24) {
+        var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+            $('<div/>', {'class': 'data-text', 'text': "All day"})
+            ])
     } else {
-        var startTime = v.time[0];
-        var endTime = v.time[v.time.length-1];
+        var startTime = v[0];
+        var endTime = v[v.length-1];
         var startAMPM = startTime >= 12 ? "PM" : "AM";
         startTime = startTime % 12
         startTime = startTime ? startTime : 12;
@@ -86,59 +103,120 @@ function getCritterTime(v) {
         var endAMPM = endTime >= 12 ? "PM" : "AM";
         endTime = endTime % 12
         endTime = endTime ? endTime : 12;
-        finalEnd = endTime + endAMPM;
+        finalEnd = endTime+1 + endAMPM;
 
         finalTime = finalStart + "-" + finalEnd;
+
+        if (altTime == false) {
+            var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                $('<div/>', {'class': 'data-text', 'text': finalTime})
+            ])
+        } else {
+            var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                $('<div/>', {'class': 'time-container-mod'}).append([
+                    $('<div/>', {'class': 'data-text', 'text': finalTime}),
+                    $('<div/>', {'class': 'data-text', 'text': altTime})
+                ])
+            ])
+        }
+    }
+    return timeHTML
+}
+
+function getAltCritterTime(v) {
+    var finalTime = "";
+    if (v.length == 24) {
+        var finalTime = "All Day";
+    } else {
+        var startTime = v[0];
+        var endTime = v[v.length-1];
+        var startAMPM = startTime >= 12 ? "PM" : "AM";
+        startTime = startTime % 12
+        startTime = startTime ? startTime : 12;
+        finalStart = startTime + startAMPM;
+
+        var endAMPM = endTime >= 12 ? "PM" : "AM";
+        endTime = endTime % 12
+        endTime = endTime ? endTime : 12;
+        finalEnd = endTime+1 + endAMPM;
+
+        finalTime = finalStart + "-" + finalEnd;
+
     }
     return finalTime
 }
 
-function getCritterLocation(v) {
-    var finalLocation = {}
-    if (v.location.includes("(")) {
-        var locationSplit = v.location.split("(");
-        var location = locationSplit[0];
-        var locationModifier = locationSplit[1];
-        if (typeof v.locationAlt == "undefined") {
-            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
-                $('<div/>', {'class': 'data-text', 'text': location}),
-                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+function getCritterLocation(v, secondLocationExists, secondLocation) {
+    var locationHTML = {}
+    var comma = ''
+    if (secondLocationExists) {
+        if (v.includes("(")) {
+            var locationSplit = v.split("(");
+            var location = locationSplit[0];
+            var locationModifier = locationSplit[1];
+            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
+                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<div/>', {'class': 'location-container-mod'}).append([
+                    $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
+                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+                ]),
+                secondLocation
             ])
         } else {
-            finalLocation = $('<div/>', {'class': 'location-container-mod'}).append([
-                $('<div/>', {'class': 'data-text', 'text': location.trim() + ","}),
-                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+            locationHTML = $('<div/>', {'class': 'location-container'}).append([
+                $('<div/>', {'class': 'data-text', 'text': v})
             ])
         }
     } else {
-        finalLocation = $('<div/>', {'class': 'data-text', 'text': v.location});
-    }
-    return finalLocation;
-}
-
-
-
-function getCritterLocationAlt(v) {
-    var finalLocationAlt = {}
-    if (typeof v.locationAlt != "undefined") {
-        if (v.locationAlt.includes("(")) {
-            var locationAltSplit = v.locationAlt.split("(");
-            var locationAlt = locationAltSplit[0];
-            var locationAltModifier = locationAltSplit[1];
-            finalLocationAlt = $('<div/>', {'class': 'location-container-mod'}).append([
-                        $('<div/>', {'class': 'data-text', 'text': locationAlt}),
-                        $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationAltModifier})
+        if (v.includes("(")) {
+            var locationSplit = v.split("(");
+            var location = locationSplit[0];
+            var locationModifier = locationSplit[1];
+            
+            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
+                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<div/>', {'class': 'location-container-mod'}).append([
+                    $('<div/>', {'class': 'data-text', 'text': location.trim()}),
+                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+                ])
             ])
         } else {
-            finalLocationAlt = $('<div/>', {'class': 'data-text', 'text': v.locationAlt});
+            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
+                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<div/>', {'class': 'location-container'}).append(
+                    $('<div/>', {'class': 'data-text', 'text': v})
+                )
+            )
         }
     }
-    return finalLocationAlt;
+    return locationHTML;
+}
+
+function getAltCritterLocation(v) {
+    var locationHTML = {}
+    if (v.includes("(")) {
+        var locationSplit = v.split("(");
+        var location = locationSplit[0];
+        var locationModifier = locationSplit[1];
+        locationHTML = $('<div/>', {'class': 'location-container-mod'}).append([
+            $('<div/>', {'class': 'data-text', 'text': location.trim() + comma}),
+            $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+        ])
+    } else {
+        locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
+            $('<div/>', {'class': 'location-container'}).append(
+                $('<div/>', {'class': 'data-text', 'text': v})
+            )
+        )
+    }
+    return locationHTML;
 }
 
 
 
-async function createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict) {
+async function createHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
     var opacity = '100%';
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
@@ -151,88 +229,51 @@ async function createHTMLElement(element, k, v, finalTime, finalLocation, finalL
     }
 
     var tooltip = 'Click to mark as caught or uncaught';
-
-    if (typeof v.locationAlt == "undefined") {
-        element.append(
-            $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'style': 'opacity: ' + opacity, 'title': tooltip}).append([
-                $('<img/>', {'class': 'critter-icon', 'src':v.icon, 'loading':'lazy'}),
-                $('<div/>', {'class': 'critter-data'}).append([
-                    $('<div/>', {'class': 'critter-data-wrapper'}).append([
-                        $('<div/>', {'class': 'data-grid'}).append([
-                            $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                            ),
-                            $('<div/>', {'class': 'location-container icon-text'}).append([
-                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
-                                finalLocation
-                                ]),
-                            $('<div/>', {'class': 'bell-container icon-text'}).append([
-                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': v.price})
-                                ]),
-                            $('<div/>', {'class': 'time-container icon-text'}).append([
-                                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': finalTime})
-                                ]),
-                            $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                            ])
+    element.append(
+        $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title': tooltip, css: {'opacity': opacity}}).append([
+            $('<img/>', {'class': 'critter-icon', 'src':v.icon, 'loading':'lazy'}),
+            $('<div/>', {'class': 'critter-data'}).append([
+                $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                    $('<div/>', {'class': 'data-grid'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
+                        ),
+                        locationHTML,
+                        $('<div/>', {'class': 'bell-container icon-text'}).append([
+                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.price})
+                            ]),
+                        timeHTML,
+                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
                         ])
                     ])
                 ])
             ])
-        )
-    } else {
-        var locationHTML = [finalLocation, finalLocationAlt];
-
-        if (v.location.includes("(")) {
-            locationHTML = [finalLocation, finalLocationAlt];
-        } 
-
-
-        element.append(
-            $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'style': 'opacity: ' + opacity, 'title': tooltip}).append([
-                $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
-                $('<div/>', {'class': 'critter-data'}).append([
-                    $('<div/>', {'class': 'critter-data-wrapper'}).append([
-                        $('<div/>', {'class': 'data-grid'}).append([
-                            $('<div/>', {'class': 'name-container critter-name'}).append(
-                                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                            ),
-                            $('<div/>', {'class': 'location-container icon-text'}).append(
-                                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
-                                locationHTML[0],
-                                locationHTML[1]
-                            ),
-                            $('<div/>', {'class': 'bell-container icon-text'}).append([
-                                $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': v.price})
-                                ]),
-                            $('<div/>', {'class': 'time-container icon-text'}).append([
-                                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': finalTime})
-                                ]),
-                            $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                                $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
-                                $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                            ])
-                        ])
-                    ])
-                ])
-            ])
-        )
-    }
+        ])
+    )
 }
 
 async function generateFishHTML(element, k, v, userDict) {
+    
+    if (v.hasOwnProperty('timeAlt')) {
+        altTime = getAltCritterTime(v.timeAlt);
+        var timeHTML = getCritterTime(v.time, altTime);
+    } else {
+        altTime = false;
+        var timeHTML = getCritterTime(v.time, altTime);
+    }
 
-    var finalTime = getCritterTime(v);
-    var finalLocation = getCritterLocation(v);
-    var finalLocationAlt = getCritterLocationAlt(v);
-    createHTMLElement(element, k, v, finalTime, finalLocation, finalLocationAlt, userDict).then(function() {
-        classFilterManager("fish");
-    })
+    
+    if (v.hasOwnProperty('locationAlt')) {
+        var altLocationHTML = getAltCritterLocation(v.locationAlt)
+        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
+    } else {
+        var locationHTML = getCritterLocation(v.location, false);
+    }
+    
+    createHTMLElement(element, k, v, timeHTML, locationHTML, userDict);
 
 
     $('#'+k).click(function() {
@@ -275,14 +316,17 @@ async function getAllFish() {
                 $.getJSON('/fish/all', function(data) {
                     var $elem = $(document.getElementById("fish-data-wrapper"));
                     $.each(data, function(k, v) {
-                        generateFishHTML($elem, k, v, userDict);
+                        generateFishHTML($elem, k, v, userDict)
                     })
                 }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
                     if ($('#caught-checkbox')[0].checked) {
-                        hideCaughtCritters().then(() => classFilterManager("fish"));
+                        hideCaughtCritters()
                     }else {
                         console.log("its not ticked")
-                        showCaughtCritters().then(() => classFilterManager("fish"));
+                        showCaughtCritters()
+                    }
+                    if ($('#caught-checkbox')[0].checked) {
+                        markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
                     }
                 })
             } catch(err) {
@@ -328,7 +372,7 @@ async function getFish() {
 
 
 /*
-bugs FUNCTIONS -----------------------------------------------------------------
+BUGS FUNCTIONS -----------------------------------------------------------------
 */
 
 $(function() { //bugs tab click
@@ -340,8 +384,21 @@ $(function() { //bugs tab click
 });
 
 function generateBugsHTML($elem, k, v, userDict) {
-    var finalTime = getCritterTime(v);
-    var finalLocation = getCritterLocation(v);
+    if (v.hasOwnProperty('timeAlt')) {
+        altTime = getAltCritterTime(v.timeAlt);
+        var timeHTML = getCritterTime(v.time, altTime);
+    } else {
+        altTime = false;
+        var timeHTML = getCritterTime(v.time, altTime);
+    }
+
+    if (v.hasOwnProperty('locationAlt')) {
+        var altLocationHTML = getAltCritterLocation(v.locationAlt)
+        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
+    } else {
+        var locationHTML = getCritterLocation(v.location, false);
+    }
+    
 
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
@@ -364,18 +421,12 @@ function generateBugsHTML($elem, k, v, userDict) {
                         $('<div/>', {'class': 'name-container critter-name'}).append(
                             $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
                         ),
-                        $('<div/>', {'class': 'location-container icon-text'}).append([
-                            $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
-                            finalLocation
-                            ]),
+                        locationHTML,
                         $('<div/>', {'class': 'bell-container icon-text'}).append([
                             $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
                             $('<div/>', {'class': 'data-text', 'text': v.price})
                             ]),
-                        $('<div/>', {'class': 'time-container icon-text'}).append([
-                            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-                            $('<div/>', {'class': 'data-text', 'text': finalTime})
-                            ])
+                        timeHTML
                     ])
                 ])
             ])
@@ -628,18 +679,26 @@ TAB VIEW FUNCTIONS -------------------------------------------------------------
 */
 
 function showTab(tab) {
-    if (tab == "fish") {  
+    if (tab == "fish") {
+        $('#chores-tab').css('display', 'none');
         $('#fish-tab').css('display', 'flex');
         $('#bugs-tab').css('display', 'none');
         $('#villagers-tab').css('display', 'none');
     } else if (tab == "bugs") {
+        $('#chores-tab').css('display', 'none');
         $('#fish-tab').css('display', 'none');
         $('#bugs-tab').css('display', 'flex');
         $('#villagers-tab').css('display', 'none');
     } else if (tab == "villagers") {
+        $('#chores-tab').css('display', 'none');
         $('#fish-tab').css('display', 'none');
         $('#bugs-tab').css('display', 'none');
         $('#villagers-tab').css('display', 'flex');
+    } else if (tab == "chores") {
+        $('#chores-tab').css('display', 'flex');
+        $('#fish-tab').css('display', 'none');
+        $('#bugs-tab').css('display', 'none');
+        $('#villagers-tab').css('display', 'none');
     } else {
         console.log("Error showing tab")
     }
@@ -652,20 +711,25 @@ TAB ICON FUNCTIONS -------------------------------------------------------------
 
 function setActiveTabIcon(tab) {
     if (tab == "fish") {
-        console.log("fish")
+        makeTabIconInactive("chores");
         makeTabIconActive("fish");
         makeTabIconInactive("bugs");
         makeTabIconInactive("villagers");
     } else if (tab == "bugs") {
-        console.log("bugs")
-        makeTabIconActive("bugs");
+        makeTabIconInactive("chores");
         makeTabIconInactive("fish");
+        makeTabIconActive("bugs");
         makeTabIconInactive("villagers");
     } else if (tab == "villagers") {
-        console.log("villagers")
-        makeTabIconActive("villagers");
+        makeTabIconInactive("chores");
         makeTabIconInactive("bugs");
         makeTabIconInactive("fish");
+        makeTabIconActive("villagers");
+    } else if (tab == "chores") {
+        makeTabIconActive("chores");
+        makeTabIconInactive("bugs");
+        makeTabIconInactive("fish");
+        makeTabIconInactive("villagers");
     } else {
         console.log("Error setting tab icon")
     }
@@ -720,7 +784,7 @@ async function markAll(tab) {
     }
 }
 
-async function unMarkAll(tab) {
+async function unmarkAll(tab) {
     var $elemChildren = $("#" + tab + "-data-wrapper").children();
     for (var i=0; i < $elemChildren.length; i++) {
         $("#" + $elemChildren[i].id).removeClass('_all_filter');
@@ -748,7 +812,6 @@ async function markAvailiable(tab) {
                         $alreadyChecked.push($elemChildren[i].id);
                         break;
                     } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
-                        console.log($elemChildren[i])
                         $("#" + $elemChildren[i].id).addClass('_all_filter');
                     }
                 }
@@ -766,10 +829,10 @@ $(document).ready( () => {
             $('#caught-checkbox').prop('checked', false);
         }
         if (this.checked) {
-            markAvailiable(getActiveTab());
+            markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
         } else {
-            unMarkAll(getActiveTab()).then(() => classFilterManager(getActiveTab()))
-        };
+            unmarkAll("fish").then(() => unmarkAll("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+        }
     });
 });
 

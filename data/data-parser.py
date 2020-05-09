@@ -40,6 +40,8 @@ def get_fish_data(url, out):
                 periods = time.split("&")
                 regex = re.compile("(\d)(\w\w)-(\d)(\w\w)")
                 time_list = []
+                time_list_alt = []
+                first = True
                 for item in periods:
                     span = regex.match(item)
                     start = int(span.group(1))
@@ -50,13 +52,23 @@ def get_fish_data(url, out):
                     if span.group(4) == "PM":
                         end = int(span.group(3)) + 12
 
-                    if start > end:
-                        time_list = time_list + [x for x in range(start, 24)]
-                        time_list = time_list + [x for x in range(0, end)]
-                    else:
-                        time_list = time_list + [x for x in range(start, end)]
+                    if first == True:
+                        if start > end:
+                            time_list = time_list + [x for x in range(start, 24)]
+                            time_list = time_list + [x for x in range(0, end)]
+                        else:
+                            time_list = time_list + [x for x in range(start, end)]
 
-                temp_dict['time'] = time_list
+                        first = False
+                        temp_dict['time'] = time_list
+                    else :
+                        if start > end:
+                            time_list_alt = time_list_alt + [x for x in range(start, 24)]
+                            time_list_alt = time_list_alt + [x for x in range(0, end)]
+                        else:
+                            time_list_alt = time_list_alt + [x for x in range(start, end)]
+
+                        temp_dict['timeAlt'] = time_list_alt
             else:
                 time = re.sub(" ", "", td[5].text)
                 regex = re.compile("(\d)(\w\w)-(\d)(\w\w)")
@@ -75,6 +87,7 @@ def get_fish_data(url, out):
                     time_list = time_list + [x for x in range(0, end)]
                 else:
                     time_list = time_list + [x for x in range(start, end)]
+
 
                 temp_dict['time'] = time_list
 
