@@ -93,6 +93,14 @@
                 </div>
                 <div class="search-wrapper">
                     <input type="text" class="search-box" id="search" placeholder="  Search...">
+                    <div id="chores-timer-wrapper">
+                        <div id="chores-title" class="timer-title">Daily Chores:</div>
+                        <div id="chores-time" class="timer-time"></div>
+                    </div>
+                    <div id="turnip-timer-wrapper">
+                        <div id="turnip-title" class="timer-title">New Turnip Price:</div>
+                        <div id="turnip-time" class="timer-time"></div>
+                    </div>
                 </div>
                 <div id="chores-tab" class="data-container" style="display:none;">
                     <div id="chores-data-wrapper" class="data-wrapper">
@@ -101,69 +109,90 @@
                                 <span>Rocks</span>
                             </div>
                             <div id="rock-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper">
-                                    <img id="rock0" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                <div class="chore-wrapper" id="rock0" data-checked="false">
+                                    <embed id="rock0-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" >
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="rock1" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                <div class="chore-wrapper" id="rock1" data-checked="false">
+                                    <embed id="rock1-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="rock2" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                <div class="chore-wrapper" id="rock2" data-checked="false">
+                                    <embed id="rock2-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="rock3" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}">
+                                <div class="chore-wrapper" id="rock3" data-checked="false">
+                                    <embed id="rock3-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="rock4" src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}">
+                                <div class="chore-wrapper" id="money-rock" data-checked="false">
+                                    <embed id="money-rock-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}" data-checked="false">
                                 </div>
                             </div>
                         </div>
                         <div id="fossils-wrapper" class="chores-container">
                             <div class="title-wrapper">
                                 <span>Fossils</span>
+                                <div id="fossil-timer" class="timer"></div>
                             </div>
                             <div id="fossil-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper">
-                                    <img id="fossil0" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                <div class="chore-wrapper" id="fossil0" data-checked="false">
+                                    <embed id="fossil0-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img  src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}" >
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="fossil1" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                <div class="chore-wrapper" id="fossil1" data-checked="false">
+                                    <embed id="fossil1-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="fossil2" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                                <div class="chore-wrapper" id="fossil2" data-checked="false">
+                                    <embed id="fossil2-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
                                 </div>
-                                <div class="chore-wrapper">
-                                    <img id="fossil4" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="turnips-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>Turnips</span>
-                            </div>
-                            <div id="turnip-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper">
-                                    <img id="turnip" src="{{ url_for('static', filename = 'image/chores/acturnip.png') }}">
+                                <div class="chore-wrapper" id="fossil3" data-checked="false">
+                                    <embed id="fossil3-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
                                 </div>
                             </div>
                         </div>
                         <div id="bottles-wrapper" class="chores-container">
                             <div class="title-wrapper">
                                 <span>DIY Recipe</span>
+                                <div id="bottle-timer" class="timer"></div>
                             </div>
                             <div id="bottle-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper">
-                                    <img id="bottle" src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}">
+                                <div class="chore-wrapper" id="bottle" data-checked="false">
+                                    <embed id="bottle-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}">
                                 </div>
                             </div>
                         </div>
+                        
                         <div id="crack-wrapper" class="chores-container">
                             <div class="title-wrapper">
-                                <span>Crack</span>
+                                <span>Glow</span>
+                                <div id="crack-timer" class="timer"></div>
                             </div>
                             <div id="crack-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper">
-                                    <img id="crack" src="{{ url_for('static', filename = 'image/chores/accrack.png') }}">
+                                <div class="chore-wrapper" id="crack" data-checked="false">
+                                    <embed id="crack-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/accrack.png') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="turnips-wrapper" class="chores-container">
+                            <div class="title-wrapper">
+                                <span>Turnip Price</span>
+                                <div id="turnip-timer" class="timer"></div>
+                            </div>
+                            <div id="turnip-wrapper" class="chores-wrapper">
+                                <div class="chore-wrapper" id="turnip-am" data-checked="false">
+                                    <embed id="turnip-am-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/AMturnip.png') }}">
+                                </div>
+                                <div class="chore-wrapper" id="turnip-pm" data-checked="false">
+                                    <embed id="turnip-pm-tick" class="tick" src="{{ url_for('static', filename = 'image/chores/tick.svg') }}" style="display: none;">
+                                    <img src="{{ url_for('static', filename = 'image/chores/PMturnip.png') }}">
                                 </div>
                             </div>
                         </div>

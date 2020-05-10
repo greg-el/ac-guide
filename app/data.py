@@ -7,7 +7,6 @@ from operator import itemgetter
 #GET DATA
 
 def get_all_fish():
-    out = {}
     with open('data/fish.json') as f:
         fish_data = json.load(f)
 

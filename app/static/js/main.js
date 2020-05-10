@@ -1,6 +1,7 @@
 ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
+CURRENT_TIME = new Date();
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -26,7 +27,27 @@ $(document).ready(function() {
             console.log(error.message)
         })
     })
-})
+});
+
+function updateJSON(updateSpecies, updateCritter, updateValue) {
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+                $.ajax({
+                    url: "/update",
+                    headers: {
+                        token: idToken,
+                        species: updateSpecies,
+                        critter: updateCritter,
+                        value: updateValue
+                    },
+                })
+            })
+        } else {
+          console.log("No one signed in")
+        }
+    });
+}
 
 function getCaught(species) {
     return new Promise(function(resolve, reject) {
@@ -44,6 +65,8 @@ function getCaught(species) {
                                 resolve(data.fish);
                             } else if (species == "bugs") {
                                 resolve(data.bugs)
+                            } else if (species == "chores") {
+                                resolve(data.chores)
                             }
                         },
                         error: function(data) {
@@ -62,15 +85,106 @@ function getCaught(species) {
 CHORES FUNCTIONS -----------------------------------------------------------------
 */
 
-$(function() {  //Fish tab click
-    $('a#chores-button').bind('click', function() {
+$(function() {  //Chores tab click
+    $('a#chores-button').bind('click', async function() {
         setActiveTab("chores");
         setActiveTabIcon("chores");
         showTab("chores");
-        console.log("hi")
+        $('#search').css('display', 'none');
+        $('.search-wrapper').css('justify-content', 'center');
+        var data = await getCaught("chores");
+        $.each(data, function(k, v) {
+            if (v == true) {
+                $('#'+k).addClass('_chore_ticked');
+                $('#'+k+'-tick').css('display', 'flex');
+                $('#'+k+'-tick').css('display', 'flex');
+            }
+        })
     });
-    return false;
+
+    function toggleChore(thisButton) {
+        if (thisButton.attr('data-checked') == "false") {
+            thisButton.addClass("_chore_ticked");
+            thisButton.attr("data-checked", 'true');
+            updateJSON("chores", thisButton[0].id, true);
+            $('#'+thisButton[0].id+'-tick').css('display', 'flex');
+        } else {
+            thisButton.removeClass("_chore_ticked");
+            thisButton.attr("data-checked", 'false');
+            updateJSON("chores", thisButton[0].id, false);
+            $('#'+thisButton[0].id+'-tick').css('display', 'none');
+        }
+    }
+    
+    for (var i=0; i<4; i++) {
+        $('#rock' + i).click(function() {
+            toggleChore($(this))
+        })
+        $('#fossil' + i).click(function() {
+            toggleChore($(this))
+        })
+    }
+    $('#money-rock').click(function() {
+        toggleChore($(this));
+    })
+    $('#bottle').click(function() {
+        toggleChore($(this));
+    })
+    $('#crack').click(function() {
+        toggleChore($(this));
+    })
+    $('#turnip-am').click(function() {
+        toggleChore($(this));
+    })
+    $('#turnip-pm').click(function() {
+        toggleChore($(this));
+    })
+    
 });
+
+
+
+function minutesUntilMidnight() {
+    var midnight = new Date();
+    midnight.setHours(24);
+    midnight.setMinutes(0);
+    midnight.setSeconds(0);
+    midnight.setMilliseconds(0);
+    return (midnight.getTime() - new Date().getTime()) /1000/60;
+}
+
+function minutesUntilMidday() {
+    var midday = new Date();
+    midday.setHours(12);
+    midday.setMinutes(0);
+    midday.setSeconds(0);
+    midday.setMilliseconds(0);
+    return (midday.getTime() - new Date().getTime()) /1000/60;
+}
+
+function formattedTime(time) {
+    var hours = Math.floor(time / 60)
+    var mins = Math.ceil(time % 60);
+    var hourText = (hours == 1) ? " Hour" : " Hours";
+    var minuteText = (mins == 1) ? " Minute" : " Minutes";
+    return (hours + hourText + " " + mins + minuteText)
+}
+
+choresTimers();
+setInterval(choresTimers, 1000);
+
+var now = new Date();
+var delay = 60 * 60 * 1000; // 1 hour
+var start = delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
+
+function choresTimers() {
+    var midnight = minutesUntilMidnight();
+    var midday = minutesUntilMidday();
+    var eightHours = 60 * 8;
+    var turnipTime = (midday < 0) ? formattedTime(midnight + eightHours) : formattedTime(midday)
+    $('#chores-time').text(formattedTime(midnight));
+    $('#turnip-time').text(turnipTime)
+};
 
 /*
 FISH FUNCTIONS -----------------------------------------------------------------
@@ -81,6 +195,8 @@ $(function() {  //Fish tab click
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
     });
     return false;
 });
@@ -379,7 +495,9 @@ $(function() { //bugs tab click
     $('a#bugs-button, #bug-icon').click(function() {
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
-        showTab("bugs")
+        showTab("bugs");
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
     });
 });
 
@@ -537,6 +655,9 @@ $(function() { //Birthdays tab click
         setActiveTab("villagers");
         setActiveTabIcon("villagers");
         showTab("villagers");
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
+        $('#chores-timer-wrapper').css('display', 'none');
     });
     return false;
 });
@@ -968,6 +1089,7 @@ function datetime() {
         CURRENT_HOUR = hours;
     }
     var t = setTimeout(datetime, 1000);
+    CURRENT_TIME = d;
 
     if (dayElem.data === "") {
         dayElem.data = "./static/image/icons/days/" + dayIcons[d.getDay()] + ".svg"
