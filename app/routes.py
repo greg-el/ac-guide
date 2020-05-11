@@ -56,8 +56,9 @@ def get_user_data():
         return "401"
     if uid:
         try:
+            requested_data = request.headers.get('species')
             conn = mypool.getconn()
-            data = get_from_db(conn, uid)
+            data = get_from_db(conn, uid, requested_data)
             mypool.putconn(conn)
             return data
         except NoSuchUidError as e:

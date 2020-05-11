@@ -26,9 +26,10 @@ def update_inventory(conn, uid, species, critter, value):
     conn.commit()
 
 
-def get_from_db(conn, uid):
+def get_from_db(conn, uid, requested_data):
+    print(requested_data)
     cur = conn.cursor()
-    cur.execute("SELECT pocket FROM inventory WHERE uid = (%s)", (uid, ))
+    cur.execute("SELECT pocket->>(%s) FROM inventory WHERE uid = (%s)", (requested_data, uid))
     data = cur.fetchone()[0]
     if data == None:
         raise NoSuchUidError

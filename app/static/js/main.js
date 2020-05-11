@@ -49,7 +49,7 @@ function updateJSON(updateSpecies, updateCritter, updateValue) {
     });
 }
 
-function getCaught(species) {
+function getCaught(speciesType) {
     return new Promise(function(resolve, reject) {
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
@@ -58,16 +58,10 @@ function getCaught(species) {
                         url: "/get",
                         headers: {
                             token: idToken,
+                            species: speciesType
                         },
                         success: function(data) {
-                            console.log("got data");
-                            if (species == "fish") {
-                                resolve(data.fish);
-                            } else if (species == "bugs") {
-                                resolve(data.bugs)
-                            } else if (species == "chores") {
-                                resolve(data.chores)
-                            }
+                            resolve(JSON.parse(data));
                         },
                         error: function(data) {
                             reject(new Error("UID not in database"))
@@ -87,11 +81,15 @@ CHORES FUNCTIONS ---------------------------------------------------------------
 
 $(function() {  //Chores tab click
     $('a#chores-button').bind('click', async function() {
+        choresTimers();
+        setInterval(choresTimers, 1000);
         setActiveTab("chores");
         setActiveTabIcon("chores");
         showTab("chores");
         $('#search').css('display', 'none');
         $('.search-wrapper').css('justify-content', 'center');
+        $('#chores-timer-wrapper').css('display', 'flex');
+        $('#turnip-timer-wrapper').css('display', 'flex');
         var data = await getCaught("chores");
         $.each(data, function(k, v) {
             if (v == true) {
@@ -170,13 +168,6 @@ function formattedTime(time) {
     return (hours + hourText + " " + mins + minuteText)
 }
 
-choresTimers();
-setInterval(choresTimers, 1000);
-
-var now = new Date();
-var delay = 60 * 60 * 1000; // 1 hour
-var start = delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds();
-
 function choresTimers() {
     var midnight = minutesUntilMidnight();
     var midday = minutesUntilMidday();
@@ -192,6 +183,10 @@ FISH FUNCTIONS -----------------------------------------------------------------
 
 $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
+        $('#chores-timer-wrapper').css('display', 'none');
+        $('#turnip-timer-wrapper').css('display', 'none');
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
@@ -345,9 +340,10 @@ async function createHTMLElement(element, k, v, timeHTML, locationHTML, userDict
     }
 
     var tooltip = 'Click to mark as caught or uncaught';
+
     element.append(
         $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title': tooltip, css: {'opacity': opacity}}).append([
-            $('<img/>', {'class': 'critter-icon', 'src':v.icon, 'loading':'lazy'}),
+            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
@@ -493,6 +489,13 @@ BUGS FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //bugs tab click
     $('a#bugs-button, #bug-icon').click(function() {
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
+        $('#chores-timer-wrapper').css('display', 'none');
+        $('#turnip-timer-wrapper').css('display', 'none');
+        if ($('#bugs-data-wrapper').children().length === 0) {
+            getAllBugs();
+        }
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
         showTab("bugs");
@@ -532,7 +535,7 @@ function generateBugsHTML($elem, k, v, userDict) {
 
     $elem.append(
         $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
@@ -652,6 +655,13 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click 
     $('a#villagers-button').bind('click', function() {
+        $('#search').css('display', 'flex');
+        $('.search-wrapper').css('justify-content', 'flex-start');
+        $('#chores-timer-wrapper').css('display', 'none');
+        $('#turnip-timer-wrapper').css('display', 'none');
+        if ($('#villagers-data-wrapper').children().length === 0) {
+            getVillagers();
+        }
         setActiveTab("villagers");
         setActiveTabIcon("villagers");
         showTab("villagers");
@@ -669,7 +679,7 @@ function generateVillagerHTML($elem, k, v) {
     };
     $elem.append(
         $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
-            $('<img/>', {'class': 'critter-icon', 'src':v.icon}),
+            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
                     $('<div/>', {'class': 'data-grid'}).append([
@@ -1125,7 +1135,5 @@ $(function() {
     hemisphereCookieHandler();
     datetime();
     getAllFish();
-    getAllBugs();
-    getVillagers();
     showTab("fish");
 });

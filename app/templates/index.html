@@ -23,10 +23,7 @@
           </script>
         
 
-        <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.4.1.js') }}"></script>
-        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
@@ -93,11 +90,11 @@
                 </div>
                 <div class="search-wrapper">
                     <input type="text" class="search-box" id="search" placeholder="  Search...">
-                    <div id="chores-timer-wrapper">
+                    <div id="chores-timer-wrapper" style="display: none">
                         <div id="chores-title" class="timer-title">Daily Chores:</div>
                         <div id="chores-time" class="timer-time"></div>
                     </div>
-                    <div id="turnip-timer-wrapper">
+                    <div id="turnip-timer-wrapper" style="display: none">
                         <div id="turnip-title" class="timer-title">New Turnip Price:</div>
                         <div id="turnip-time" class="timer-time"></div>
                     </div>
