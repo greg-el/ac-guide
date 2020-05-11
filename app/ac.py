@@ -19,7 +19,7 @@ cred = credentials.Certificate({"type": "service_account",
 "token_uri": "https://oauth2.googleapis.com/token"})
 ac_firebase = firebase_admin.initialize_app(cred)
 
-sslmode = 'disable' if '127.0.0.1' in os.environ['DATABASE_URL'] else 'required'
+sslmode = 'disable' if '127.0.0.1' in os.environ['DATABASE_URL'] else 'require'
 mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, os.environ['DATABASE_URL'], sslmode=sslmode)
 
 import routes
