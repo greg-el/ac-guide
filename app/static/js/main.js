@@ -318,22 +318,18 @@ function getAltCritterLocation(v) {
 
 
 
-async function createHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
+async function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
     var opacity = '100%';
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = userDict[k];
         opacity = '40%';
     }
-    var nameLength = '_name_short'
-    if (k.length > 18) {
-        nameLength = '_name_long'
-    }
 
     var tooltip = 'Click to mark as caught or uncaught';
 
     element.append(
-        $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title': tooltip, css: {'opacity': opacity}}).append([
+        $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'data-checked': isChecked, 'title': tooltip, css: {'opacity': opacity}}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
@@ -376,7 +372,7 @@ async function generateFishHTML(element, k, v, userDict) {
         var locationHTML = getCritterLocation(v.location, false);
     }
     
-    createHTMLElement(element, k, v, timeHTML, locationHTML, userDict);
+    createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict);
 
 
     $('#'+k).click(function() {
@@ -496,17 +492,10 @@ function generateBugsHTML($elem, k, v, userDict) {
         opacity = '40%';
     }
 
-    console.log
-
-    var nameLength = '_name_short'
-    if (k.length > 18) {
-        nameLength = '_name_long'
-    }
-
     var tooltip = 'Click to mark as caught or uncaught';
 
     $elem.append(
-        $('<div/>', {'class': 'critter-wrapper ' + nameLength, 'id':k, 'data-checked': isChecked, 'title':tooltip, 'css': {'opacity': opacity}}).append([
+        $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'data-checked': isChecked, 'title':tooltip, 'css': {'opacity': opacity}}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'critter-data-wrapper'}).append([
