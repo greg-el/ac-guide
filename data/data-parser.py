@@ -114,11 +114,36 @@ def get_bug_data(url, out):
     for item in test:
         temp_dict = {}
         td = item.find_all("td")
-
-        temp_dict['name_formatted'] = td[0].text.strip()
+        name_formatted = ' '.join(word[0].upper() + word[1:] for word in td[0].text.split())
+        temp_dict['name_formatted'] = name_formatted.strip()
         name = re.sub("[\'\s-]", '', td[0].text.strip()).lower()
         temp_dict['price'] = td[2].text.strip()
-        temp_dict['location'] = td[3].text.strip()
+        location = td[3].text.strip()
+        location = ' '.join(word[0].upper() + word[1:] for word in location.split())
+
+        if "(r" in location:
+            location = location.replace("(r", "(R")
+
+        if "By" in location:
+            loc_split = location.split("By")
+            location = f"{loc_split[0].strip()} ({loc_split[1].strip()})"
+
+        if "On The " in location:
+            location = location.replace("On The ", "")
+
+        if "On " in location:
+            location = location.replace("On ", "")
+
+        if "Disguised" in location:
+            loc_split = location.split("Disguised")
+            location = f"{loc_split[0].strip()} (Disguised {loc_split[1].strip()})"
+
+        if "And" in location:
+            loc_split = location.split(" And ")
+            location = loc_split[0].strip()
+            temp_dict['locationAlt'] = loc_split[1].strip() #TODO fix this
+
+        temp_dict['location'] = location
 
         if td[4].text.strip() == "All day":
             temp_dict['time'] = [i for i in range(24)]
@@ -287,4 +312,4 @@ def run_villager():
         json.dump(villagers, f)
 
 
-run_fish()
+run_bugs()

@@ -4,6 +4,7 @@ CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 CURRENT_TIME = new Date();
 var gotBugs = false;
 var gotVillagers = false;
+var prevTab = "fish"
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -79,6 +80,9 @@ CHORES FUNCTIONS ---------------------------------------------------------------
 
 $(function() {  //Chores tab click
     $('a#chores-button').bind('click', async function() {
+        hidePrevTab();
+        setPrevTabIconInactive();
+        prevTab = "chores";
         choresTimers();
         setInterval(choresTimers, 1000);
         setActiveTab("chores");
@@ -180,15 +184,18 @@ FISH FUNCTIONS -----------------------------------------------------------------
 
 $(function() {  //Fish tab click
     $('a#fish-button').bind('click', function() {
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
-        $('#chores-timer-wrapper').css('display', 'none');
-        $('#turnip-timer-wrapper').css('display', 'none');
+        if (prevTab == "chores") {
+            $('#search').css('display', 'flex');
+            $('.search-wrapper').css('justify-content', 'flex-start');
+            $('#chores-timer-wrapper').css('display', 'none');
+            $('#turnip-timer-wrapper').css('display', 'none');
+        }
+        hidePrevTab();
+        setPrevTabIconInactive();
+        prevTab = "fish"
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
     });
     return false;
 });
@@ -376,18 +383,18 @@ function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) 
 
 function addCaughtToggle(k, tab) {
     $('#'+k).click(function() {
-         var $thisCritter = $(this)[0]
-        if ($($thisCritter).attr('data-checked') == 'true') {
+        var $thisCritter = $(this)
+        if ($thisCritter.attr('data-checked') == 'true') {
             updateValue = 'false'; 
-            $($thisCritter).removeClass("critter-wrapper-checked")
-            $($thisCritter).addClass("critter-wrapper")
+            $thisCritter.removeClass("critter-wrapper-checked")
+            $thisCritter.addClass("critter-wrapper")
         }
-        if ($($thisCritter).attr('data-checked') == 'false') {
+        if ($thisCritter.attr('data-checked') == 'false') {
             updateValue = 'true';
-            $($thisCritter).addClass("critter-wrapper-checked")
-            $($thisCritter).removeClass("critter-wrapper")
+            $thisCritter.addClass("critter-wrapper-checked")
+            $thisCritter.removeClass("critter-wrapper")
         }
-        $($thisCritter).attr('data-checked', updateValue);
+        $thisCritter.attr('data-checked', updateValue);
         var idToken = getCookie("user");
         if (idToken != "") {
             $.ajax({
@@ -418,11 +425,11 @@ async function getAllFish() {
         $.each(data, function(k, v) {
             $elementsToAppend.push(createFishHTMLElement($elem, k, v, userDict));
         });
-        console.log($elementsToAppend)
         $elem.append($elementsToAppend);
         $.each(data, function(k, v) {
             addCaughtToggle(k, "fish");
         });
+        $('.wrapper-skeleton').remove();
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
         if ($('#caught-checkbox')[0].checked) {
             hideCaughtCritters()
@@ -432,7 +439,7 @@ async function getAllFish() {
         if ($('#caught-checkbox')[0].checked) {
             markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
         }
-        $('.wrapper-skeleton').remove();
+        
     })
 };
 
@@ -463,17 +470,24 @@ BUGS FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //bugs tab click
     $('a#bugs-button, #bug-icon').click(function() {
-        createSkeletonHTML("bugs");
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
-        $('#chores-timer-wrapper').css('display', 'none');
-        $('#turnip-timer-wrapper').css('display', 'none');
+        if (prevTab == "chores") {
+            $('#search').css('display', 'flex');
+            $('.search-wrapper').css('justify-content', 'flex-start');
+            $('#chores-timer-wrapper').css('display', 'none');
+            $('#turnip-timer-wrapper').css('display', 'none');
+        }
+        hidePrevTab();
+        setPrevTabIconInactive();
+        prevTab = "bugs"
+        showTab("bugs");
+        setActiveTab("bugs");
+        setActiveTabIcon("bugs");
+        if (!gotBugs) {
+            createSkeletonHTML("bugs");
+        }
         if (!gotBugs) {
             getAllBugs();
         }
-        setActiveTab("bugs");
-        setActiveTabIcon("bugs");
-        showTab("bugs");
         $('#search').css('display', 'flex');
         $('.search-wrapper').css('justify-content', 'flex-start');
     });
@@ -544,7 +558,7 @@ async function getAllBugs() {
         $.each(data, function(k, v) {
             addCaughtToggle(k, "bugs");
         });
-        
+        $('.wrapper-skeleton').remove();
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
         
         if ($('#caught-checkbox')[0].checked) {
@@ -552,7 +566,6 @@ async function getAllBugs() {
         } else {
             showCaughtCritters().then(() => classFilterManager("bugs"));
         }
-        $('.wrapper-skeleton').remove();
         gotBugs = true;
     })
 };
@@ -585,17 +598,25 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click 
     $('a#villagers-button').bind('click', function() {
-        createSkeletonHTML("villagers")
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
-        $('#chores-timer-wrapper').css('display', 'none');
-        $('#turnip-timer-wrapper').css('display', 'none');
+        if (prevTab == "chores") {
+            $('#search').css('display', 'flex');
+            $('.search-wrapper').css('justify-content', 'flex-start');
+            $('#chores-timer-wrapper').css('display', 'none');
+            $('#turnip-timer-wrapper').css('display', 'none');
+        }
+        hidePrevTab();
+        setPrevTabIconInactive();
+        prevTab = "villagers";
+        if (!gotVillagers) {
+            createSkeletonHTML("villagers")
+        }
+        showTab("villagers");
+        setActiveTab("villagers");
+        setActiveTabIcon("villagers");
+
         if (!gotVillagers) {
             getVillagers();
         }
-        setActiveTab("villagers");
-        setActiveTabIcon("villagers");
-        showTab("villagers");
         $('#search').css('display', 'flex');
         $('.search-wrapper').css('justify-content', 'flex-start');
         $('#chores-timer-wrapper').css('display', 'none');
@@ -684,12 +705,13 @@ function setCookie(cname, cvalue, exdays) {
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
         var expires = "expires="+d.toUTCString() + ";";
     }
-    document.cookie = cname + "=" + cvalue + ";" + expires + "Secure;" + "SameSite=Strict;" + "path=/";
+    document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=Strict;" + "path=/";
 };
   
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
+    console.log(ca)
     for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
@@ -701,11 +723,6 @@ function getCookie(cname) {
     }
     return "";
 };
-
-function eraseCookie(name) {   
-    document.cookie = name+'=; Max-Age=-99999999;';  
-}
-
 
 async function setDefaultHemisphereCookie() {
     setCookie("hemisphere", "north", 365);
@@ -719,11 +736,10 @@ async function setDefaultHemisphereCookie() {
     }
 }
 
-
-
-async function hemisphereCookieHandler() {
-    document.getElementById("hemisphere-button").onclick = function() {
+$(function() {
+    $("#hemisphere-button").click(() => {
         var cookie = getCookie("hemisphere");
+        console.log(cookie)
         if (cookie == "north") {
             setHemisphereIcon("south");
             setCookie("hemisphere", "south", 365);
@@ -747,6 +763,18 @@ async function hemisphereCookieHandler() {
         } else {
             alert("Can't find any cookies");
         }
+    })
+});
+
+function setHemisphereIcon(hemisphere) {
+    if (hemisphere == "north") {
+        $("#nhemisphere-icon").css("display", "block")
+        $("#shemisphere-icon").css("display", "none");
+    } else if (hemisphere == "south") {
+        $("#shemisphere-icon").css("display", "block")
+        $("#nhemisphere-icon").css("display", "none");
+    } else {
+        console.log("Can't change hemisphere button");
     }
 };
 
@@ -754,30 +782,12 @@ async function hemisphereCookieHandler() {
 TAB VIEW FUNCTIONS -----------------------------------------------------------------
 */
 
-function showTab(tab) {
-    if (tab == "fish") {
-        $('#chores-tab').css('display', 'none');
-        $('#fish-tab').css('display', 'flex');
-        $('#bugs-tab').css('display', 'none');
-        $('#villagers-tab').css('display', 'none');
-    } else if (tab == "bugs") {
-        $('#chores-tab').css('display', 'none');
-        $('#fish-tab').css('display', 'none');
-        $('#bugs-tab').css('display', 'flex');
-        $('#villagers-tab').css('display', 'none');
-    } else if (tab == "villagers") {
-        $('#chores-tab').css('display', 'none');
-        $('#fish-tab').css('display', 'none');
-        $('#bugs-tab').css('display', 'none');
-        $('#villagers-tab').css('display', 'flex');
-    } else if (tab == "chores") {
-        $('#chores-tab').css('display', 'flex');
-        $('#fish-tab').css('display', 'none');
-        $('#bugs-tab').css('display', 'none');
-        $('#villagers-tab').css('display', 'none');
-    } else {
-        console.log("Error showing tab")
-    }
+async function hidePrevTab() {
+    $('#' + prevTab + '-tab').css('display', 'none');
+}
+
+async function showTab(tab) {
+    $('#' + tab + '-tab').css('display', 'flex');
 };
 
 
@@ -785,36 +795,17 @@ function showTab(tab) {
 TAB ICON FUNCTIONS -----------------------------------------------------------------
 */
 
+function setPrevTabIconInactive() {
+    makeTabIconInactive(prevTab)
+}
+
 function setActiveTabIcon(tab) {
-    if (tab == "fish") {
-        makeTabIconInactive("chores");
-        makeTabIconActive("fish");
-        makeTabIconInactive("bugs");
-        makeTabIconInactive("villagers");
-    } else if (tab == "bugs") {
-        makeTabIconInactive("chores");
-        makeTabIconInactive("fish");
-        makeTabIconActive("bugs");
-        makeTabIconInactive("villagers");
-    } else if (tab == "villagers") {
-        makeTabIconInactive("chores");
-        makeTabIconInactive("bugs");
-        makeTabIconInactive("fish");
-        makeTabIconActive("villagers");
-    } else if (tab == "chores") {
-        makeTabIconActive("chores");
-        makeTabIconInactive("bugs");
-        makeTabIconInactive("fish");
-        makeTabIconInactive("villagers");
-    } else {
-        console.log("Error setting tab icon")
-    }
+   makeTabIconActive(tab);
 };
 
 function makeTabIconActive(tab) {
     $('#' + tab + '-container').css('background-color', '#32A4A4');
     $('#' + tab + '-icon').css('opacity', '1');
-
 }
 
 function makeTabIconInactive(tab) {
@@ -971,9 +962,7 @@ function classFilterManager(tab) {
          $elemClasses.includes("_all_filter") ||
          $elemClasses.includes("_search_filter")) {
             $elemChildren[i].style.display = "none";
-            //$('#' + $elemChildren[i].id).fadeOut(500)
         } else {
-            //$('#' + $elemChildren[i].id).fadeIn(500)
             $elemChildren[i].style.display = "flex";
         }
     }
@@ -1007,17 +996,7 @@ function ordinalSuffixOf(i) {
     return i + "th";
 }
 
-function setHemisphereIcon(hemisphere) {
-    if (hemisphere == "north") {
-        $("#nhemisphere-icon").css("display", "block")
-        $("#shemisphere-icon").css("display", "none");
-    } else if (hemisphere == "south") {
-        $("#shemisphere-icon").css("display", "block")
-        $("#nhemisphere-icon").css("display", "none");
-    } else {
-        console.log("Can't change hemisphere button");
-    }
-};
+
 
 
 function datetime() {
@@ -1140,9 +1119,9 @@ function createSkeletonHTML(tab) {
 
 $(function() {
     if (getCookie("hemisphere") == "") {
-        setDefaultHemisphereCookie().then(() => hemisphereCookieHandler());
+        setDefaultHemisphereCookie().then(() => setHemisphereIcon(getCookie("hemisphere")));
     } else {
-        hemisphereCookieHandler();
+        setHemisphereIcon(getCookie("hemisphere"));
     }
     createSkeletonHTML("fish");
     datetime();
