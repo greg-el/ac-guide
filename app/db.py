@@ -27,7 +27,6 @@ def update_inventory(conn, uid, species, critter, value):
 
 
 def get_from_db(conn, uid, requested_data):
-    print(requested_data)
     cur = conn.cursor()
     cur.execute("SELECT pocket->>(%s) FROM inventory WHERE uid = (%s)", (requested_data, uid))
     data = cur.fetchone()[0]

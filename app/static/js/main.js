@@ -324,7 +324,23 @@ function getAltCritterLocation(v) {
 
 
 
-async function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
+function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
+    if (v.hasOwnProperty('timeAlt')) {
+        altTime = getAltCritterTime(v.timeAlt);
+        var timeHTML = getCritterTime(v.time, altTime);
+    } else {
+        altTime = false;
+        var timeHTML = getCritterTime(v.time, altTime);
+    }
+
+    
+    if (v.hasOwnProperty('locationAlt')) {
+        var altLocationHTML = getAltCritterLocation(v.locationAlt)
+        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
+    } else {
+        var locationHTML = getCritterLocation(v.location, false);
+    }
+
     var checkedFilter = "critter-wrapper"
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
@@ -333,8 +349,8 @@ async function createFishHTMLElement(element, k, v, timeHTML, locationHTML, user
     }
 
     var tooltip = 'Click to mark as caught or uncaught';
-    element.append(
-        $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title': tooltip}).append([
+    
+    return $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title': tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append(
@@ -355,32 +371,12 @@ async function createFishHTMLElement(element, k, v, timeHTML, locationHTML, user
             ])
             ])
         ])
-    )
+    
 }
 
-async function generateFishHTML(element, k, v, userDict) {
-    
-    if (v.hasOwnProperty('timeAlt')) {
-        altTime = getAltCritterTime(v.timeAlt);
-        var timeHTML = getCritterTime(v.time, altTime);
-    } else {
-        altTime = false;
-        var timeHTML = getCritterTime(v.time, altTime);
-    }
-
-    
-    if (v.hasOwnProperty('locationAlt')) {
-        var altLocationHTML = getAltCritterLocation(v.locationAlt)
-        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
-    } else {
-        var locationHTML = getCritterLocation(v.location, false);
-    }
-    
-    createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict);
-
-
+function addCaughtToggle(k, tab) {
     $('#'+k).click(function() {
-        var $thisCritter = $(this)[0]
+         var $thisCritter = $(this)[0]
         if ($($thisCritter).attr('data-checked') == 'true') {
             updateValue = 'false'; 
             $($thisCritter).removeClass("critter-wrapper-checked")
@@ -398,16 +394,17 @@ async function generateFishHTML(element, k, v, userDict) {
                 url: "/update",
                 headers: {
                     token: idToken,
-                    species: "fish",
+                    species: tab,
                     critter: $thisCritter.id,
                     value: updateValue
-                },
+                }
             })
         } else {
-            new Error("No one signed in");
+            console.log("No one signed in")
         }
     });
 };
+
 
 async function getAllFish() {
     var userDict = false;
@@ -416,10 +413,16 @@ async function getAllFish() {
         userDict = await getCaught("fish");
     }
     $.getJSON('/fish/all', function(data) {
+        var $elementsToAppend = []
         var $elem = $(document.getElementById("fish-data-wrapper"));
         $.each(data, function(k, v) {
-            generateFishHTML($elem, k, v, userDict)
-        })
+            $elementsToAppend.push(createFishHTMLElement($elem, k, v, userDict));
+        });
+        console.log($elementsToAppend)
+        $elem.append($elementsToAppend);
+        $.each(data, function(k, v) {
+            addCaughtToggle(k, "fish");
+        });
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
         if ($('#caught-checkbox')[0].checked) {
             hideCaughtCritters()
@@ -502,8 +505,9 @@ function generateBugsHTML($elem, k, v, userDict) {
 
     var tooltip = 'Click to mark as caught or uncaught';
 
-    $elem.append(
-        $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
+    
+
+    return $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append(
@@ -519,38 +523,10 @@ function generateBugsHTML($elem, k, v, userDict) {
                         timeHTML
                     ])
                 ])
-        ])
-    )
+            ])
+}
 
-    $('#'+k).click(function() {
-         var $thisCritter = $(this)[0]
-        if ($($thisCritter).attr('data-checked') == 'true') {
-            updateValue = 'false'; 
-            $($thisCritter).removeClass("critter-wrapper-checked")
-            $($thisCritter).addClass("critter-wrapper")
-        }
-        if ($($thisCritter).attr('data-checked') == 'false') {
-            updateValue = 'true';
-            $($thisCritter).addClass("critter-wrapper-checked")
-            $($thisCritter).removeClass("critter-wrapper")
-        }
-        $($thisCritter).attr('data-checked', updateValue);
-        var idToken = getCookie("user");
-        if (idToken != "") {
-            $.ajax({
-                url: "/update",
-                headers: {
-                    token: idToken,
-                    species: "bugs",
-                    critter: $thisCritter.id,
-                    value: updateValue
-                }
-            })
-        } else {
-            console.log("No one signed in")
-        }
-    });
-};
+
 
 async function getAllBugs() {
     var userDict = false;
@@ -559,11 +535,18 @@ async function getAllBugs() {
         userDict = await getCaught("bugs");
     }
     $.getJSON('/bugs/all', function(data) {
+        var $elementsToAppend = [];
         var $elem = $("#bugs-data-wrapper");
         $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v, userDict);
+            $elementsToAppend.push(generateBugsHTML($elem, k, v, userDict));
         });
+        $elem.append($elementsToAppend);
+        $.each(data, function(k, v) {
+            addCaughtToggle(k, "bugs");
+        });
+        
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
+        
         if ($('#caught-checkbox')[0].checked) {
             hideCaughtCritters().then(() => classFilterManager("bugs"));
         } else {
@@ -625,33 +608,31 @@ function generateVillagerHTML($elem, k, v) {
     if (v.gender == "m") {
         genderIcon = './static/image/icons/svg/male.svg';
     };
-    $elem.append(
-        $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
+    return $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'name-container critter-name'}).append(
-                $('<div/>', {'class': 'villager-name', 'text':v.name}),
-                $('<embed/>', {'class': 'villager-gender-icon', 'src': genderIcon})
-                ),
+                $('<div/>', {'class': 'name-container critter-name'}).append([
+                    $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                    $('<img/>', {'class': 'villager-gender-icon', 'src': genderIcon})
+                ]),
                 $('<div/>', {'class': 'critter-divider'}),
                 $('<div/>', {'class': 'data-grid'}).append([
-                        $('<div/>', {'class': 'birthday-container icon-text'}).append([
-                            $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/svg/cake.svg'}),
-                            $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
-                            ]),
-                        $('<div/>', {'class': 'villager-species-container'}).append([
-                            $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/svg/paw.svg'}),
-                            $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                    $('<div/>', {'class': 'birthday-container icon-text'}).append([
+                        $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/svg/cake.svg'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
                         ]),
-                        $('<div/>', {'class': 'villager-personality-container'}).append([
-                            $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/svg/star.svg'}),
-                            $('<div/>', {'class': 'villager-block', 'text':  v.personality})
-                        ]),
-                            $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
-                    ])
+                    $('<div/>', {'class': 'villager-species-container'}).append([
+                        $('<img/>', {'class': 'villager-species-icon', 'src': './static/image/icons/svg/paw.svg'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.species})
+                    ]),
+                    $('<div/>', {'class': 'villager-personality-container'}).append([
+                        $('<img/>', {'class': 'villager-personality-icon', 'src': './static/image/icons/svg/star.svg'}),
+                        $('<div/>', {'class': 'villager-block', 'text':  v.personality})
+                    ]),
+                        $('<div/>', {'class': 'villager-block', 'text':  '"' + v.catchphrase + '"'})
                 ])
             ])
-    )
+        ])
 };
 
 
@@ -668,10 +649,12 @@ async function getVillagers() {
             month: m
         },
         success: function(data) {
+            var $elementsToAppend = [];
             var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
-                generateVillagerHTML($elem, k , v);
+                $elementsToAppend.push(generateVillagerHTML($elem, k , v));
             })
+            $elem.append($elementsToAppend)
             $('.wrapper-skeleton').remove();
             gotVillagers = true;
         },
@@ -1091,32 +1074,32 @@ function setActiveTab(tab) {
 
 function createSkeletonHTML(tab) {
     var element = $("#" + tab + "-data-wrapper");
-    if (tab == "fish") {
+    if (tab == "fish" || tab == "villagers") {
         for (var i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
                     $('<div/>', {'class': 'image-skeleton'}),
                     $('<div/>', {'class': 'skeleton-data'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'name-skeleton'})
+                            $('<div/>', {'class': 'name-skeleton name-animation'})
                         ),
                         $('<div/>', {'class': 'critter-divider'}),
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ]),
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ]),
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ]),
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ])
                         ])
                     ])
@@ -1130,21 +1113,21 @@ function createSkeletonHTML(tab) {
                     $('<div/>', {'class': 'image-skeleton'}),
                     $('<div/>', {'class': 'skeleton-data'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'name-skeleton'})
+                            $('<div/>', {'class': 'name-skeleton name-animation'})
                         ),
                         $('<div/>', {'class': 'critter-divider'}),
                         $('<div/>', {'class': 'data-grid'}).append([
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ]),
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ]),
                             $('<div/>', {'class': 'data-container-skeleton'}).append([
                                 $('<div/>', {'class': 'icon-skeleton'}),
-                                $('<div/>', {'class': 'text-skeleton'})
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
                             ])
                         ])
                     ])

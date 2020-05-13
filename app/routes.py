@@ -75,8 +75,8 @@ def update_user_data():
         decoded_token = auth.verify_id_token(id_token, ac_firebase)
         uid = decoded_token['uid']
     except Exception as e:
-        print(e)
-        return "401"
+        data = {'detail': 'The update failed.'}
+        return jsonify(data), 400
     if uid:
         species = request.headers.get('species')
         critter = request.headers.get('critter')
