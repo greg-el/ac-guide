@@ -2,6 +2,8 @@ ACTIVE_TAB = "fish";
 CURRENT_HOUR = new Date().getHours() % 12;    
 CURRENT_HOUR = CURRENT_HOUR ? CURRENT_HOUR : 12;
 CURRENT_TIME = new Date();
+var gotBugs = false;
+var gotVillagers = false;
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -23,6 +25,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 $(document).ready(function() {
     $('#logout').click(function() {
         firebase.auth().signOut().then(function() {
+            eraseCookie("user");
             console.log("signout successful");
         }).catch(function(error) {
             console.log(error.message)
@@ -88,18 +91,21 @@ $(function() {  //Chores tab click
         var data = await getCaught("chores");
         $.each(data, function(k, v) {
             if (v == true) {
-                $('#'+k).addClass('_chore_ticked');
+                $('#'+k).removeClass('chore-wrapper');
+                $('#'+k).addClass('chore-wrapper-ticked');
             }
         })
     });
 
     function toggleChore(thisButton) {
         if (thisButton.attr('data-checked') == "false") {
-            thisButton.addClass("_chore_ticked");
+            thisButton.addClass('chore-wrapper-ticked');
+            thisButton.removeClass('chore-wrapper');
             thisButton.attr("data-checked", 'true');
             updateJSON("chores", thisButton[0].id, true);
         } else {
-            thisButton.removeClass("_chore_ticked");
+            thisButton.removeClass('chore-wrapper-ticked');
+            thisButton.addClass('chore-wrapper');
             thisButton.attr("data-checked", 'false');
             updateJSON("chores", thisButton[0].id, false);
         }
@@ -319,36 +325,34 @@ function getAltCritterLocation(v) {
 
 
 async function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
-    var opacity = '100%';
+    var checkedFilter = "critter-wrapper"
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = userDict[k];
-        opacity = '40%';
+        checkedFilter = "critter-wrapper-checked";
     }
 
     var tooltip = 'Click to mark as caught or uncaught';
-
     element.append(
-        $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'data-checked': isChecked, 'title': tooltip, css: {'opacity': opacity}}).append([
+        $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title': tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'critter-data-wrapper'}).append([
-                    $('<div/>', {'class': 'data-grid'}).append([
-                        $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                        ),
-                        locationHTML,
-                        $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.price})
-                            ]),
-                        timeHTML,
-                        $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                            $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                        ])
-                    ])
+                $('<div/>', {'class': 'name-container critter-name'}).append(
+                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
+                ),
+            $('<div/>', {'class': 'critter-divider'}),
+            $('<div/>', {'class': 'data-grid'}).append([
+                locationHTML,
+                $('<div/>', {'class': 'bell-container icon-text'}).append([
+                    $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                    $('<div/>', {'class': 'data-text', 'text': v.price})
+                ]),
+                timeHTML,
+                $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                    $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                    $('<div/>', {'class': 'data-text', 'text': v.shadow})
                 ])
+            ])
             ])
         ])
     )
@@ -379,11 +383,13 @@ async function generateFishHTML(element, k, v, userDict) {
         var $thisCritter = $(this)[0]
         if ($($thisCritter).attr('data-checked') == 'true') {
             updateValue = 'false'; 
-            $($thisCritter).css('opacity', '100%');
+            $($thisCritter).removeClass("critter-wrapper-checked")
+            $($thisCritter).addClass("critter-wrapper")
         }
         if ($($thisCritter).attr('data-checked') == 'false') {
             updateValue = 'true';
-            $($thisCritter).css('opacity', '40%')
+            $($thisCritter).addClass("critter-wrapper-checked")
+            $($thisCritter).removeClass("critter-wrapper")
         }
         $($thisCritter).attr('data-checked', updateValue);
         var idToken = getCookie("user");
@@ -423,6 +429,7 @@ async function getAllFish() {
         if ($('#caught-checkbox')[0].checked) {
             markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
         }
+        $('.wrapper-skeleton').remove();
     })
 };
 
@@ -453,11 +460,12 @@ BUGS FUNCTIONS -----------------------------------------------------------------
 
 $(function() { //bugs tab click
     $('a#bugs-button, #bug-icon').click(function() {
+        createSkeletonHTML("bugs");
         $('#search').css('display', 'flex');
         $('.search-wrapper').css('justify-content', 'flex-start');
         $('#chores-timer-wrapper').css('display', 'none');
         $('#turnip-timer-wrapper').css('display', 'none');
-        if ($('#bugs-data-wrapper').children().length === 0) {
+        if (!gotBugs) {
             getAllBugs();
         }
         setActiveTab("bugs");
@@ -485,24 +493,24 @@ function generateBugsHTML($elem, k, v, userDict) {
     }
     
 
-    var opacity = '100%';
+    var checkedFilter = "critter-wrapper"
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = userDict[k];
-        opacity = '40%';
+        checkedFilter = "critter-wrapper-checked";
     }
 
     var tooltip = 'Click to mark as caught or uncaught';
 
     $elem.append(
-        $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'data-checked': isChecked, 'title':tooltip, 'css': {'opacity': opacity}}).append([
+        $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'critter-data-wrapper'}).append([
+                $('<div/>', {'class': 'name-container critter-name'}).append(
+                    $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
+                ),
+                    $('<div/>', {'class': 'critter-divider'}),
                     $('<div/>', {'class': 'data-grid'}).append([
-                        $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                        ),
                         locationHTML,
                         $('<div/>', {'class': 'bell-container icon-text'}).append([
                             $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
@@ -511,20 +519,20 @@ function generateBugsHTML($elem, k, v, userDict) {
                         timeHTML
                     ])
                 ])
-            ])
         ])
     )
 
     $('#'+k).click(function() {
-        var $thisCritter = $(this)[0]
+         var $thisCritter = $(this)[0]
         if ($($thisCritter).attr('data-checked') == 'true') {
-            updateValue = 'false';
-            $($thisCritter).css('opacity', '100%');
+            updateValue = 'false'; 
+            $($thisCritter).removeClass("critter-wrapper-checked")
+            $($thisCritter).addClass("critter-wrapper")
         }
         if ($($thisCritter).attr('data-checked') == 'false') {
             updateValue = 'true';
-            $($thisCritter).css('opacity', '40%');
-
+            $($thisCritter).addClass("critter-wrapper-checked")
+            $($thisCritter).removeClass("critter-wrapper")
         }
         $($thisCritter).attr('data-checked', updateValue);
         var idToken = getCookie("user");
@@ -561,8 +569,9 @@ async function getAllBugs() {
         } else {
             showCaughtCritters().then(() => classFilterManager("bugs"));
         }
+        $('.wrapper-skeleton').remove();
+        gotBugs = true;
     })
-    
 };
 
 async function getAvaliableBugs() {
@@ -593,11 +602,12 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click 
     $('a#villagers-button').bind('click', function() {
+        createSkeletonHTML("villagers")
         $('#search').css('display', 'flex');
         $('.search-wrapper').css('justify-content', 'flex-start');
         $('#chores-timer-wrapper').css('display', 'none');
         $('#turnip-timer-wrapper').css('display', 'none');
-        if ($('#villagers-data-wrapper').children().length === 0) {
+        if (!gotVillagers) {
             getVillagers();
         }
         setActiveTab("villagers");
@@ -619,12 +629,12 @@ function generateVillagerHTML($elem, k, v) {
         $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'critter-data-wrapper'}).append([
-                    $('<div/>', {'class': 'data-grid'}).append([
-                        $('<div/>', {'class': 'name-container critter-name'}).append(
-                            $('<div/>', {'class': 'critter-name', 'text':v.name}),
-                            $('<img/>', {'class': 'villager-gender-icon', 'src': genderIcon})
-                        ),
+                $('<div/>', {'class': 'name-container critter-name'}).append(
+                $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                $('<embed/>', {'class': 'villager-gender-icon', 'src': genderIcon})
+                ),
+                $('<div/>', {'class': 'critter-divider'}),
+                $('<div/>', {'class': 'data-grid'}).append([
                         $('<div/>', {'class': 'birthday-container icon-text'}).append([
                             $('<img/>', {'class': 'villager-birthday-icon', 'src': './static/image/icons/svg/cake.svg'}),
                             $('<div/>', {'class': 'villager-block', 'text':  v.month + " " + ordinalSuffixOf(v.date)})
@@ -641,7 +651,6 @@ function generateVillagerHTML($elem, k, v) {
                     ])
                 ])
             ])
-        ])
     )
 };
 
@@ -663,6 +672,8 @@ async function getVillagers() {
             $.each(data, function(k, v) {
                 generateVillagerHTML($elem, k , v);
             })
+            $('.wrapper-skeleton').remove();
+            gotVillagers = true;
         },
         error: function(data) {
             console.log(data)
@@ -707,6 +718,10 @@ function getCookie(cname) {
     }
     return "";
 };
+
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
 
 
 async function setDefaultHemisphereCookie() {
@@ -1074,6 +1089,70 @@ function setActiveTab(tab) {
     ACTIVE_TAB = tab;
 }
 
+function createSkeletonHTML(tab) {
+    var element = $("#" + tab + "-data-wrapper");
+    if (tab == "fish") {
+        for (var i=0; i<50; i++) {
+            element.append([
+                $('<div/>', {'class': 'wrapper-skeleton'}).append([
+                    $('<div/>', {'class': 'image-skeleton'}),
+                    $('<div/>', {'class': 'skeleton-data'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'name-skeleton'})
+                        ),
+                        $('<div/>', {'class': 'critter-divider'}),
+                        $('<div/>', {'class': 'data-grid'}).append([
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ])
+                        ])
+                    ])
+                ])
+            ])
+        }
+    } else {
+        for (var i=0; i<50; i++) {
+            element.append([
+                $('<div/>', {'class': 'wrapper-skeleton'}).append([
+                    $('<div/>', {'class': 'image-skeleton'}),
+                    $('<div/>', {'class': 'skeleton-data'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'name-skeleton'})
+                        ),
+                        $('<div/>', {'class': 'critter-divider'}),
+                        $('<div/>', {'class': 'data-grid'}).append([
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton'})
+                            ])
+                        ])
+                    ])
+                ])
+            ])
+        }
+    }
+}
 
 
 $(function() {
@@ -1082,6 +1161,7 @@ $(function() {
     } else {
         hemisphereCookieHandler();
     }
+    createSkeletonHTML("fish");
     datetime();
     getAllFish();
     showTab("fish");

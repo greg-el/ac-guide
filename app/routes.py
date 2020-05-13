@@ -15,8 +15,8 @@ def verify_token():
         uid = decoded_token['uid']
         return "200"
     except Exception as e:
-        print(e)
-        return "401"
+        data = {'detail': 'The token could not be verified.'}
+        return jsonify(data), 400
 
 
 @app.route('/')
@@ -29,15 +29,14 @@ def login():
 
 @app.route('/add')
 def add_user():
-    
     uid = False
     try:
         id_token = request.headers.get('token')
         decoded_token = auth.verify_id_token(id_token, ac_firebase)
         uid = decoded_token['uid']
     except Exception as e:
-        print(e)
-        return "401"
+        data = {'detail': 'The user could not be added to the database.'}
+        return jsonify(data), 400
     if uid:
         conn = mypool.getconn()
         add_to_db(conn, uid)
@@ -52,7 +51,6 @@ def get_user_data():
         decoded_token = auth.verify_id_token(id_token, ac_firebase)
         uid = decoded_token['uid']
     except Exception as e:
-        print(e)
         return "401"
     if uid:
         try:
