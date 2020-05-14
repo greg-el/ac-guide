@@ -204,7 +204,7 @@ function getCritterTime(v, altTime) {
     var timeHTML = "";
     if (v.length == 24) {
         var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+            $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
             $('<div/>', {'class': 'data-text', 'text': "All day"})
             ])
     } else {
@@ -224,12 +224,12 @@ function getCritterTime(v, altTime) {
 
         if (altTime == false) {
             var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
                 $('<div/>', {'class': 'data-text', 'text': finalTime})
             ])
         } else {
             var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
                 $('<div/>', {'class': 'time-container-mod'}).append([
                     $('<div/>', {'class': 'data-text', 'text': finalTime}),
                     $('<div/>', {'class': 'data-text', 'text': altTime})
@@ -272,7 +272,7 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
             var location = locationSplit[0];
             var locationModifier = locationSplit[1];
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
                 $('<div/>', {'class': 'location-container-mod'}).append([
                     $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
                     $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
@@ -291,7 +291,7 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
             var locationModifier = locationSplit[1];
             
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
                 $('<div/>', {'class': 'location-container-mod'}).append([
                     $('<div/>', {'class': 'data-text', 'text': location.trim()}),
                     $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
@@ -299,7 +299,7 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
             ])
         } else {
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
-                $('<img/>', {'class': 'magnify-icon', 'src': './static/image/icons/svg/pin.svg'}),
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
                 $('<div/>', {'class': 'location-container'}).append(
                     $('<div/>', {'class': 'data-text', 'text': v})
                 )
@@ -367,12 +367,12 @@ function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) 
             $('<div/>', {'class': 'data-grid'}).append([
                 locationHTML,
                 $('<div/>', {'class': 'bell-container icon-text'}).append([
-                    $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
                     $('<div/>', {'class': 'data-text', 'text': v.price})
                 ]),
                 timeHTML,
                 $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                    $('<img/>', {'class': 'shadow-icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                    $('<img/>', {'class': 'icon shadow', 'src': './static/image/icons/svg/shadow.svg'}),
                     $('<div/>', {'class': 'data-text', 'text': v.shadow})
                 ])
             ])
@@ -469,7 +469,9 @@ BUGS FUNCTIONS -----------------------------------------------------------------
 */
 
 $(function() { //bugs tab click
-    $('a#bugs-button, #bug-icon').click(function() {
+    $('a#bugs-button, #bug-icon').click(async function() {
+        setActiveTab("bugs");
+        setActiveTabIcon("bugs");
         if (prevTab == "chores") {
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
@@ -480,8 +482,6 @@ $(function() { //bugs tab click
         setPrevTabIconInactive();
         prevTab = "bugs"
         showTab("bugs");
-        setActiveTab("bugs");
-        setActiveTabIcon("bugs");
         if (!gotBugs) {
             createSkeletonHTML("bugs");
         }
@@ -531,7 +531,7 @@ function generateBugsHTML($elem, k, v, userDict) {
                     $('<div/>', {'class': 'data-grid'}).append([
                         locationHTML,
                         $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'bell-icon', 'src': './static/image/icons/svg/bell.svg'}),
+                            $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
                             $('<div/>', {'class': 'data-text', 'text': v.price})
                             ]),
                         timeHTML
@@ -795,11 +795,11 @@ async function showTab(tab) {
 TAB ICON FUNCTIONS -----------------------------------------------------------------
 */
 
-function setPrevTabIconInactive() {
+async function setPrevTabIconInactive() {
     makeTabIconInactive(prevTab)
 }
 
-function setActiveTabIcon(tab) {
+async function setActiveTabIcon(tab) {
    makeTabIconActive(tab);
 };
 
@@ -1053,11 +1053,25 @@ function setActiveTab(tab) {
 
 function createSkeletonHTML(tab) {
     var element = $("#" + tab + "-data-wrapper");
-    if (tab == "fish" || tab == "villagers") {
+    if (tab == "fish") {
+        var fishDominant = ["rgb(19, 43, 53)","rgb(253, 208, 15)","rgb(99, 76, 69)","rgb(164, 65, 37)","rgb(112, 89, 82)",
+    "rgb(101, 75, 47)","rgb(24, 40, 52)","rgb(40, 48, 60)","rgb(32, 49, 67)","rgb(129, 82, 67)","rgb(40, 52, 39)",
+    "rgb(22, 55, 69)","rgb(11, 30, 38)","rgb(88, 77, 24)","rgb(97, 93, 76)","rgb(114, 100, 61)","rgb(43, 54, 62)",
+    "rgb(100, 91, 71)","rgb(145, 110, 22)","rgb(103, 88, 72)","rgb(183, 159, 115)","rgb(222, 220, 207)","rgb(32, 46, 63)",
+    "rgb(8, 43, 36)","rgb(209, 148, 119)","rgb(32, 34, 37)","rgb(36, 42, 41)","rgb(123, 96, 73)","rgb(10, 34, 52)",
+    "rgb(227, 212, 193)","rgb(18, 43, 59)","rgb(53, 36, 13)","rgb(31, 32, 38)","rgb(5, 40, 57)","rgb(126, 103, 66)",
+    "rgb(156, 97, 14)","rgb(27, 67, 36)","rgb(93, 87, 73)","rgb(124, 63, 41)","rgb(109, 101, 67)","rgb(120, 90, 52)",
+    "rgb(77, 118, 135)","rgb(19, 28, 32)","rgb(106, 100, 62)","rgb(108, 104, 58)","rgb(23, 24, 45)","rgb(8, 48, 61)",
+    "rgb(86, 82, 7)","rgb(130, 107, 50)","rgb(48, 75, 101)","rgb(60, 23, 28)","rgb(72, 75, 109)","rgb(23, 56, 31)",
+    "rgb(24, 48, 27)","rgb(149, 160, 58)","rgb(71, 7, 9)","rgb(28, 33, 37)","rgb(178, 171, 118)","rgb(0, 0, 0)",
+    "rgb(56, 85, 11)","rgb(29, 52, 45)","rgb(203, 160, 31)","rgb(127, 89, 64)","rgb(57, 74, 86)","rgb(107, 95, 84)"
+    ,"rgb(24, 32, 41)","rgb(39, 45, 52)","rgb(147, 92, 34)","rgb(167, 157, 117)","rgb(24, 40, 63)","rgb(200, 163, 21)"
+    ,"rgb(6, 38, 54)","rgb(111, 100, 58)","rgb(103, 101, 61)","rgb(108, 100, 70)","rgb(241, 152, 56)","rgb(14, 44, 39)"
+    ,"rgb(29, 35, 54)","rgb(150, 87, 26)","rgb(93, 109, 47)"]
         for (var i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
-                    $('<div/>', {'class': 'image-skeleton'}),
+                    $('<div/>', {'class': 'image-skeleton', 'css':{'background-color': fishDominant[i], 'opacity': '50%'}}),
                     $('<div/>', {'class': 'skeleton-data'}).append([
                         $('<div/>', {'class': 'name-container critter-name'}).append(
                             $('<div/>', {'class': 'name-skeleton name-animation'})
@@ -1085,7 +1099,52 @@ function createSkeletonHTML(tab) {
                 ])
             ])
         }
-    } else {
+    } else if (tab == "bugs") {
+        for (var i=0; i<50; i++) {
+            var bugsDominant = ["rgb(102, 110, 50)","rgb(83, 87, 18)","rgb(78, 13, 16)","rgb(147, 94, 17)",
+            "rgb(30, 40, 29)","rgb(11, 27, 10)","rgb(11, 30, 12)","rgb(18, 47, 11)","rgb(124, 96, 48)",
+            "rgb(116, 95, 43)","rgb(87, 86, 83)","rgb(110, 84, 49)","rgb(27, 15, 17)","rgb(30, 47, 41)",
+            "rgb(94, 73, 53)","rgb(157, 86, 20)","rgb(37, 14, 46)","rgb(35, 37, 35)","rgb(57, 48, 53)",
+            "rgb(41, 13, 14)","rgb(215, 138, 17)","rgb(21, 34, 16)","rgb(122, 82, 45)","rgb(31, 66, 32)",
+            "rgb(86, 71, 28)","rgb(38, 44, 56)","rgb(255, 255, 254)","rgb(120, 103, 69)","rgb(40, 45, 51)",
+            "rgb(97, 96, 94)","rgb(124, 97, 42)","rgb(125, 95, 35)","rgb(15, 18, 34)","rgb(196, 170, 98)",
+            "rgb(50, 30, 41)","rgb(27, 48, 34)","rgb(248, 236, 85)","rgb(151, 96, 29)","rgb(114, 100, 85)",
+            "rgb(19, 32, 57)","rgb(128, 93, 42)","rgb(52, 29, 30)","rgb(33, 54, 119)","rgb(14, 16, 15)",
+            "rgb(139, 71, 31)","rgb(87, 80, 14)","rgb(197, 165, 96)","rgb(19, 31, 52)","rgb(44, 51, 40)",
+            "rgb(35, 39, 43)","rgb(19, 22, 17)","rgb(100, 90, 80)","rgb(55, 70, 51)","rgb(173, 8, 6)",
+            "rgb(60, 37, 38)","rgb(123, 89, 29)","rgb(32, 46, 54)","rgb(15, 17, 30)","rgb(24, 36, 44)",
+            "rgb(93, 87, 69)","rgb(161, 80, 15)","rgb(113, 76, 60)","rgb(110, 79, 53)","rgb(103, 93, 82)",
+            "rgb(12, 47, 37)","rgb(53, 75, 44)","rgb(98, 50, 45)","rgb(18, 17, 15)","rgb(25, 25, 28)",
+            "rgb(70, 93, 110)","rgb(134, 86, 43)","rgb(143, 176, 32)","rgb(12, 8, 7)","rgb(89, 81, 74)",
+            "rgb(160, 77, 26)","rgb(138, 85, 20)","rgb(1, 0, 0)","rgb(113, 104, 62)","rgb(18, 20, 32)","rgb(134, 85, 31)"]
+
+            element.append([
+                $('<div/>', {'class': 'wrapper-skeleton'}).append([
+                    $('<div/>', {'class': 'image-skeleton', 'css':{'background-color': bugsDominant[i], 'opacity': '50%'}}),
+                    $('<div/>', {'class': 'skeleton-data'}).append([
+                        $('<div/>', {'class': 'name-container critter-name'}).append(
+                            $('<div/>', {'class': 'name-skeleton name-animation'})
+                        ),
+                        $('<div/>', {'class': 'critter-divider'}),
+                        $('<div/>', {'class': 'data-grid'}).append([
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
+                            ]),
+                            $('<div/>', {'class': 'data-container-skeleton'}).append([
+                                $('<div/>', {'class': 'icon-skeleton'}),
+                                $('<div/>', {'class': 'text-skeleton text-animation'})
+                            ])
+                        ])
+                    ])
+                ])
+            ])
+        }
+    } else if (tab == "villagers") {
         for (var i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
