@@ -179,26 +179,48 @@ function choresTimers() {
 };
 
 /*
-FISH FUNCTIONS -----------------------------------------------------------------
+CRITTER HTML GEN FUNCTIONS -----------------------------------------------------------------
 */
 
-$(function() {  //Fish tab click
-    $('a#fish-button').bind('click', function() {
-        if (prevTab == "chores") {
-            $('#search').css('display', 'flex');
-            $('.search-wrapper').css('justify-content', 'flex-start');
-            $('#chores-timer-wrapper').css('display', 'none');
-            $('#turnip-timer-wrapper').css('display', 'none');
+function getCritterTimePlainHTML(v, altTime) {
+    var timeHTML = "";
+    if (v.length == 24) {
+        var timeHTML = '<div class="time-container icon-text">\n' +
+                            '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
+                            '<div class="data-text" text="All Day"></div>\n' +
+                        '</div>';
+    } else {
+        var startTime = v[0];
+        var endTime = v[v.length-1];
+        var startAMPM = startTime >= 12 ? "PM" : "AM";
+        startTime = startTime % 12
+        startTime = startTime ? startTime : 12;
+        finalStart = startTime + startAMPM;
+
+        var endAMPM = endTime >= 12 ? "PM" : "AM";
+        endTime = endTime % 12
+        endTime = endTime ? endTime : 12;
+        finalEnd = endTime+1 + endAMPM;
+
+        finalTime = finalStart + "-" + finalEnd;
+
+        if (altTime == false) {
+            var timeHTML = '<div class="time-container icon-text">\n' +
+            '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
+            '<div class="data-text" text="'+finalTime+'"></div>\n' +
+        '</div>';
+        } else {
+            var timeHTML = '<div class="time-container icon-text">\n' +
+                                '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
+                                '<div class="time-container-mod">\n' +
+                                    '<div class="data-text" text="'+finalTime+'"></div>\n' +
+                                    '<div class="data-text" text="'+altTime+'"></div>\n'+
+                                '</div>\n' +
+                            '</div>';
         }
-        hidePrevTab();
-        setPrevTabIconInactive();
-        prevTab = "fish"
-        setActiveTab("fish");
-        setActiveTabIcon("fish");
-        showTab("fish");
-    });
-    return false;
-});
+    }
+    return timeHTML
+}
 
 function getCritterTime(v, altTime) {
     var timeHTML = "";
@@ -263,12 +285,11 @@ function getAltCritterTime(v) {
     return finalTime
 }
 
-function getCritterLocation(v, secondLocationExists, secondLocation) {
+function getCritterLocation(location, secondLocationExists, secondLocation) {
     var locationHTML = {}
-    var comma = ''
     if (secondLocationExists) {
-        if (v.includes("(")) {
-            var locationSplit = v.split("(");
+        if (location.includes("(")) {
+            var locationSplit = location.split("(");
             var location = locationSplit[0];
             var locationModifier = locationSplit[1];
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
@@ -281,12 +302,12 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
             ])
         } else {
             locationHTML = $('<div/>', {'class': 'location-container'}).append([
-                $('<div/>', {'class': 'data-text', 'text': v})
+                $('<div/>', {'class': 'data-text', 'text': location})
             ])
         }
     } else {
-        if (v.includes("(")) {
-            var locationSplit = v.split("(");
+        if (location.includes("(")) {
+            var locationSplit = location.split("(");
             var location = locationSplit[0];
             var locationModifier = locationSplit[1];
             
@@ -301,9 +322,54 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
                 $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
                 $('<div/>', {'class': 'location-container'}).append(
-                    $('<div/>', {'class': 'data-text', 'text': v})
+                    $('<div/>', {'class': 'data-text', 'text': location})
                 )
             )
+        }
+    }
+    return locationHTML;
+}
+
+function getCritterLocationPlainHTML(v, secondLocationExists, secondLocation) {
+    var locationHTML = {}
+    if (secondLocationExists) {
+        if (v.includes("(")) {
+            var locationSplit = v.split("(");
+            var location = locationSplit[0];
+            var locationModifier = locationSplit[1];
+            locationHTML = '<div class="location-container icon-text">\n' +
+                                '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
+                                '<div class="location-container-mod">\n' +
+                                    '<div class="data-text" text="'+location.trim()+',"></div>\n' +
+                                    '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
+                                '</div>\n' +
+                            '</div>\n' + 
+                            secondLocation
+        } else {
+            locationHTML = '<div class="location-container">\n' +
+                '<div class="data-text" text="'+v+'"></div>\n' +
+            '</div>'
+        }
+    } else {
+        if (v.includes("(")) {
+            var locationSplit = v.split("(");
+            var location = locationSplit[0];
+            var locationModifier = locationSplit[1];
+            
+            locationHTML = '<div class="location-container icon-text">\n' +
+                                '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
+                                '<div class="location-container-mod">\n' +
+                                    '<div class="data-text" text="'+location.trim()+',"></div>\n' +
+                                    '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
+                                '</div>\n' +
+                            '</div>' 
+        } else {
+            locationHTML = '<div class="location-container icon-text">\n' +
+                                '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
+                                '<div class="location-container-mod">\n' +
+                                    '<div class="data-text" text="'+v+'"></div>\n' +
+                                '</div>\n' +
+                            '</div>\n'
         }
     }
     return locationHTML;
@@ -329,6 +395,82 @@ function getAltCritterLocation(v) {
     return locationHTML;
 }
 
+function getAltCritterLocationPlainHTML(v) {
+    var locationHTML = {}
+    if (v.includes("(")) {
+        var locationSplit = v.split("(");
+        var location = locationSplit[0];
+        var locationModifier = locationSplit[1];
+        locationHTML = '<div class="location-container-mod">\n' +
+        '<div class="data-text" text="'+location+'"></div>\n' +
+        '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
+    '</div>\n'
+    } else {
+        locationHTML = '<div class="location-container icon-text">\n' +
+                            '<div class="location-container">\n' +
+                                'div class="data-text" text="'+v+'">\n' +
+                            '</div>\n'+
+                        '</div>'
+    }
+    return locationHTML;
+}
+
+
+function addCaughtToggle(k, tab) {
+    $('#'+k).click(function() {
+        var $thisCritter = $(this)
+        if ($thisCritter.attr('data-checked') == 'true') {
+            updateValue = 'false'; 
+            $thisCritter.removeClass("critter-wrapper-checked")
+            $thisCritter.addClass("critter-wrapper")
+        }
+        if ($thisCritter.attr('data-checked') == 'false') {
+            updateValue = 'true';
+            $thisCritter.addClass("critter-wrapper-checked")
+            $thisCritter.removeClass("critter-wrapper")
+        }
+        $thisCritter.attr('data-checked', updateValue);
+        if (getCookie("user") != "") {
+            var idToken = getCookie("user");
+            if (idToken != "") {
+                $.ajax({
+                    url: "/update",
+                    headers: {
+                        token: idToken,
+                        species: tab,
+                        critter: $thisCritter.id,
+                        value: updateValue
+                    }
+                })
+            } else {
+                console.log("No one signed in")
+            }
+        }
+    })
+};
+
+
+/*
+FISH FUNCTIONS -----------------------------------------------------------------
+*/
+
+$(function() {  //Fish tab click
+    $('a#fish-button').bind('click', function() {
+        if (prevTab == "chores") {
+            $('#search').css('display', 'flex');
+            $('.search-wrapper').css('justify-content', 'flex-start');
+            $('#chores-timer-wrapper').css('display', 'none');
+            $('#turnip-timer-wrapper').css('display', 'none');
+        }
+        hidePrevTab();
+        setPrevTabIconInactive();
+        prevTab = "fish"
+        setActiveTab("fish");
+        setActiveTabIcon("fish");
+        showTab("fish");
+    });
+    return false;
+});
 
 
 function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
@@ -347,6 +489,9 @@ function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) 
     } else {
         var locationHTML = getCritterLocation(v.location, false);
     }
+
+
+
 
     var checkedFilter = "critter-wrapper"
     var isChecked = false;
@@ -380,38 +525,6 @@ function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) 
         ])
     
 }
-
-function addCaughtToggle(k, tab) {
-    $('#'+k).click(function() {
-        var $thisCritter = $(this)
-        if ($thisCritter.attr('data-checked') == 'true') {
-            updateValue = 'false'; 
-            $thisCritter.removeClass("critter-wrapper-checked")
-            $thisCritter.addClass("critter-wrapper")
-        }
-        if ($thisCritter.attr('data-checked') == 'false') {
-            updateValue = 'true';
-            $thisCritter.addClass("critter-wrapper-checked")
-            $thisCritter.removeClass("critter-wrapper")
-        }
-        $thisCritter.attr('data-checked', updateValue);
-        var idToken = getCookie("user");
-        if (idToken != "") {
-            $.ajax({
-                url: "/update",
-                headers: {
-                    token: idToken,
-                    species: tab,
-                    critter: $thisCritter.id,
-                    value: updateValue
-                }
-            })
-        } else {
-            console.log("No one signed in")
-        }
-    });
-};
-
 
 async function getAllFish() {
     var userDict = false;
@@ -519,7 +632,48 @@ function generateBugsHTML($elem, k, v, userDict) {
 
     var tooltip = 'Click to mark as caught or uncaught';
 
+    if (k == "divingbeetle") {
+        console.log(v)
+        console.log(locationHTML, altLocationHTML)
+    }
+
+
+    if (v.hasOwnProperty('timeAlt')) {
+        var plainAltTime = getAltCritterTime(v.timeAlt);
+        var plainTimeHTML = getCritterTimePlainHTML(v.time, plainAltTime);
+    } else {
+        altTime = false;
+        var plainTimeHTML = getCritterTimePlainHTML(v.time, altTime);
+    }
+
     
+    if (v.hasOwnProperty('locationAlt')) {
+        var plainAltLocationHTML = getAltCritterLocationPlainHTML(v.locationAlt)
+        var plainLocationHTML = getCritterLocationPlainHTML(v.location, true, plainAltLocationHTML);
+    } else {
+        var plainLocationHTML = getCritterLocationPlainHTML(v.location, false);
+    }
+    var template = document.createElement("template");
+
+    template.innerHTML = '<div id="' + k + '" class="critter-wrapper ' + checkedFilter + '" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
+                '<img class="critter-wrapper" loading="lazy" src="' + v.icon + '">\n' +
+                '<div class="critter-data">\n' +
+                    '<div class="name-container critter-name">\n' +
+                        '<div class="critter-name" text=' + v.name_formatted + '></div>\n' +
+                    '<div class="critter-divider"></div>\n' +
+                    '<div class="data-grid">\n' +
+                        plainLocationHTML +
+                    '<div class="bell-container icon-text">\n' +
+                        '<img class="icon" src="./static/image/icons/svg/bell.svg">\n' +
+                        '<div class="data-text">'+v.price+'</div>\n' +
+                    '</div>\n' +
+                    plainTimeHTML +
+                '</div>\n' +
+            '</div>\n'
+        
+    return template.content.firstChild;
+
+
 
     return $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
@@ -540,8 +694,6 @@ function generateBugsHTML($elem, k, v, userDict) {
             ])
 }
 
-
-
 async function getAllBugs() {
     var userDict = false;
     var idToken = getCookie("user");
@@ -549,12 +701,13 @@ async function getAllBugs() {
         userDict = await getCaught("bugs");
     }
     $.getJSON('/bugs/all', function(data) {
-        var $elementsToAppend = [];
-        var $elem = $("#bugs-data-wrapper");
+        //var $elementsToAppend = [];
+        //var $elem = $("#bugs-data-wrapper");
+        var elem = document.getElementById("bugs-data-wrapper")
         $.each(data, function(k, v) {
-            $elementsToAppend.push(generateBugsHTML($elem, k, v, userDict));
+            elem.appendChild(generateBugsHTML(elem, k, v, userDict));
         });
-        $elem.append($elementsToAppend);
+        //$elem.append($elementsToAppend);
         $.each(data, function(k, v) {
             addCaughtToggle(k, "bugs");
         });
@@ -711,7 +864,6 @@ function setCookie(cname, cvalue, exdays) {
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
-    console.log(ca)
     for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
@@ -739,7 +891,6 @@ async function setDefaultHemisphereCookie() {
 $(function() {
     $("#hemisphere-button").click(() => {
         var cookie = getCookie("hemisphere");
-        console.log(cookie)
         if (cookie == "north") {
             setHemisphereIcon("south");
             setCookie("hemisphere", "south", 365);
@@ -1002,13 +1153,13 @@ function ordinalSuffixOf(i) {
 function datetime() {
     var dayIcons = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    var dayElem = document.getElementById("day")
-    var dateElem = document.getElementById("date")
-    var timeElem = document.getElementById("time")
-    var timeAMPM = document.getElementById("ampm")
+    var dayElem = document.getElementById("day");
+    var dateElem = document.getElementById("date");
+    var timeElem = document.getElementById("time");
+    var timeAMPM = document.getElementById("ampm");
     var d = new Date();
-    var minutes = d.getMinutes()
-    var hours = d.getHours()
+    var minutes = d.getMinutes();
+    var hours = d.getHours();
     var date = d.getDate();
     var amPm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12
