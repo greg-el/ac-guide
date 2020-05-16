@@ -142,6 +142,7 @@ def get_bug_data(url, out):
             loc_split = location.split(" And ")
             location = loc_split[0].strip()
             temp_dict['locationAlt'] = loc_split[1].strip() #TODO fix this
+            print(location, loc_split[1].strip())
 
         temp_dict['location'] = location
 

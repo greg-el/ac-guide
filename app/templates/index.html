@@ -22,9 +22,10 @@
             firebase.analytics();
           </script>
         
-
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/progressbar.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename = 'js/main.js') }}"></script>
+
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
     </head>
     <body>
@@ -102,58 +103,44 @@
                 <div id="chores-tab" class="data-container" style="display:none;">
                     <div id="chores-data-wrapper" class="data-wrapper">
                         <div id="rocks-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>Rocks</span>
-                            </div>
-                            <div id="rock-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="rock0" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" >
-                                </div>
-                                <div class="chore-wrapper" id="rock1" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
-                                </div>
-                                <div class="chore-wrapper" id="rock2" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
-                                </div>
-                                <div class="chore-wrapper" id="rock3" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" data-checked="false">
-                                </div>
-                                <div class="chore-wrapper" id="money-rock" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}" data-checked="false">
+                            <div id="rock-wrapper" class="chore-wrapper">
+                                <img id="rock-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acrock.png') }}" >
+                                <div class="progress-circle" id="rock"></div>
+                                <div id ="rock-title-container" class="chore-title-container">
+                                    <div id="rock-title" class="chore-title">Smash Rocks</div>
                                 </div>
                             </div>
                         </div>
+                        <div id="money-rock-wrapper" class="chores-container">
+                            <div id="money-rock-wrapper" class="chore-wrapper">
+                                <img id="money-rock-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}" >
+                                <div class="progress-circle" id="money-rock"></div>
+                                <div id ="rock-title-container" class="chore-title-container">
+                                    <div id="rock-title" class="chore-title">Money Rock</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="fossils-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>Fossils</span>
-                                <div id="fossil-timer" class="timer"></div>
-                            </div>
-                            <div id="fossil-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="fossil0" data-checked="false">
-                                    <img  src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}" >
-                                </div>
-                                <div class="chore-wrapper" id="fossil1" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
-                                </div>
-                                <div class="chore-wrapper" id="fossil2" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
-                                </div>
-                                <div class="chore-wrapper" id="fossil3" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}">
+                            <div id="fossils-wrapper" class="chore-wrapper">
+                                <img id="fossils-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}" >
+                                <div class="progress-circle" id="fossils"></div>
+                                <div id ="fossil-title-container" class="chore-title-container">
+                                    <div id="fossil-title" class="chore-title">Find Fossils</div>
                                 </div>
                             </div>
                         </div>
+
                         <div id="bottles-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>DIY Recipe</span>
-                                <div id="bottle-timer" class="timer"></div>
-                            </div>
-                            <div id="bottle-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="bottle" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}">
+                            <div id="bottles-wrapper" class="chore-wrapper">
+                                <img id="bottles-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}" >
+                                <div class="progress-circle" id="bottle"></div>
+                                <div id ="bottle-title-container" class="chore-title-container">
+                                    <div id="bottle-title" class="chore-title">DIY Recipe</div>
                                 </div>
                             </div>
                         </div>
+
                         
                         <div id="crack-wrapper" class="chores-container">
                             <div class="title-wrapper">
@@ -172,9 +159,6 @@
                                 <div id="turnip-timer" class="timer"></div>
                             </div>
                             <div id="turnip-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="turnip-am" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/AMturnip.png') }}">
-                                </div>
                                 <div class="chore-wrapper" id="turnip-pm" data-checked="false">
                                     <img src="{{ url_for('static', filename = 'image/chores/PMturnip.png') }}">
                                 </div>

@@ -184,6 +184,18 @@ a {
     color: white;
 }
 
+._caught_filter  {
+    display: none !important;
+}
+
+._all_filter {
+    display: none !important;
+}
+
+._search_filter {
+    display: none !important;
+}
+
 .checkbox {
     -webkit-appearance: none;
     background-color: white;
@@ -265,6 +277,8 @@ a {
     display: flex;
     flex-direction: row;
 }
+
+
 
 
 .title-wrapper {
@@ -494,9 +508,52 @@ a {
     }
 }
 
-.chore-wrapper {
-    display: flex;
-    flex-direction: row;
+.chore-title {
+    position: absolute;
+    color: white;
+    left: 0;
+    top: 75%;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    background: #5CB9AD;
+    border-radius: 20px;
+    height: 10%;
+    font-size: 20px;
+}
+
+.chore-title-container {
+    position: absolute;
+    color: var(--critter-name);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.progress-circle {
+    position: absolute;
+    height: 190px;
+    width: 190px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+
+.chore-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
 }
 
 .chore-wrapper-ticked{
@@ -519,6 +576,7 @@ a {
 }
 
 .chores-wrapper {
+
     display: flex;
     flex-direction: row;
     flex-grow: 1;
@@ -529,20 +587,23 @@ a {
 }
 
 .chore-wrapper {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
+    background-image: url("../image/circlebase.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: relative;
     align-items: center;
     justify-content: center;
-    background: #F9F6E3;
-    border: 1px solid #E2DFCE;
-    box-sizing: border-box;
-    box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
     border-radius: 4px;
     margin: 15px;
-    padding-left: 10px;
-    padding-right: 10px;
     cursor: pointer;
+    height: 300px;
+    width: 300px;
+}
+
+.chores-container {
+    height: 300px;
+    width: 300px;
 }
 
 

@@ -5,6 +5,8 @@ CURRENT_TIME = new Date();
 var gotBugs = false;
 var gotVillagers = false;
 var prevTab = "fish"
+var fishElements = [];
+var bugsElements = [];
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -101,44 +103,58 @@ $(function() {  //Chores tab click
         })
     });
 
-    function toggleChore(thisButton) {
-        if (thisButton.attr('data-checked') == "false") {
-            thisButton.addClass('chore-wrapper-ticked');
-            thisButton.removeClass('chore-wrapper');
-            thisButton.attr("data-checked", 'true');
-            updateJSON("chores", thisButton[0].id, true);
-        } else {
-            thisButton.removeClass('chore-wrapper-ticked');
-            thisButton.addClass('chore-wrapper');
-            thisButton.attr("data-checked", 'false');
-            updateJSON("chores", thisButton[0].id, false);
+    var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
+    trailColor: '#d5ccab',
+    strokeWidth: 11,
+    duration: 500,
+    easing: 'easeInOut'});
+    var rockPercent = 0;
+    rock.animate(rockPercent);
+    $('#rock-wrapper').click(function() {
+        if (rockPercent != 1) {
+            rockPercent = rockPercent + 0.25;
         }
-    }
-    
-    for (var i=0; i<4; i++) {
-        $('#rock' + i).click(function() {
-            toggleChore($(this))
-        })
-        $('#fossil' + i).click(function() {
-            toggleChore($(this))
-        })
-    }
-    $('#money-rock').click(function() {
-        toggleChore($(this));
+        rock.animate(rockPercent);
     })
-    $('#bottle').click(function() {
-        toggleChore($(this));
+
+    var moneyRock = new ProgressBar.Circle("#money-rock",{color: '#e3b645',
+    trailColor: '#d5ccab',
+    strokeWidth: 11,
+    duration: 500,
+    easing: 'easeInOut'});
+    var moneyRockPercent = 0;
+    $('#money-rock-wrapper').click(function() {
+        if (moneyRockPercent == 0) {
+            moneyRock.animate(1);
+            moneyRockPercent = 1
+        }
     })
-    $('#crack').click(function() {
-        toggleChore($(this));
+
+    var fossil = new ProgressBar.Circle("#fossils",{color: '#736cc4',
+    trailColor: '#d5ccab',
+    strokeWidth: 11,
+    duration: 500,
+    easing: 'easeInOut'});
+    var fossilPercent = 0;
+    $('#fossils-wrapper').click(function() {
+        if (fossilPercent != 1) {
+            fossilPercent = fossilPercent + 0.25;
+        }
+        fossil.animate(fossilPercent);
     })
-    $('#turnip-am').click(function() {
-        toggleChore($(this));
+
+    var bottle = new ProgressBar.Circle("#bottle",{color: '#e3b645',
+    trailColor: '#d5ccab',
+    strokeWidth: 11,
+    duration: 500,
+    easing: 'easeInOut'});
+    var bottlePercent = 0;
+    $('#bottles-wrapper').click(function() {
+        if (bottlePercent == 0) {
+            bottle.animate(1);
+            bottlePercent = 1
+        }
     })
-    $('#turnip-pm').click(function() {
-        toggleChore($(this));
-    })
-    
 });
 
 
@@ -187,8 +203,8 @@ function getCritterTimePlainHTML(v, altTime) {
     if (v.length == 24) {
         var timeHTML = '<div class="time-container icon-text">\n' +
                             '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
-                            '<div class="data-text" text="All Day"></div>\n' +
-                        '</div>';
+                            '<div class="data-text">All Day</div>\n' +
+                        '</div>\n';
     } else {
         var startTime = v[0];
         var endTime = v[v.length-1];
@@ -207,60 +223,21 @@ function getCritterTimePlainHTML(v, altTime) {
         if (altTime == false) {
             var timeHTML = '<div class="time-container icon-text">\n' +
             '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
-            '<div class="data-text" text="'+finalTime+'"></div>\n' +
-        '</div>';
+            '<div class="data-text">'+finalTime+'</div>\n' +
+        '</div>\n';
         } else {
             var timeHTML = '<div class="time-container icon-text">\n' +
                                 '<img class="icon" src="./static/image/icons/svg/timer.svg">\n' +
                                 '<div class="time-container-mod">\n' +
-                                    '<div class="data-text" text="'+finalTime+'"></div>\n' +
-                                    '<div class="data-text" text="'+altTime+'"></div>\n'+
+                                    '<div class="data-text">'+finalTime+'</div>\n' +
+                                    '<div class="data-text">'+altTime+'</div>\n'+
                                 '</div>\n' +
-                            '</div>';
+                            '</div>\n';
         }
     }
     return timeHTML
 }
 
-function getCritterTime(v, altTime) {
-    var timeHTML = "";
-    if (v.length == 24) {
-        var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-            $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
-            $('<div/>', {'class': 'data-text', 'text': "All day"})
-            ])
-    } else {
-        var startTime = v[0];
-        var endTime = v[v.length-1];
-        var startAMPM = startTime >= 12 ? "PM" : "AM";
-        startTime = startTime % 12
-        startTime = startTime ? startTime : 12;
-        finalStart = startTime + startAMPM;
-
-        var endAMPM = endTime >= 12 ? "PM" : "AM";
-        endTime = endTime % 12
-        endTime = endTime ? endTime : 12;
-        finalEnd = endTime+1 + endAMPM;
-
-        finalTime = finalStart + "-" + finalEnd;
-
-        if (altTime == false) {
-            var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
-                $('<div/>', {'class': 'data-text', 'text': finalTime})
-            ])
-        } else {
-            var timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
-                $('<div/>', {'class': 'time-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': finalTime}),
-                    $('<div/>', {'class': 'data-text', 'text': altTime})
-                ])
-            ])
-        }
-    }
-    return timeHTML
-}
 
 function getAltCritterTime(v) {
     var finalTime = "";
@@ -285,51 +262,6 @@ function getAltCritterTime(v) {
     return finalTime
 }
 
-function getCritterLocation(location, secondLocationExists, secondLocation) {
-    var locationHTML = {}
-    if (secondLocationExists) {
-        if (location.includes("(")) {
-            var locationSplit = location.split("(");
-            var location = locationSplit[0];
-            var locationModifier = locationSplit[1];
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
-                $('<div/>', {'class': 'location-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
-                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-                ]),
-                secondLocation
-            ])
-        } else {
-            locationHTML = $('<div/>', {'class': 'location-container'}).append([
-                $('<div/>', {'class': 'data-text', 'text': location})
-            ])
-        }
-    } else {
-        if (location.includes("(")) {
-            var locationSplit = location.split("(");
-            var location = locationSplit[0];
-            var locationModifier = locationSplit[1];
-            
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
-                $('<div/>', {'class': 'location-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': location.trim()}),
-                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-                ])
-            ])
-        } else {
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
-                $('<div/>', {'class': 'location-container'}).append(
-                    $('<div/>', {'class': 'data-text', 'text': location})
-                )
-            )
-        }
-    }
-    return locationHTML;
-}
-
 function getCritterLocationPlainHTML(v, secondLocationExists, secondLocation) {
     var locationHTML = {}
     if (secondLocationExists) {
@@ -340,14 +272,15 @@ function getCritterLocationPlainHTML(v, secondLocationExists, secondLocation) {
             locationHTML = '<div class="location-container icon-text">\n' +
                                 '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
                                 '<div class="location-container-mod">\n' +
-                                    '<div class="data-text" text="'+location.trim()+',"></div>\n' +
-                                    '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
+                                '<div class="data-text">'+location.trim()+',</div>\n' +
+                                    '<div class="data-text-modifier">('+locationModifier+'</div>\n' +
                                 '</div>\n' +
-                            '</div>\n' + 
-                            secondLocation
+                                secondLocation +
+                            '</div>\n';
+                            
         } else {
             locationHTML = '<div class="location-container">\n' +
-                '<div class="data-text" text="'+v+'"></div>\n' +
+            '<div class="data-text">'+v+'</div>\n' +
             '</div>'
         }
     } else {
@@ -359,38 +292,18 @@ function getCritterLocationPlainHTML(v, secondLocationExists, secondLocation) {
             locationHTML = '<div class="location-container icon-text">\n' +
                                 '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
                                 '<div class="location-container-mod">\n' +
-                                    '<div class="data-text" text="'+location.trim()+',"></div>\n' +
-                                    '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
+                                    '<div class="data-text">'+location.trim()+',</div>\n' +
+                                    '<div class="data-text-modifier">(' + locationModifier + '</div>\n' +
                                 '</div>\n' +
                             '</div>' 
         } else {
             locationHTML = '<div class="location-container icon-text">\n' +
                                 '<img class="icon" src="./static/image/icons/svg/pin.svg">\n' +
                                 '<div class="location-container-mod">\n' +
-                                    '<div class="data-text" text="'+v+'"></div>\n' +
+                                    '<div class="data-text">'+v+'</div>\n' +
                                 '</div>\n' +
                             '</div>\n'
         }
-    }
-    return locationHTML;
-}
-
-function getAltCritterLocation(v) {
-    var locationHTML = {}
-    if (v.includes("(")) {
-        var locationSplit = v.split("(");
-        var location = locationSplit[0];
-        var locationModifier = locationSplit[1];
-        locationHTML = $('<div/>', {'class': 'location-container-mod'}).append([
-            $('<div/>', {'class': 'data-text', 'text': location.trim() + comma}),
-            $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-        ])
-    } else {
-        locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
-            $('<div/>', {'class': 'location-container'}).append(
-                $('<div/>', {'class': 'data-text', 'text': v})
-            )
-        )
     }
     return locationHTML;
 }
@@ -402,34 +315,34 @@ function getAltCritterLocationPlainHTML(v) {
         var location = locationSplit[0];
         var locationModifier = locationSplit[1];
         locationHTML = '<div class="location-container-mod">\n' +
-        '<div class="data-text" text="'+location+'"></div>\n' +
-        '<div class="data-text-modifier" text="(' + locationModifier + '></div>\n' +
-    '</div>\n'
+                            '<div class="data-text">'+location+'</div>\n' +
+                            '<div class="data-text-modifier">(+'+locationModifier+'+</div>\n' +
+                        '</div>\n'
     } else {
         locationHTML = '<div class="location-container icon-text">\n' +
                             '<div class="location-container">\n' +
-                                'div class="data-text" text="'+v+'">\n' +
+                            '<div class="data-text">'+v+'</div>\n' +
                             '</div>\n'+
-                        '</div>'
+                        '</div>\n';
     }
     return locationHTML;
 }
 
 
 function addCaughtToggle(k, tab) {
-    $('#'+k).click(function() {
-        var $thisCritter = $(this)
-        if ($thisCritter.attr('data-checked') == 'true') {
+    k.addEventListener("click", (function() {
+        var thisCritter = this
+        if (thisCritter.getAttribute('data-checked') == 'true') {
             updateValue = 'false'; 
-            $thisCritter.removeClass("critter-wrapper-checked")
-            $thisCritter.addClass("critter-wrapper")
+            thisCritter.classList.remove("critter-wrapper-checked")
+            thisCritter.classList.add("critter-wrapper")
         }
-        if ($thisCritter.attr('data-checked') == 'false') {
+        if (thisCritter.getAttribute('data-checked') == 'false') {
             updateValue = 'true';
-            $thisCritter.addClass("critter-wrapper-checked")
-            $thisCritter.removeClass("critter-wrapper")
+            thisCritter.classList.add("critter-wrapper-checked");
+            thisCritter.classList.remove("critter-wrapper");
         }
-        $thisCritter.attr('data-checked', updateValue);
+        thisCritter.setAttribute('data-checked', updateValue);
         if (getCookie("user") != "") {
             var idToken = getCookie("user");
             if (idToken != "") {
@@ -447,7 +360,7 @@ function addCaughtToggle(k, tab) {
             }
         }
     })
-};
+)};
 
 
 /*
@@ -473,26 +386,7 @@ $(function() {  //Fish tab click
 });
 
 
-function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) {
-    if (v.hasOwnProperty('timeAlt')) {
-        altTime = getAltCritterTime(v.timeAlt);
-        var timeHTML = getCritterTime(v.time, altTime);
-    } else {
-        altTime = false;
-        var timeHTML = getCritterTime(v.time, altTime);
-    }
-
-    
-    if (v.hasOwnProperty('locationAlt')) {
-        var altLocationHTML = getAltCritterLocation(v.locationAlt)
-        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
-    } else {
-        var locationHTML = getCritterLocation(v.location, false);
-    }
-
-
-
-
+function createFishHTMLElement(k, v, userDict) {
     var checkedFilter = "critter-wrapper"
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
@@ -500,30 +394,46 @@ function createFishHTMLElement(element, k, v, timeHTML, locationHTML, userDict) 
         checkedFilter = "critter-wrapper-checked";
     }
 
+    if (v.hasOwnProperty('timeAlt')) {
+        var plainAltTime = getAltCritterTime(v.timeAlt);
+        var plainTimeHTML = getCritterTimePlainHTML(v.time, plainAltTime);
+    } else {
+        altTime = false;
+        var plainTimeHTML = getCritterTimePlainHTML(v.time, altTime);
+    }
+
+    if (v.hasOwnProperty('locationAlt')) {
+        var plainAltLocationHTML = getAltCritterLocationPlainHTML(v.locationAlt)
+        var plainLocationHTML = getCritterLocationPlainHTML(v.location, true, plainAltLocationHTML);
+    } else {
+        var plainLocationHTML = getCritterLocationPlainHTML(v.location, false);
+    }
     var tooltip = 'Click to mark as caught or uncaught';
-    
-    return $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title': tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
-            $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'name-container critter-name'}).append(
-                $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                ),
-            $('<div/>', {'class': 'critter-divider'}),
-            $('<div/>', {'class': 'data-grid'}).append([
-                locationHTML,
-                $('<div/>', {'class': 'bell-container icon-text'}).append([
-                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
-                    $('<div/>', {'class': 'data-text', 'text': v.price})
-                ]),
-                timeHTML,
-                $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                    $('<img/>', {'class': 'icon shadow', 'src': './static/image/icons/svg/shadow.svg'}),
-                    $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                ])
-            ])
-            ])
-        ])
-    
+    var template = document.createElement("template");
+
+    template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
+                            '<img class="critter-icon" loading="lazy" src="' + v.icon + '">\n' +
+                            '<div class="critter-data">\n' +
+                                '<div class="name-container critter-name">\n' +
+                                    '<div class="critter-name">'+v.name_formatted+'</div>\n' +
+                                '</div>\n' + 
+                                '<div class="critter-divider"></div>\n' +
+                                '<div class="data-grid">\n' +
+                                    plainLocationHTML +
+                                    '<div class="bell-container icon-text">\n' +
+                                        '<img class="icon" src="./static/image/icons/svg/bell.svg">\n' +
+                                        '<div class="data-text">'+v.price+'</div>\n' +
+                                    '</div>\n' +
+                                    plainTimeHTML +
+                                    '<div class="shadow-container icon-text">\n' +
+                                        '<img class="icon" src="./static/image/icons/svg/shadow.svg">\n' +
+                                        '<div class="data-text">'+v.shadow+'</div>\n' +
+                                    '</div>\n' +
+                                '</div>\n' +
+                            '</div>\n' +
+                        '</div>\n';
+        
+    return template.content.firstChild;
 }
 
 async function getAllFish() {
@@ -533,24 +443,23 @@ async function getAllFish() {
         userDict = await getCaught("fish");
     }
     $.getJSON('/fish/all', function(data) {
-        var $elementsToAppend = []
-        var $elem = $(document.getElementById("fish-data-wrapper"));
+        var elem = document.getElementById("fish-data-wrapper");
         $.each(data, function(k, v) {
-            $elementsToAppend.push(createFishHTMLElement($elem, k, v, userDict));
+            fishElements.push(createFishHTMLElement(k, v, userDict));
         });
-        $elem.append($elementsToAppend);
-        $.each(data, function(k, v) {
-            addCaughtToggle(k, "fish");
-        });
+        for (var i=0; i<fishElements.length; i++) {
+            elem.appendChild(fishElements[i]);
+            addCaughtToggle(fishElements[i], "fish");
+        }
         $('.wrapper-skeleton').remove();
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
         if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters()
+            hideCaughtCritters();
         }else {
-            showCaughtCritters()
+            showCaughtCritters();
         }
         if ($('#caught-checkbox')[0].checked) {
-            markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+            markAvailiable("fish").then(() => markAvailiable("bugs"));
         }
         
     })
@@ -591,52 +500,29 @@ $(function() { //bugs tab click
             $('#chores-timer-wrapper').css('display', 'none');
             $('#turnip-timer-wrapper').css('display', 'none');
         }
+
+        
+        showTab("bugs");
         hidePrevTab();
         setPrevTabIconInactive();
         prevTab = "bugs"
-        showTab("bugs");
         if (!gotBugs) {
             createSkeletonHTML("bugs");
         }
         if (!gotBugs) {
             getAllBugs();
+            gotBugs = true;
         }
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
     });
 });
 
-function generateBugsHTML($elem, k, v, userDict) {
-    if (v.hasOwnProperty('timeAlt')) {
-        altTime = getAltCritterTime(v.timeAlt);
-        var timeHTML = getCritterTime(v.time, altTime);
-    } else {
-        altTime = false;
-        var timeHTML = getCritterTime(v.time, altTime);
-    }
-
-    if (v.hasOwnProperty('locationAlt')) {
-        var altLocationHTML = getAltCritterLocation(v.locationAlt)
-        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
-    } else {
-        var locationHTML = getCritterLocation(v.location, false);
-    }
-    
-
+function generateBugsHTML(k, v, userDict) {
     var checkedFilter = "critter-wrapper"
     var isChecked = false;
     if (userDict && userDict.hasOwnProperty(k)) {
         isChecked = userDict[k];
         checkedFilter = "critter-wrapper-checked";
     }
-
-    var tooltip = 'Click to mark as caught or uncaught';
-
-    if (k == "divingbeetle") {
-        console.log(v)
-        console.log(locationHTML, altLocationHTML)
-    }
-
 
     if (v.hasOwnProperty('timeAlt')) {
         var plainAltTime = getAltCritterTime(v.timeAlt);
@@ -653,13 +539,15 @@ function generateBugsHTML($elem, k, v, userDict) {
     } else {
         var plainLocationHTML = getCritterLocationPlainHTML(v.location, false);
     }
+    var tooltip = 'Click to mark as caught or uncaught';
     var template = document.createElement("template");
 
-    template.innerHTML = '<div id="' + k + '" class="critter-wrapper ' + checkedFilter + '" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
-                '<img class="critter-wrapper" loading="lazy" src="' + v.icon + '">\n' +
+    template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
+                '<img class="critter-icon" loading="lazy" src="' + v.icon + '">\n' +
                 '<div class="critter-data">\n' +
                     '<div class="name-container critter-name">\n' +
-                        '<div class="critter-name" text=' + v.name_formatted + '></div>\n' +
+                        '<div class="critter-name">'+v.name_formatted+'</div>\n' +
+                        '</div>\n' + 
                     '<div class="critter-divider"></div>\n' +
                     '<div class="data-grid">\n' +
                         plainLocationHTML +
@@ -672,26 +560,6 @@ function generateBugsHTML($elem, k, v, userDict) {
             '</div>\n'
         
     return template.content.firstChild;
-
-
-
-    return $('<div/>', {'class': 'critter-wrapper ' + checkedFilter, 'id':k, 'data-checked': isChecked, 'title':tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
-            $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'name-container critter-name'}).append(
-                    $('<div/>', {'class': 'critter-name', 'text':v.name_formatted})
-                ),
-                    $('<div/>', {'class': 'critter-divider'}),
-                    $('<div/>', {'class': 'data-grid'}).append([
-                        locationHTML,
-                        $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.price})
-                            ]),
-                        timeHTML
-                    ])
-                ])
-            ])
 }
 
 async function getAllBugs() {
@@ -701,35 +569,22 @@ async function getAllBugs() {
         userDict = await getCaught("bugs");
     }
     $.getJSON('/bugs/all', function(data) {
-        //var $elementsToAppend = [];
-        //var $elem = $("#bugs-data-wrapper");
         var elem = document.getElementById("bugs-data-wrapper")
         $.each(data, function(k, v) {
-            elem.appendChild(generateBugsHTML(elem, k, v, userDict));
+            bugsElements.push(generateBugsHTML(k, v, userDict));
         });
-        //$elem.append($elementsToAppend);
-        $.each(data, function(k, v) {
-            addCaughtToggle(k, "bugs");
-        });
-        $('.wrapper-skeleton').remove();
-    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
-        
-        if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters().then(() => classFilterManager("bugs"));
-        } else {
-            showCaughtCritters().then(() => classFilterManager("bugs"));
+        for (var i=0; i<bugsElements.length; i++) {
+            elem.appendChild(bugsElements[i]);
+            addCaughtToggle(bugsElements[i], "bugs")
         }
-        gotBugs = true;
+        $('.wrapper-skeleton').remove();
+    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or no
+        if ($('#caught-checkbox')[0].checked) {
+            hideCaughtCritters();
+        } else {
+            showCaughtCritters();
+        }
     })
-};
-
-async function getAvaliableBugs() {
-    $.getJSON('/bugs/available', function(data) {
-        var $elem = $("#bugs-data-wrapper");
-        $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v);
-        });
-    });
 };
 
 
@@ -769,10 +624,8 @@ $(function() { //Birthdays tab click
 
         if (!gotVillagers) {
             getVillagers();
+            gotVillagers = true;
         }
-        $('#search').css('display', 'flex');
-        $('.search-wrapper').css('justify-content', 'flex-start');
-        $('#chores-timer-wrapper').css('display', 'none');
     });
     return false;
 });
@@ -830,7 +683,6 @@ async function getVillagers() {
             })
             $elem.append($elementsToAppend)
             $('.wrapper-skeleton').remove();
-            gotVillagers = true;
         },
         error: function(data) {
             console.log(data)
@@ -978,7 +830,6 @@ $(document).ready( () => {
                 $($critterChildren[i]).removeClass('_search_filter');
             }
         }
-        classFilterManager(getActiveTab());
     })
     $('#search').on('blur', function() {
         this.value = "";
@@ -986,7 +837,6 @@ $(document).ready( () => {
         for (var i=0; i<$critterChildren.length; i++) {
             $($critterChildren[i]).removeClass('_search_filter');
         }
-        classFilterManager(getActiveTab());
     })
 })
 
@@ -1034,11 +884,9 @@ async function markAvailiable(tab) {
                     }
                 }
             })
-            classFilterManager(tab);
         }
     })
 };
-
 
 
 $(document).ready( () => {
@@ -1047,9 +895,9 @@ $(document).ready( () => {
             $('#caught-checkbox').prop('checked', false);
         }
         if (this.checked) {
-            markAvailiable("fish").then(() => markAvailiable("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+            markAvailiable("fish").then(() => markAvailiable("bugs"));
         } else {
-            unmarkAll("fish").then(() => unmarkAll("bugs")).then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+            unmarkAll("fish").then(() => unmarkAll("bugs"));
         }
     });
 });
@@ -1058,34 +906,28 @@ $(document).ready( () => {
 FILTER CAUGHT CHECKBOX -----------------------------------------------------------------
 */
 
-
-
 async function showCaughtCritters() {
-    var $elemChildren = $("#fish-data-wrapper").children();
-    for (var i=0; i<$elemChildren.length; i++) {
-        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
-            $('#' + $elemChildren[i].id).removeClass("_caught_filter");
+    for (var i=0; i<fishElements.length; i++) {
+        if (fishElements[i].getAttribute('data-checked') == 'true') {
+            fishElements[i].classList.remove("_caught_filter");
         }
     }
-    var $elemChildren = $("#bugs-data-wrapper").children();
-    for (var i=0; i<$elemChildren.length; i++) {
-        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
-            $('#' + $elemChildren[i].id).removeClass("_caught_filter");
+    for (var i=0; i<bugsElements.length; i++) {
+        if (fishElements[i].getAttribute('data-checked') == 'true') {
+            fishElements[i].classList.remove("_caught_filter");
         }
     }
 }
 
 async function hideCaughtCritters() {
-    var $elemChildren = $("#fish-data-wrapper").children();
-    for (var i=0; i<$elemChildren.length; i++) {
-        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
-            $('#' + $elemChildren[i].id).addClass("_caught_filter");
+    for (var i=0; i<fishElements.length; i++) {
+        if (fishElements[i].getAttribute('data-checked') == 'true') {
+            fishElements[i].classList.add("_caught_filter");
         }
     }
-    var $elemChildren = $("#bugs-data-wrapper").children();
-    for (var i=0; i<$elemChildren.length; i++) {
-        if ($('#' + $elemChildren[i].id).attr('data-checked') == 'true') {
-            $('#' + $elemChildren[i].id).addClass("_caught_filter");
+    for (var i=0; i<bugsElements.length; i++) {
+        if (fishElements[i].getAttribute('data-checked') == 'true') {
+            fishElements[i].classList.add("_caught_filter");
         }
     }
 }
@@ -1093,9 +935,9 @@ async function hideCaughtCritters() {
 $(document).ready( () => {
     $('#caught-checkbox').on('click', function() {
         if (!this.checked) {
-            showCaughtCritters().then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+            showCaughtCritters();
         } else {
-            hideCaughtCritters().then(() => classFilterManager("fish")).then(() => classFilterManager("bugs"));
+            hideCaughtCritters();
         }
     })
 });
@@ -1104,21 +946,6 @@ $(document).ready( () => {
 /*
 OTHER -----------------------------------------------------------------
 */
-
-function classFilterManager(tab) {
-    var $elemChildren = $("#" + tab + "-data-wrapper").children();
-    for (var i=0; i < $elemChildren.length; i++) {
-        $elemClasses = Array.from($elemChildren[i].classList);
-        if ($elemClasses.includes("_caught_filter") ||
-         $elemClasses.includes("_all_filter") ||
-         $elemClasses.includes("_search_filter")) {
-            $elemChildren[i].style.display = "none";
-        } else {
-            $elemChildren[i].style.display = "flex";
-        }
-    }
-}
-
 
 function refreshCurrentTab() {
     if (getActiveTab() == "fish") {
