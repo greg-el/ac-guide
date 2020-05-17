@@ -251,9 +251,10 @@ a {
 }
 
 .timer-title {
-    color: #4e4b3a;
-    font-size: 150%;
-    margin: 5px;
+	color: #4e4b3a;
+	font-size: 150%;
+	margin: 5px;
+	text-align: center;
 }
 
 .timer-time {
@@ -274,8 +275,11 @@ a {
 }
 
 #turnip-timer-wrapper {
-    display: flex;
-    flex-direction: row;
+    display: inline-block;
+    transform: rotate(-25deg);
+    margin-left: 35px;
+    margin-top: 100px;
+    z-index: -1;
 }
 
 
@@ -545,6 +549,11 @@ a {
     bottom: 0;
     right: 0;
     margin: auto;
+}
+
+#turnips-image {
+    width:37%;
+    left:10px;
 }
 
 .chore-image {

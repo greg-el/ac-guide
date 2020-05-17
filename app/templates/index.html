@@ -95,10 +95,6 @@
                         <div id="chores-title" class="timer-title">Daily Chores:</div>
                         <div id="chores-time" class="timer-time"></div>
                     </div>
-                    <div id="turnip-timer-wrapper" style="display: none">
-                        <div id="turnip-title" class="timer-title">New Turnip Price:</div>
-                        <div id="turnip-time" class="timer-time"></div>
-                    </div>
                 </div>
                 <div id="chores-tab" class="data-container" style="display:none;">
                     <div id="chores-data-wrapper" class="data-wrapper">
@@ -111,7 +107,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="money-rock-wrapper" class="chores-container">
+
                             <div id="money-rock-wrapper" class="chore-wrapper">
                                 <img id="money-rock-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acmoneyrock.png') }}" >
                                 <div class="progress-circle" id="money-rock"></div>
@@ -119,9 +115,6 @@
                                     <div id="rock-title" class="chore-title">Money Rock</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div id="fossils-wrapper" class="chores-container">
                             <div id="fossils-wrapper" class="chore-wrapper">
                                 <img id="fossils-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acfossil.png') }}" >
                                 <div class="progress-circle" id="fossils"></div>
@@ -129,9 +122,6 @@
                                     <div id="fossil-title" class="chore-title">Find Fossils</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div id="bottles-wrapper" class="chores-container">
                             <div id="bottles-wrapper" class="chore-wrapper">
                                 <img id="bottles-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/acdiybottleicon.png') }}" >
                                 <div class="progress-circle" id="bottle"></div>
@@ -139,31 +129,24 @@
                                     <div id="bottle-title" class="chore-title">DIY Recipe</div>
                                 </div>
                             </div>
-                        </div>
-
-                        
-                        <div id="crack-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>Glow</span>
-                                <div id="crack-timer" class="timer"></div>
-                            </div>
-                            <div id="crack-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="crack" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/accrack.png') }}">
+                            <div id="crack-wrapper" class="chore-wrapper">
+                                <img id="crack-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/accrack.png') }}" >
+                                <div class="progress-circle" id="crack"></div>
+                                <div id ="crack-title-container" class="chore-title-container">
+                                    <div id="crack-title" class="chore-title">Find The Glow!</div>
                                 </div>
                             </div>
-                        </div>
-                        <div id="turnips-wrapper" class="chores-container">
-                            <div class="title-wrapper">
-                                <span>Turnip Price</span>
-                                <div id="turnip-timer" class="timer"></div>
-                            </div>
-                            <div id="turnip-wrapper" class="chores-wrapper">
-                                <div class="chore-wrapper" id="turnip-pm" data-checked="false">
-                                    <img src="{{ url_for('static', filename = 'image/chores/PMturnip.png') }}">
+                            <div id="turnips-wrapper" class="chore-wrapper">
+                                <div id="turnip-timer-wrapper">
+                                    <div id="turnip-title" class="timer-title">New Price In:</div>
+                                    <div id="turnip-time" class="timer-time"></div>
+                                </div>
+                                <img id="turnips-image" class="chore-image" src="{{ url_for('static', filename = 'image/chores/AMturnip.png') }}" >
+                                <div class="progress-circle" id="turnips"></div>
+                                <div id ="turnips-title-container" class="chore-title-container">
+                                    <div id="turnips-title" class="chore-title">Turnip Prices</div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
                 <div id="fish-tab" class="data-container">
