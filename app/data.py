@@ -271,6 +271,8 @@ def get_n_sorted_villagers(month, date, n):
         count+=1
 
     output = {}
+    if n == 0:
+        n = len(villager_data)
     for i in range(n):
         data = out[i]
         output[i] = data

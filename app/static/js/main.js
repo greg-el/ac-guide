@@ -726,7 +726,7 @@ async function getVillagers() {
         url: '/villagers-sorted',
         dataType: 'json',
         headers: {
-            n: 100,
+            n: 0,
             day: d,
             month: m
         },

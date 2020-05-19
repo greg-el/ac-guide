@@ -37,7 +37,7 @@ a {
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
     font-size: 500%;
     position: absolute;
-    top: 5%;
+    top: 0%;
     left: 50%;
     transform: translate(-50%,-5%);
 }
@@ -368,6 +368,7 @@ a {
     width: 20px;
     border-radius: 5px;
     margin-right: 5px;
+    margin-left: 10px;
 }
 
 .text-skeleton {
