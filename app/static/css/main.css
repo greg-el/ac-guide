@@ -6,6 +6,12 @@
     --critter-name: #FF4875;
 }
 
+@media (orientation: landscape) {
+}
+
+@media (orientation: portrait) {
+}
+
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -19,6 +25,13 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-weight: 900;
     color: #7A7057;
+    overflow: hidden;
+}
+
+@media (orientation: portrait) {
+    body {
+        margin: 0;
+    }
 }
 
 a {
@@ -31,7 +44,9 @@ a {
 
  a object{
     pointer-events: none;
-  }
+}
+
+
 
 #header {
     text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
@@ -50,11 +65,24 @@ a {
     color: #7CC9DD;
 }
 
-#page-wrapper {
-    display:flex;
-    flex-direction: column;
-    width: 90%;
-    margin: 0 auto;
+
+
+@media (orientation: landscape) {
+    #page-wrapper {
+        display:flex;
+        flex-direction: column;
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+@media (orientation: portrait) {
+    #page-wrapper {
+        display:flex;
+        flex-direction: column;
+        width: 100%;
+        margin: 0 auto;
+    }
 }
 
 #window-wrapper {
@@ -300,6 +328,8 @@ a {
     background-color:#FBF6E3;
 }
 
+
+
 .search-wrapper {
     background-color: #EEE4CB;
     display: flex;
@@ -384,6 +414,9 @@ a {
     background-color: var(--light);
     padding: 5px 5px 5px 5px;
     border-radius: 0 0 10px 10px;
+    height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 
@@ -415,12 +448,9 @@ a {
 
 @media (orientation: portrait) {
     .data-grid {
-        font-size: 30px;
-        display: flex;
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-evenly;
-        padding-top: 10px;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-gap: 10px;
     }
 }
 
@@ -644,6 +674,7 @@ a {
         border-radius: 4px;
         margin: 5px;
         width: 90%;
+        height: 200px;
         cursor: pointer;
     }
 }
@@ -680,8 +711,8 @@ a {
         flex-shrink: 0;
         flex-basis: 0 0 10em;
         margin-right: 5px;
-        height: 110px;
-        width: 110px;
+        height: 100%;
+        width: auto;
     }
 }
 

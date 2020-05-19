@@ -82,7 +82,7 @@ function getCaught(speciesType) {
 CHORES FUNCTIONS -----------------------------------------------------------------
 */
 
-$(function() {  //Chores tab click
+$(async function() {  //Chores tab click
     $('a#chores-button').bind('click', async function() {
         hidePrevTab();
         setPrevTabIconInactive();
@@ -103,16 +103,20 @@ $(function() {  //Chores tab click
             }
         })
     });
+    var chores = await getCaught("chores")
+    console.log(chores)
 
     var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
     trailColor: '#d5ccab',
     strokeWidth: 8,
     duration: 500,
     easing: 'easeInOut'});
-    var rockPercent = 0;
+    var rockPercent = chores["rock"];
+    rock.animate(rockPercent)
     $('#rock-wrapper').click(function() {
         if (rockPercent != 1) {
-            rockPercent = rockPercent + 0.25;
+            rockPercent = rockPercent + 0.2;
+            updateJSON("chores", "rock", rockPercent)
         }
         rock.animate(rockPercent);
     })
@@ -122,7 +126,13 @@ $(function() {  //Chores tab click
     strokeWidth: 8,
     duration: 500,
     easing: 'easeInOut'});
-    var moneyRockPercent = 0;
+    if (chores["moneyrock"] === "undefined") {
+        updateJSON("chores", "moneyrock", 0)
+        var moneyRockPercent = 0;
+    } else {
+
+    }
+        moneyRockPercent = 0;
     $('#money-rock-wrapper').click(function() {
         if (moneyRockPercent == 0) {
             moneyRock.animate(1);
@@ -406,7 +416,7 @@ function addCaughtToggle(k, tab) {
                     headers: {
                         token: idToken,
                         species: tab,
-                        critter: $thisCritter.id,
+                        critter: thisCritter.id,
                         value: updateValue
                     }
                 })
