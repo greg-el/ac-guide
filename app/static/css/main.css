@@ -778,12 +778,13 @@ a {
     }
 
     #tab-mobile-bar {
-        height: 20%;
+        height: 10%;
+        width:100%;
         background-color: var(--tab-bar);
         display: inline-flex;
         flex-direction: row;
         justify-content: space-evenly;
-        position: sticky;
+        position: fixed;
         bottom:0;
     }
     #fish-icon-m {
@@ -825,6 +826,7 @@ a {
         width: 100%;
         height: 100%;
         background-color:#FBF6E3;
+        margin-bottom: 17%;
     }
     .search-wrapper {
         background-color: #EEE4CB;
