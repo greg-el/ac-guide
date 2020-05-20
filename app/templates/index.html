@@ -34,7 +34,7 @@
         <link rel="mask-icon" href="static/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
-
+        <meta name="viewport" content="initial-scale=1">
 
     </head>
     <body>
@@ -61,24 +61,16 @@
                 <div id="tab-bar">
                     <div id="tabs-container">
                         <div id="chores-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <a href=# id="chores-button">
-                                <object class="tab-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
-                            </a>
+                            <object class="tab-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
                         </div>
                         <div id="fish-container" class="tab-container">
-                            <a href=# id="fish-button">
-                                <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
-                            </a>
+                            <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
                         </div>
                         <div id="bugs-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <a href=# id="bugs-button">
-                                <object class="tab-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
-                            </a>
+                            <object class="tab-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
                         </div>
                         <div id="villagers-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <a href=# id="villagers-button">
-                                <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
-                            </a>
+                            <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
                         </div>
                     </div>
                     <div id="filter-wrapper">
