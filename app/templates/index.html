@@ -163,6 +163,20 @@
                 <div id="villagers-tab" class="data-container" style="display: none;">
                     <div id="villagers-data-wrapper" class="data-wrapper"></div>
                 </div>
+                <div id="tab-mobile-bar">
+                    <div id="chores-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
+                        <object class="tab-mobile-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
+                    </div>
+                    <div id="fish-container" class="tab-mobile-container">
+                        <object class="tab-mobile-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
+                    </div>
+                    <div id="bugs-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
+                        <object class="tab-mobile-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
+                    </div>
+                    <div id="villagers-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
+                            <object class="tab-mobile-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
