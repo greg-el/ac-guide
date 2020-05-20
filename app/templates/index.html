@@ -34,7 +34,7 @@
         <link rel="mask-icon" href="static/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
-        <meta name="viewport" content="initial-scale=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1"> 
 
     </head>
     <body>
@@ -49,7 +49,7 @@
                         <div class="time-style" id="time">0:00</div>
                         <div class="time-style" id="ampm">AM</div>
                     </div>
-                    <div class="time-divider"></div>
+                    <div id="time-divider"></div>
                     <div id="date-container">
                         <object id="day"></object>
                         <div id="date">01 Jan</div>
@@ -60,17 +60,17 @@
             <div id="window-wrapper">
                 <div id="tab-bar">
                     <div id="tabs-container">
-                        <div id="chores-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
+                        <div class="chores-container tab-container" style="background-color: #5CB9AD;">
+                            <object class="tab-icon chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
                         </div>
                         <div id="fish-container" class="tab-container">
-                            <object class="tab-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
+                            <object class="tab-icon fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
                         </div>
                         <div id="bugs-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
+                            <object class="tab-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
                         </div>
                         <div id="villagers-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
+                            <object class="tab-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
                         </div>
                     </div>
                     <div id="filter-wrapper">
@@ -156,17 +156,17 @@
                     <div id="villagers-data-wrapper" class="data-wrapper"></div>
                 </div>
                 <div id="tab-mobile-bar">
-                    <div id="chores-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
-                        <object class="tab-mobile-icon" id="chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
+                    <div class="chores-container tab-mobile-container" style="background-color: #5CB9AD;">
+                        <object id="chores-icon-m" class="tab-mobile-icon chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
                     </div>
-                    <div id="fish-container" class="tab-mobile-container">
-                        <object class="tab-mobile-icon" id="fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
+                    <div class="tab-mobile-container fish-container">
+                        <object id="fish-icon-m" class="tab-mobile-icon fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
                     </div>
-                    <div id="bugs-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
-                        <object class="tab-mobile-icon" id="bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
+                    <div class="tab-mobile-container bugs-container" style="background-color: #5CB9AD;">
+                        <object class="tab-mobile-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
                     </div>
-                    <div id="villagers-container" class="tab-mobile-container" style="background-color: #5CB9AD;">
-                            <object class="tab-mobile-icon" id="villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
+                    <div class="tab-mobile-container villagers-container" style="background-color: #5CB9AD;">
+                            <object class="tab-mobile-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
                     </div>
                 </div>
             </div>

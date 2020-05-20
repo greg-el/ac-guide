@@ -83,7 +83,7 @@ CHORES FUNCTIONS ---------------------------------------------------------------
 */
 
 $(async function() {  //Chores tab click
-    $('a#chores-button').bind('click', async function() {
+    $('.chores-container').bind('click', async function() {
         hidePrevTab();
         setPrevTabIconInactive();
         prevTab = "chores";
@@ -433,7 +433,7 @@ FISH FUNCTIONS -----------------------------------------------------------------
 */
 
 $(function() {  //Fish tab click
-    $('a#fish-button').bind('click', function() {
+    $('.fish-container').bind('click', function() {
         if (prevTab == "chores") {
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
@@ -556,7 +556,7 @@ BUGS FUNCTIONS -----------------------------------------------------------------
 */
 
 $(function() { //bugs tab click
-    $('a#bugs-button, #bug-icon').click(async function() {
+    $('.bugs-container, #bug-icon').click(async function() {
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
         if (prevTab == "chores") {
@@ -670,7 +670,7 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 
 $(function() { //Birthdays tab click 
-    $('a#villagers-button').bind('click', function() {
+    $('.villagers-container').bind('click', function() {
         if (prevTab == "chores") {
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
@@ -872,13 +872,13 @@ async function setActiveTabIcon(tab) {
 };
 
 function makeTabIconActive(tab) {
-    $('#' + tab + '-container').css('background-color', '#32A4A4');
-    $('#' + tab + '-icon').css('opacity', '1');
+    $('.' + tab + '-container').css('background-color', '#32A4A4');
+    $('.' + tab + '-icon').css('opacity', '1');
 }
 
 function makeTabIconInactive(tab) {
-    $('#' + tab + '-container').css('background-color', '#5CB9AD');
-    $('#' + tab + '-icon').css('opacity', '0.5');
+    $('.' + tab + '-container').css('background-color', '#5CB9AD');
+    $('.' + tab + '-icon').css('opacity', '0.5');
 }
 
 /*
