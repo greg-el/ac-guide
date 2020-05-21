@@ -479,11 +479,11 @@ function createFishHTMLElement(k, v, userDict) {
     var tooltip = 'Click to mark as caught or uncaught';
     var template = document.createElement("template");
 
-    var icon = v.icon;
-
+    var icon = "./static/image/fish/" + k + ".webp";
     if (isIOS) {
-        icon = v.icon.slice(0, 19) + "/png/" + k + ".png";
-    }
+        icon = "./static/image/fish/png/" + k + ".webp";
+    };
+
 
     template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
                             '<img class="critter-icon" loading="lazy" src="' + icon + '">\n' +
@@ -606,18 +606,23 @@ function generateBugsHTML(k, v, userDict) {
         var plainTimeHTML = getCritterTimePlainHTML(v.time, altTime);
     }
 
-    
     if (v.hasOwnProperty('locationAlt')) {
         var plainAltLocationHTML = getAltCritterLocationPlainHTML(v.locationAlt)
         var plainLocationHTML = getCritterLocationPlainHTML(v.location, true, plainAltLocationHTML);
     } else {
         var plainLocationHTML = getCritterLocationPlainHTML(v.location, false);
     }
+
     var tooltip = 'Click to mark as caught or uncaught';
     var template = document.createElement("template");
 
+    var icon = "./static/image/bugs/" + k + ".webp";
+    if (isIOS) {
+        icon = "./static/image/bugs/png/" + k + ".png";
+    };
+
     template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
-                '<img class="critter-icon" loading="lazy" src="' + v.icon + '">\n' +
+                '<img class="critter-icon" loading="lazy" src="' + icon + '">\n' +
                 '<div class="critter-data">\n' +
                     '<div class="name-container critter-name">\n' +
                         '<div class="critter-name">'+v.name_formatted+'</div>\n' +
@@ -704,13 +709,20 @@ $(function() { //Birthdays tab click
     return false;
 });
 
-function generateVillagerHTML($elem, k, v) {
+function generateVillagerHTML(k, v) {
     var genderIcon = './static/image/icons/svg/female.svg';
     if (v.gender == "m") {
         genderIcon = './static/image/icons/svg/male.svg';
     };
+    
+    var icon = "./static/image/villagers/" + k + ".webp";
+    if (isIOS) {
+        icon = "./static/image/villagers/png/" + k + ".webp";
+    };
+
+
     return $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':v.icon}),
+            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append([
                     $('<div/>', {'class': 'villager-name', 'text':v.name}),

@@ -98,7 +98,7 @@ def get_fish_data(url, out):
 
         temp_dict['months'] = months
 
-        temp_dict['icon'] = "./static/image/fish/" + name + ".webp"
+        #temp_dict['icon'] = "./static/image/fish/" + name + ".webp"
 
         if url == "./fish-north":
             out['northern'][name] = temp_dict
@@ -199,7 +199,7 @@ def get_bug_data(url, out):
 
         temp_dict['months'] = months
 
-        temp_dict['icon'] = "./static/image/bugs/" + name + ".webp"
+        #temp_dict['icon'] = "./static/image/bugs/" + name + ".webp"
 
         if url == "./bugs-north":
             out['northern'][name] = temp_dict
@@ -314,3 +314,4 @@ def run_villager():
 
 
 run_bugs()
+run_fish()
