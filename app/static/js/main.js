@@ -9,6 +9,9 @@ var CURRENT_HOUR_24 = d.getHours()
 var CURRENT_HOUR = CURRENT_HOUR_24 % 12 ? CURRENT_HOUR_24 % 12 : 12;
 amPm = d.getHours() >= 12 ? "PM" : "AM";
 var amPm = "";
+var isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+!window.MSStream
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -476,8 +479,14 @@ function createFishHTMLElement(k, v, userDict) {
     var tooltip = 'Click to mark as caught or uncaught';
     var template = document.createElement("template");
 
+    var icon = v.icon;
+
+    if (isIOS) {
+        icon = v.icon.slice(0, 19) + "/png/" + k + ".png";
+    }
+
     template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
-                            '<img class="critter-icon" loading="lazy" src="' + v.icon + '">\n' +
+                            '<img class="critter-icon" loading="lazy" src="' + icon + '">\n' +
                             '<div class="critter-data">\n' +
                                 '<div class="name-container critter-name">\n' +
                                     '<div class="critter-name">'+v.name_formatted+'</div>\n' +
