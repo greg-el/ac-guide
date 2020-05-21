@@ -81,6 +81,24 @@ function getCaught(speciesType) {
     })
 };
 
+
+/*
+MOBILE FUNCTIONS -----------------------------------------------------------------
+*/
+$(function() {
+    $('#mobile-settings-close').click(() => {
+        document.getElementById("mobile-settings").style.display ="none";
+    });
+
+    $('#cog').click(() => {
+        document.getElementById("mobile-settings").style.display ="flex";
+    });
+
+    $('.mobile-login').click(() => {
+        window.location.replace("/login")
+    })
+})
+
 /*
 CHORES FUNCTIONS -----------------------------------------------------------------
 */
@@ -893,12 +911,12 @@ async function setActiveTabIcon(tab) {
 };
 
 function makeTabIconActive(tab) {
-    $('.' + tab + '-container').css('background-color', '#32A4A4');
+    $('.' + tab + '-container').css('background-color', '#F9F6E3');
     $('.' + tab + '-icon').css('opacity', '1');
 }
 
 function makeTabIconInactive(tab) {
-    $('.' + tab + '-container').css('background-color', '#5CB9AD');
+    $('.' + tab + '-container').css('background-color', '#F9F6E3');
     $('.' + tab + '-icon').css('opacity', '0.5');
 }
 

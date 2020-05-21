@@ -34,14 +34,80 @@
         <link rel="mask-icon" href="static/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
-        <meta name="viewport" content="width=device-width,initial-scale=1"> 
-
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <!-- Chrome, Firefox OS and Opera -->
+        <meta name="theme-color" content="#5CB9AD">
+        <!-- Windows Phone -->
+        <meta name="msapplication-navbutton-color" content="#5CB9AD">
+        <!-- iOS Safari -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="#5CB9AD">
     </head>
     <body>
         <div id="page-wrapper">
+            <div id="cover"></div>
             <div id="login-container">
                 <a href="{{ url_for('login') }}" id="login-link">Login</a>
                 <a href=# id="logout" style="display:none">Logout</a>
+            </div>
+            <div id="mobile-header">
+                <div id="signal"></div>
+                <div id="nook"></div>
+                <div id="mobile-date"></div>
+                <div id="cog"></div>
+            </div>
+            <div id="mobile-settings" class="modal" style="display: none">
+                <div id="mobile-settings-close"></div>
+                <div id="mobile-login-link" class="mobile-login">
+                    <div id="mobile-login-text" class="mobile-login">Login</div>
+                </div>
+            </div>
+            <div id="critter-modal" class="modal">
+                <div id="modal-header-container">
+                    <div id="modal-bells-icon"></div>
+                    <div id="modal-bells-price-container">
+                        <div id="modal-bells-price">0000</div>
+                    </div>
+                    <div id="modal-close-container">
+                        <div id="modal-close"></div>
+                    </div>
+                </div>
+                <div id="modal-critter-icon-container" class="modal-container">
+                    <div id="modal-critter-icon"></div>
+                </div>
+                <div id="modal-critter-time-container" class="modal-container">
+                    <div id="modal-critter-time">0AM - 12AM</div>
+                </div>
+                <div id="modal-critter-name-container" class="modal-container">
+                    <div id="modal-critter-name">Template Name</div>
+                </div>
+                <div id="modal-critter-month-container" class="modal-container">
+                    <div id="modal-months">
+                        <div id="jan" class="month">Jan</div>
+                        <div id="feb" class="month">Feb</div>
+                        <div id="mar" class="month">Mar</div>
+                        <div id="apr" class="month">Apr</div>
+                        <div id="may" class="month">May</div>
+                        <div id="june" class="month">June</div>
+                        <div id="july" class="month">July</div>
+                        <div id="aug" class="month">Aug</div>
+                        <div id="sept" class="month">Sept</div>
+                        <div id="oct" class="month">Oct</div>
+                        <div id="nov" class="month">Nov</div>
+                        <div id="dec" class="month">Dec</div>
+                    </div>
+                </div>
+                <div id="modal-critter-location-container" class="modal-container">
+                    <div id="modal-critter-location-text-container">
+                        <div id="modal-critter-location" class="modal-location-text">Location</div>
+                        <div id="modal-critter-location-alt">Location Alt</div>
+                    </div>
+                    <div id="modal-critter-map"></div>
+                </div>
+                <div id="modal-critter-caught-container" class="modal-container">
+                    <div id="modal-critter-caught-button">
+                        <div id="modal-critter-caught-text">Not Caught!</div>
+                    </div>
+                </div>
             </div>
             <div id="header-container">
                 <div id="datetime-container">
@@ -156,17 +222,17 @@
                     <div id="villagers-data-wrapper" class="data-wrapper"></div>
                 </div>
                 <div id="tab-mobile-bar">
-                    <div class="chores-container tab-mobile-container" style="background-color: #5CB9AD;">
-                        <object id="chores-icon-m" class="tab-mobile-icon chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
+                    <div class="tab-mobile-container chores-container">
+                        <object id="chores-icon-m" class="tab-mobile-icon chores-icon" data="{{ url_for('static', filename = 'image/bar/mobile-check.svg') }}" style="opacity: 0.5;"></object>
                     </div>
                     <div class="tab-mobile-container fish-container">
-                        <object id="fish-icon-m" class="tab-mobile-icon fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
+                        <object id="fish-icon-m" class="tab-mobile-icon fish-icon" data="{{ url_for('static', filename = 'image/bar/mobile-check.svg') }}" ></object>
                     </div>
-                    <div class="tab-mobile-container bugs-container" style="background-color: #5CB9AD;">
-                        <object class="tab-mobile-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
+                    <div class="tab-mobile-container bugs-container"">
+                        <object class="tab-mobile-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/mobile-check.svg') }}" style="opacity: 0.5;"></object>
                     </div>
-                    <div class="tab-mobile-container villagers-container" style="background-color: #5CB9AD;">
-                            <object class="tab-mobile-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
+                    <div class="tab-mobile-container villagers-container">
+                            <object class="tab-mobile-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/mobile-check.svg') }}" style="opacity: 0.5"></object>
                     </div>
                 </div>
             </div>

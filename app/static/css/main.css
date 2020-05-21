@@ -4,16 +4,16 @@
     --light: #F9F6E3;
     --dark: #C8BC9C;
     --critter-name: #FF4875;
+    --green:#89C48A;
 }
-
 
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-
 body {
+    height: 100vh;
     width: 100%;
     font-size: 15px;
     background-image: url("../image/acrepeat-blur.jpg");
@@ -24,8 +24,6 @@ body {
     color: #7A7057;
     overflow: hidden;
 }
-
-
 
 a {
     outline: 0;
@@ -39,11 +37,34 @@ a {
     pointer-events: none;
 }
 
+@media (orientation: landscape) {
+    #page-wrapper {
+        display:flex;
+        flex-direction: column;
+        width: 90%;
+        margin: 0 auto;
+    }
+}
+
+#cover {
+    position: absolute;
+    box-shadow: 0 0 0 1000px rgba(0,0,0,.5);
+    /* for real browsers */
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,.5);
+    pointer-events: none;
+    z-index: 2;
+    top:0;
+}
+
 #tabs-container {
     display: none;
 }
 
 #tab-mobile-bar {
+    display: none;
+}
+
+#mobile-header {
     display: none;
 }
 
@@ -64,14 +85,7 @@ a {
     color: #7CC9DD;
 }
 
-@media (orientation: landscape) {
-    #page-wrapper {
-        display:flex;
-        flex-direction: column;
-        width: 90%;
-        margin: 0 auto;
-    }
-}
+
 
 #window-wrapper {
     display: flex;
@@ -677,10 +691,6 @@ a {
     padding: .5em;
 }
 
-.villager-icon {
-    width: 50%;
-    margin-right: 5px;
-}
 
 .villager-data {
     display: flex;
@@ -746,56 +756,87 @@ a {
     body {
         margin: 0;
         overflow: scroll;
-    }
+        background-image: none;
+        background-color: var(--tab-bar);
+        }
+    
 
     #page-wrapper {
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
     }
 
-    #new {
-        display: none;
-    }
-    
-    #horizons {
-        display: none;
+    #window-wrapper {
+        height: 95%;
+        border-radius: 0px;
     }
 
-    #time {
-        display: none;
+    #mobile-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        border-bottom: 3px solid #B7B19B;
+        align-items: center;
+        height: 15%;
     }
-    
-    #ampm {
-        display: none;
+
+    #signal {
+        display:flex;
+        background-image: url("../image/bar/mobile-signal.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        height: 60%;
+        width: 75px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
-    
-    #time-divider {
-        display: none;
+
+    #nook {
+        display:flex;
+        background-image: url("../image/bar/mobile-nook.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        height: 40px;
+        width: 50px;
     }
-    #tab-bar {
-        display:none;
+
+    #cog {
+        display:flex;
+        background-image: url("../image/bar/mobile-cog.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        height: 40px;
+        width: 40px;
+        margin-left: auto;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+
+    #new, #horizons, #tab-bar, #datetime-container, #login-container{
+        display: none;
     }
 
     #tab-mobile-bar {
         height: 10%;
         width:100%;
-        background-color: var(--tab-bar);
+        background-color: var(--light);
         display: inline-flex;
         flex-direction: row;
         justify-content: space-evenly;
         position: fixed;
         bottom:0;
-    }
-    #fish-icon-m {
-        height: 40%;
-    }
-    #chores-icon-m {
-        height: 60%;
+        border-top: 3px solid #B7B19B;
+        box-sizing: border-box;
+        border-radius: 4px;
     }
 
     .tab-mobile-icon {
-        height: 50%;
+        height: 90%;
         pointer-events: none;
     }
 
@@ -804,14 +845,13 @@ a {
         justify-content: center;
         align-items: center;
         border-radius: 10px 10px 0 0;
-        background-color: var(--selected-tab);
         padding: 0;
         margin: 0;
         width:25%;
+        height: 100%;
     }
     .tab-container {
         border-radius: 10px 10px 0 0;
-        background-color: var(--selected-tab);
         padding: 0;
         margin: 0;
         height: 100%;
@@ -928,4 +968,181 @@ a {
         opacity: 50%;
         margin-top: 3px;
     }
+
+    .modal {
+        display: flex;
+        background-color: var(--light);
+        background: #F9F6E3;
+        border: 1px solid #E2DFCE;
+        box-sizing: border-box;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        position: absolute;
+        height: 70%;
+        width: 70%;
+        top: 10%;
+        left: 15%;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+    }
+
+    #mobile-settings-close {
+        position: relative;
+        background-image: url("../image/close.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 70px;
+        width: 70px;
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    #mobile-login-link {
+        position: absolute;
+        width: 50%;
+        height: 10%;
+        background-color: var(--green);
+        color: white;
+        margin-left: 25%;
+        margin-top: 80%;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        border-radius: 20px;
+    }
+
+    #mobile-login-text {
+        font-size: 200%;
+    }
+
+    #critter-modal {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 20px;
+    }
+
+    #modal-header-container {
+        height: 10%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    #modal-close {
+        background-image: url("../image/close.svg");
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 100%;
+        width: 50%;
+    }
+
+    #modal-close-container {
+        display: flex;
+        width: 20%;
+        margin-left: auto;
+        justify-content: flex-end;
+    }
+
+    #modal-bells-icon {
+        display: flex;
+        background-image: url("../image/modal/bells-colour.svg");
+        background-repeat: no-repeat;
+        height: 100%;
+        width: 10%;
+        margin-right: 2%;
+        background-size: contain;
+    }
+
+    #modal-bells-price-container {
+        display: flex;
+        color: #F8BF87;
+        font-size: 300%;
+        width: 20%;
+        justify-content: flex-start;
+    }
+
+    .modal-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+    }
+
+    #modal-critter-icon {
+        height: 256px;
+        width: 256px;
+        background-color: aqua;
+    }
+
+
+    #modal-critter-name {
+        color: var(--critter-name);
+        font-size: 400%;
+    }
+
+    #modal-critter-time {
+        color: var(--critter-name);
+        font-size: 300%;
+    }
+
+    #modal-months {
+        display: grid;
+        justify-content: center;
+        font-size: 200%;
+        grid-template-rows: repeat(3, 2fr);
+        grid-template-columns: repeat(4, 20%);
+        width: 100%;
+        color: #5B5444;
+    }
+    .month {
+        border: 1px solid #EEE4CB;
+        text-align: center;
+    }
+
+    #modal-critter-location-container {
+        align-items: center;
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+
+    #modal-critter-map {
+        background-image: url("../image/modal/map.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 200px;
+        width: 250px;
+
+
+    }
+
+    #modal-critter-location-text-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        position: absolute;
+        color: #97D5BB;
+        padding-left: 5%;
+    }
+
+    #modal-critter-caught-button {
+        width: 50%;
+        font-size: 300%;
+        padding: 10px;
+        background-color: #FF5140;
+        color: white;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        border-radius: 20px;
+    }
+
+
+
 }
