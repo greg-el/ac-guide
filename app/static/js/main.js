@@ -99,6 +99,23 @@ $(function() {
 MODAL FUNCTIONS -----------------------------------------------------------------
 */
 
+//$(function() {
+//    var elem = document.getElementById("fish-tab");
+//    var mobileHeader = document.getElementById("mobile-header")
+//    var newHeight = 0;
+//    elem.addEventListener("scroll", () => {
+//        newHeight = mobileHeader.offsetHeight - elem.scrollTop;
+//        if (newHeight > 0) {
+//            console.log(newHeight)
+//            mobileHeader.style.height = newHeight + "px";
+//        } else {
+//            mobileHeader.style.height = "0px";
+//            newHeight = 0;
+//        }
+//
+//    })
+//})
+
 $(function() {
     $('#mobile-settings-close').click(() => {
         document.getElementById("mobile-settings").style.display ="none";

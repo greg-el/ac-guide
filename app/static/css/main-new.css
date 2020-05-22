@@ -1,0 +1,16 @@
+:root {
+    --tab-bar: #5CB9AD;
+    --selected-tab: #32A4A4;
+    --light: #F9F6E3;
+    --dark: #C8BC9C;
+    --critter-name: #FF4875;
+    --green:#89C48A;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+}
+
