@@ -1145,12 +1145,13 @@ a {
 
     #mobile-filter {
         display: flex;
-        width: 20%;
         height: 100%;
         background-color: var(--green);
         font-size: 150%;
         line-height: 150%;
         border-radius: 16px;
+        padding-left: 10px;
+        padding-right: 10px;
         color: white;
         justify-content: center;
     }
@@ -1160,7 +1161,7 @@ a {
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
-        height: 60px;
+        height: 50px;
         width: 100%;
     }
 
@@ -1168,7 +1169,8 @@ a {
         margin: 8px;
         display: flex;
         width: 15%;
-        height: 60%;
+        justify-content: center;
+        align-items: center;
         background-color: var(--green);
         font-size: 150%;
         line-height: 150%;
