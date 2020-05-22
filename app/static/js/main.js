@@ -90,7 +90,7 @@ $(function() {
     $('#modal-close-container').click(() => {
         document.getElementById("critter-modal").style.display ="none";
         document.getElementById("cover").style.display ="none";
-        //document.documentElement.style.overflowY = "hidden";
+        document.documentElement.style.overflowY = "hidden";
     });
 
 })
@@ -98,23 +98,6 @@ $(function() {
 /*
 MODAL FUNCTIONS -----------------------------------------------------------------
 */
-
-//$(function() {
-//    var elem = document.getElementById("fish-tab");
-//    var mobileHeader = document.getElementById("mobile-header")
-//    var newHeight = 0;
-//    elem.addEventListener("scroll", () => {
-//        newHeight = mobileHeader.offsetHeight - elem.scrollTop;
-//        if (newHeight > 0) {
-//            console.log(newHeight)
-//            mobileHeader.style.height = newHeight + "px";
-//        } else {
-//            mobileHeader.style.height = "0px";
-//            newHeight = 0;
-//        }
-//
-//    })
-//})
 
 $(function() {
     $('#mobile-settings-close').click(() => {
@@ -131,12 +114,11 @@ $(function() {
 })
 
 function createModal(k, data) {
-    console.log(k, data)
     var modal = document.getElementById("critter-modal");
     var cover = document.getElementById("cover");
-    modal.style.display ="flex";
+    $(modal).stop().css('display','flex').hide().fadeIn(300);
+    $(cover).stop().css('display','flex').hide().fadeIn(300);
     modal.style.position ="fixed";
-    cover.style.display ="flex";
     cover.style.position ="fixed";
     document.getElementById("modal-critter-name").innerHTML = data.name_formatted;
 
@@ -146,11 +128,29 @@ function createModal(k, data) {
     };
 
     document.getElementById("modal-critter-icon").style.backgroundImage = "url("+icon+")";
-
     document.getElementById("modal-bells-price").innerHTML = data.price;
-
     document.getElementById("modal-critter-time").innerHTML = getAltCritterTime(data.time);
 }
+
+/*
+MOBILE FILTER FUNCTIONS -----------------------------------------------------------------
+*/
+
+$(() => {
+    $('#mobile-filter').click(() => {
+        $('#mobile-filter-list').slideToggle();
+    });
+
+    $('#filter-location').click(() => {
+        $('#mobile-filter-by').slideToggle();
+    });
+
+    $('#filter-show').click(() => {
+        $('#mobile-filter-show').slideToggle();
+    })
+})
+
+
 
 /*
 CHORES FUNCTIONS -----------------------------------------------------------------
@@ -701,6 +701,7 @@ function generateBugsHTML(k, v, userDict) {
                 '<div class="critter-data">\n' +
                     '<div class="name-container critter-name">\n' +
                         '<div class="critter-name">'+v.name_formatted+'</div>\n' +
+                        '<div id="'+k+'-modal-button" class="modal-button"></div>\n' +
                         '</div>\n' + 
                     '<div class="critter-divider"></div>\n' +
                     '<div class="data-grid">\n' +
@@ -723,13 +724,15 @@ async function getAllBugs() {
         userDict = await getCaught("bugs");
     }
     $.getJSON('/bugs/all', function(data) {
+        var modalTempObj = {}
         var elem = document.getElementById("bugs-data-wrapper")
         $.each(data, function(k, v) {
             bugsElements.push(generateBugsHTML(k, v, userDict));
+            modalTempObj[k] = v;
         });
         for (var i=0; i<bugsElements.length; i++) {
             elem.appendChild(bugsElements[i]);
-            addCaughtToggle(bugsElements[i], "bugs")
+            addCaughtToggle(fishElements[i], "bugs", modalTempObj[bugsElements[i].id]);
         }
         $('.wrapper-skeleton').remove();
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or no
@@ -837,6 +840,7 @@ async function getVillagers() {
             month: m
         },
         success: function(data) {
+            
             var $elementsToAppend = [];
             var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
@@ -1241,24 +1245,23 @@ function createSkeletonHTML(tab) {
             ])
         }
     } else if (tab == "bugs") {
+        var bugsDominant = ["rgb(102, 110, 50)","rgb(83, 87, 18)","rgb(78, 13, 16)","rgb(147, 94, 17)",
+        "rgb(30, 40, 29)","rgb(11, 27, 10)","rgb(11, 30, 12)","rgb(18, 47, 11)","rgb(124, 96, 48)",
+        "rgb(116, 95, 43)","rgb(87, 86, 83)","rgb(110, 84, 49)","rgb(27, 15, 17)","rgb(30, 47, 41)",
+        "rgb(94, 73, 53)","rgb(157, 86, 20)","rgb(37, 14, 46)","rgb(35, 37, 35)","rgb(57, 48, 53)",
+        "rgb(41, 13, 14)","rgb(215, 138, 17)","rgb(21, 34, 16)","rgb(122, 82, 45)","rgb(31, 66, 32)",
+        "rgb(86, 71, 28)","rgb(38, 44, 56)","rgb(255, 255, 254)","rgb(120, 103, 69)","rgb(40, 45, 51)",
+        "rgb(97, 96, 94)","rgb(124, 97, 42)","rgb(125, 95, 35)","rgb(15, 18, 34)","rgb(196, 170, 98)",
+        "rgb(50, 30, 41)","rgb(27, 48, 34)","rgb(248, 236, 85)","rgb(151, 96, 29)","rgb(114, 100, 85)",
+        "rgb(19, 32, 57)","rgb(128, 93, 42)","rgb(52, 29, 30)","rgb(33, 54, 119)","rgb(14, 16, 15)",
+        "rgb(139, 71, 31)","rgb(87, 80, 14)","rgb(197, 165, 96)","rgb(19, 31, 52)","rgb(44, 51, 40)",
+        "rgb(35, 39, 43)","rgb(19, 22, 17)","rgb(100, 90, 80)","rgb(55, 70, 51)","rgb(173, 8, 6)",
+        "rgb(60, 37, 38)","rgb(123, 89, 29)","rgb(32, 46, 54)","rgb(15, 17, 30)","rgb(24, 36, 44)",
+        "rgb(93, 87, 69)","rgb(161, 80, 15)","rgb(113, 76, 60)","rgb(110, 79, 53)","rgb(103, 93, 82)",
+        "rgb(12, 47, 37)","rgb(53, 75, 44)","rgb(98, 50, 45)","rgb(18, 17, 15)","rgb(25, 25, 28)",
+        "rgb(70, 93, 110)","rgb(134, 86, 43)","rgb(143, 176, 32)","rgb(12, 8, 7)","rgb(89, 81, 74)",
+        "rgb(160, 77, 26)","rgb(138, 85, 20)","rgb(1, 0, 0)","rgb(113, 104, 62)","rgb(18, 20, 32)","rgb(134, 85, 31)"]
         for (var i=0; i<50; i++) {
-            var bugsDominant = ["rgb(102, 110, 50)","rgb(83, 87, 18)","rgb(78, 13, 16)","rgb(147, 94, 17)",
-            "rgb(30, 40, 29)","rgb(11, 27, 10)","rgb(11, 30, 12)","rgb(18, 47, 11)","rgb(124, 96, 48)",
-            "rgb(116, 95, 43)","rgb(87, 86, 83)","rgb(110, 84, 49)","rgb(27, 15, 17)","rgb(30, 47, 41)",
-            "rgb(94, 73, 53)","rgb(157, 86, 20)","rgb(37, 14, 46)","rgb(35, 37, 35)","rgb(57, 48, 53)",
-            "rgb(41, 13, 14)","rgb(215, 138, 17)","rgb(21, 34, 16)","rgb(122, 82, 45)","rgb(31, 66, 32)",
-            "rgb(86, 71, 28)","rgb(38, 44, 56)","rgb(255, 255, 254)","rgb(120, 103, 69)","rgb(40, 45, 51)",
-            "rgb(97, 96, 94)","rgb(124, 97, 42)","rgb(125, 95, 35)","rgb(15, 18, 34)","rgb(196, 170, 98)",
-            "rgb(50, 30, 41)","rgb(27, 48, 34)","rgb(248, 236, 85)","rgb(151, 96, 29)","rgb(114, 100, 85)",
-            "rgb(19, 32, 57)","rgb(128, 93, 42)","rgb(52, 29, 30)","rgb(33, 54, 119)","rgb(14, 16, 15)",
-            "rgb(139, 71, 31)","rgb(87, 80, 14)","rgb(197, 165, 96)","rgb(19, 31, 52)","rgb(44, 51, 40)",
-            "rgb(35, 39, 43)","rgb(19, 22, 17)","rgb(100, 90, 80)","rgb(55, 70, 51)","rgb(173, 8, 6)",
-            "rgb(60, 37, 38)","rgb(123, 89, 29)","rgb(32, 46, 54)","rgb(15, 17, 30)","rgb(24, 36, 44)",
-            "rgb(93, 87, 69)","rgb(161, 80, 15)","rgb(113, 76, 60)","rgb(110, 79, 53)","rgb(103, 93, 82)",
-            "rgb(12, 47, 37)","rgb(53, 75, 44)","rgb(98, 50, 45)","rgb(18, 17, 15)","rgb(25, 25, 28)",
-            "rgb(70, 93, 110)","rgb(134, 86, 43)","rgb(143, 176, 32)","rgb(12, 8, 7)","rgb(89, 81, 74)",
-            "rgb(160, 77, 26)","rgb(138, 85, 20)","rgb(1, 0, 0)","rgb(113, 104, 62)","rgb(18, 20, 32)","rgb(134, 85, 31)"]
-
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
                     $('<div/>', {'class': 'image-skeleton', 'css':{'background-color': bugsDominant[i], 'opacity': '50%'}}),
