@@ -85,6 +85,20 @@ function getCaught(speciesType) {
 /*
 MOBILE FUNCTIONS -----------------------------------------------------------------
 */
+
+$(function() {
+    $('#modal-close-container').click(() => {
+        document.getElementById("critter-modal").style.display ="none";
+        document.getElementById("cover").style.display ="none";
+        //document.documentElement.style.overflowY = "hidden";
+    });
+
+})
+
+/*
+MODAL FUNCTIONS -----------------------------------------------------------------
+*/
+
 $(function() {
     $('#mobile-settings-close').click(() => {
         document.getElementById("mobile-settings").style.display ="none";
@@ -98,6 +112,28 @@ $(function() {
         window.location.replace("/login")
     })
 })
+
+function createModal(k, data) {
+    console.log(k, data)
+    var modal = document.getElementById("critter-modal");
+    var cover = document.getElementById("cover");
+    modal.style.display ="flex";
+    modal.style.position ="fixed";
+    cover.style.display ="flex";
+    cover.style.position ="fixed";
+    document.getElementById("modal-critter-name").innerHTML = data.name_formatted;
+
+    var icon = "./static/image/fish/" + k.id + ".webp";
+    if (isIOS) {
+        icon = "./static/image/fish/png/" + k.id + ".png";
+    };
+
+    document.getElementById("modal-critter-icon").style.backgroundImage = "url("+icon+")";
+
+    document.getElementById("modal-bells-price").innerHTML = data.price;
+
+    document.getElementById("modal-critter-time").innerHTML = getAltCritterTime(data.time);
+}
 
 /*
 CHORES FUNCTIONS -----------------------------------------------------------------
@@ -415,7 +451,11 @@ function getAltCritterLocationPlainHTML(v) {
 }
 
 
-function addCaughtToggle(k, tab) {
+function addCaughtToggle(k, tab, data) {
+    document.getElementById(k.id+'-modal-button').addEventListener("click", function(event) {
+        event.stopPropagation();
+        createModal(k, data)
+    });
     k.addEventListener("click", (function() {
         var thisCritter = this
         if (thisCritter.getAttribute('data-checked') == 'true') {
@@ -508,6 +548,7 @@ function createFishHTMLElement(k, v, userDict) {
                             '<div class="critter-data">\n' +
                                 '<div class="name-container critter-name">\n' +
                                     '<div class="critter-name">'+v.name_formatted+'</div>\n' +
+                                    '<div id="'+k+'-modal-button" class="modal-button"></div>\n' +
                                 '</div>\n' + 
                                 '<div class="critter-divider"></div>\n' +
                                 '<div class="data-grid">\n' +
@@ -529,6 +570,7 @@ function createFishHTMLElement(k, v, userDict) {
 }
 
 async function getAllFish() {
+    var modalTempList = {};
     var userDict = false;
     var idToken = getCookie("user");
     if (idToken != "") {
@@ -538,10 +580,11 @@ async function getAllFish() {
         var elem = document.getElementById("fish-data-wrapper");
         $.each(data, function(k, v) {
             fishElements.push(createFishHTMLElement(k, v, userDict));
+            modalTempList[k] = v;
         });
         for (var i=0; i<fishElements.length; i++) {
             elem.appendChild(fishElements[i]);
-            addCaughtToggle(fishElements[i], "fish");
+            addCaughtToggle(fishElements[i], "fish", modalTempList[fishElements[i].id]);
         }
         $('.wrapper-skeleton').remove();
     }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
@@ -590,10 +633,7 @@ $(function() { //bugs tab click
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
             $('#chores-timer-wrapper').css('display', 'none');
-
         }
-
-        
         showTab("bugs");
         hidePrevTab();
         setPrevTabIconInactive();

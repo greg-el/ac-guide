@@ -43,8 +43,64 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="#5CB9AD">
     </head>
     <body>
+        <div id="cover"></div>
+        <div id="critter-modal" class="modal">
+            <div id="modal-header-container">
+                <div id="modal-bells-icon"></div>
+                <div id="modal-bells-price-container">
+                    <div id="modal-bells-price">0000</div>
+                </div>
+                <div id="modal-close-container">
+                    <div id="modal-close"></div>
+                </div>
+            </div>
+            <div id="modal-critter-icon-container" class="modal-container">
+                <div id="modal-critter-icon"></div>
+            </div>
+            <div id="modal-critter-time-container" class="modal-container">
+                <div id="modal-critter-time">0AM - 12AM</div>
+            </div>
+            <div id="modal-critter-name-container" class="modal-container">
+                <div id="modal-critter-name">Template Name That Is Long</div>
+            </div>
+            <div id="modal-critter-month-container" class="modal-container">
+                <div id="modal-months">
+                    <div id="jan" class="month">Jan</div>
+                    <div id="feb" class="month">Feb</div>
+                    <div id="mar" class="month">Mar</div>
+                    <div id="apr" class="month">Apr</div>
+                    <div id="may" class="month">May</div>
+                    <div id="june" class="month">June</div>
+                    <div id="july" class="month">July</div>
+                    <div id="aug" class="month">Aug</div>
+                    <div id="sept" class="month">Sept</div>
+                    <div id="oct" class="month">Oct</div>
+                    <div id="nov" class="month">Nov</div>
+                    <div id="dec" class="month">Dec</div>
+                </div>
+            </div>
+        
+            <div id="modal-critter-caught-container" class="modal-container">
+                <div id="modal-critter-caught-button">
+                    <div id="modal-critter-caught-text">Not Caught!</div>
+                </div>
+            </div>
+        </div>
+        <div id="header-container">
+            <div id="datetime-container">
+                <div id="time-container">
+                    <div class="time-style" id="time">0:00</div>
+                    <div class="time-style" id="ampm">AM</div>
+                </div>
+                <div id="time-divider"></div>
+                <div id="date-container">
+                    <object id="day"></object>
+                    <div id="date">01 Jan</div>
+                </div>
+            </div>
+            <div id="header"><span id="new">New</span><span id="horizons">Horizons</span></div>
+        </div>
         <div id="page-wrapper">
-            <div id="cover"></div>
             <div id="login-container">
                 <a href="{{ url_for('login') }}" id="login-link">Login</a>
                 <a href=# id="logout" style="display:none">Logout</a>
@@ -60,68 +116,6 @@
                 <div id="mobile-login-link" class="mobile-login">
                     <div id="mobile-login-text" class="mobile-login">Login</div>
                 </div>
-            </div>
-            <div id="critter-modal" class="modal">
-                <div id="modal-header-container">
-                    <div id="modal-bells-icon"></div>
-                    <div id="modal-bells-price-container">
-                        <div id="modal-bells-price">0000</div>
-                    </div>
-                    <div id="modal-close-container">
-                        <div id="modal-close"></div>
-                    </div>
-                </div>
-                <div id="modal-critter-icon-container" class="modal-container">
-                    <div id="modal-critter-icon"></div>
-                </div>
-                <div id="modal-critter-time-container" class="modal-container">
-                    <div id="modal-critter-time">0AM - 12AM</div>
-                </div>
-                <div id="modal-critter-name-container" class="modal-container">
-                    <div id="modal-critter-name">Template Name</div>
-                </div>
-                <div id="modal-critter-month-container" class="modal-container">
-                    <div id="modal-months">
-                        <div id="jan" class="month">Jan</div>
-                        <div id="feb" class="month">Feb</div>
-                        <div id="mar" class="month">Mar</div>
-                        <div id="apr" class="month">Apr</div>
-                        <div id="may" class="month">May</div>
-                        <div id="june" class="month">June</div>
-                        <div id="july" class="month">July</div>
-                        <div id="aug" class="month">Aug</div>
-                        <div id="sept" class="month">Sept</div>
-                        <div id="oct" class="month">Oct</div>
-                        <div id="nov" class="month">Nov</div>
-                        <div id="dec" class="month">Dec</div>
-                    </div>
-                </div>
-                <div id="modal-critter-location-container" class="modal-container">
-                    <div id="modal-critter-location-text-container">
-                        <div id="modal-critter-location" class="modal-location-text">Location</div>
-                        <div id="modal-critter-location-alt">Location Alt</div>
-                    </div>
-                    <div id="modal-critter-map"></div>
-                </div>
-                <div id="modal-critter-caught-container" class="modal-container">
-                    <div id="modal-critter-caught-button">
-                        <div id="modal-critter-caught-text">Not Caught!</div>
-                    </div>
-                </div>
-            </div>
-            <div id="header-container">
-                <div id="datetime-container">
-                    <div id="time-container">
-                        <div class="time-style" id="time">0:00</div>
-                        <div class="time-style" id="ampm">AM</div>
-                    </div>
-                    <div id="time-divider"></div>
-                    <div id="date-container">
-                        <object id="day"></object>
-                        <div id="date">01 Jan</div>
-                    </div>
-                </div>
-                <div id="header"><span id="new">New</span><span id="horizons">Horizons</span></div>
             </div>
             <div id="window-wrapper">
                 <div id="tab-bar">

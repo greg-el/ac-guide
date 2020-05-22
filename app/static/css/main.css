@@ -10,10 +10,14 @@
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
 }
 
+
+
 body {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     font-size: 15px;
     background-image: url("../image/acrepeat-blur.jpg");
@@ -22,7 +26,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-weight: 900;
     color: #7A7057;
-    overflow: hidden;
+
 }
 
 a {
@@ -47,7 +51,7 @@ a {
 }
 
 #cover {
-    position: absolute;
+    position: fixed;
     box-shadow: 0 0 0 1000px rgba(0,0,0,.5);
     /* for real browsers */
     box-shadow: 0 0 0 100vmax rgba(0,0,0,.5);
@@ -340,11 +344,6 @@ a {
     justify-content: flex-start;
     padding: 8px;
 }
-
-
-
-
-
 
 @media (orientation: landscape) {
     #search {
@@ -755,7 +754,6 @@ a {
 @media (orientation: portrait) {
     body {
         margin: 0;
-        overflow: scroll;
         background-image: none;
         background-color: var(--tab-bar);
         }
@@ -779,7 +777,7 @@ a {
         justify-content: flex-start;
         border-bottom: 3px solid #B7B19B;
         align-items: center;
-        height: 15%;
+        height: 6vh;
     }
 
     #signal {
@@ -788,7 +786,7 @@ a {
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
-        height: 60%;
+        height: 40px;
         width: 75px;
         margin-left: 10px;
         margin-right: 10px;
@@ -886,6 +884,7 @@ a {
         margin-left: 10px;
         line-height: 125%;
         width: 90%;
+        
     }
 
     #search-icon {
@@ -977,14 +976,23 @@ a {
         box-sizing: border-box;
         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         border-radius: 8px;
-        position: absolute;
-        height: 70%;
-        width: 70%;
+        position: fixed;
+        height: 80%;
+        width: 80%;
         top: 10%;
-        left: 15%;
+        left: 10%;
         right: 0;
         bottom: 0;
         z-index: 3;
+    }
+
+    .modal-button {
+        background-image: url("../image/modal/info.svg");
+            background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 20px;
+        width: 20px;
     }
 
     #mobile-settings-close {
@@ -1020,12 +1028,12 @@ a {
     #critter-modal {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
+        justify-content: space-between;
         padding: 20px;
     }
 
     #modal-header-container {
-        height: 10%;
+        height: 5%;
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -1037,7 +1045,7 @@ a {
         background-repeat: no-repeat;
         background-size: contain;
         height: 100%;
-        width: 50%;
+        width: 40%;
     }
 
     #modal-close-container {
@@ -1060,7 +1068,7 @@ a {
     #modal-bells-price-container {
         display: flex;
         color: #F8BF87;
-        font-size: 300%;
+        font-size: 200%;
         width: 20%;
         justify-content: flex-start;
     }
@@ -1073,26 +1081,28 @@ a {
     }
 
     #modal-critter-icon {
-        height: 256px;
-        width: 256px;
-        background-color: aqua;
+        height: 20vh;
+        width: 20vh;
+        background-repeat: no-repeat;
+        background-size: contain;
     }
 
 
     #modal-critter-name {
         color: var(--critter-name);
-        font-size: 400%;
+        font-size: 200%;
+        text-align: center;
     }
 
     #modal-critter-time {
         color: var(--critter-name);
-        font-size: 300%;
+        font-size: 150%;
     }
 
     #modal-months {
         display: grid;
         justify-content: center;
-        font-size: 200%;
+        font-size: 100%;
         grid-template-rows: repeat(3, 2fr);
         grid-template-columns: repeat(4, 20%);
         width: 100%;
@@ -1103,35 +1113,8 @@ a {
         text-align: center;
     }
 
-    #modal-critter-location-container {
-        align-items: center;
-        padding-top: 2%;
-        padding-bottom: 2%;
-    }
-
-    #modal-critter-map {
-        background-image: url("../image/modal/map.svg");
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        height: 200px;
-        width: 250px;
-
-
-    }
-
-    #modal-critter-location-text-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-content: center;
-        position: absolute;
-        color: #97D5BB;
-        padding-left: 5%;
-    }
-
     #modal-critter-caught-button {
-        width: 50%;
+        width: 100%;
         font-size: 300%;
         padding: 10px;
         background-color: #FF5140;
