@@ -988,7 +988,7 @@ a {
 
     .modal-button {
         background-image: url("../image/modal/info.svg");
-            background-position: center;
+        background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
         height: 20px;
