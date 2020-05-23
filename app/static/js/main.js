@@ -138,16 +138,28 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 
 $(() => {
     $('#mobile-filter').click(() => {
-        $('#mobile-filter-list').slideToggle();
+        $('#mobile-filter-list').slideToggle(200);
     });
 
     $('#filter-location').click(() => {
-        $('#mobile-filter-by').slideToggle();
+        $('#mobile-filter-list').slideUp(200);
+        $('#mobile-filter-by').slideToggle(200);
     });
 
-    $('#filter-show').click(() => {
-        $('#mobile-filter-show').slideToggle();
-    })
+    $('#filter-show').click(() => { //Show/Hide
+        $('#mobile-filter-list').slideUp(200);
+        $('#mobile-filter-show').slideToggle(200);
+    });
+
+    $('#filter-back-by').click(() => {
+        $('#mobile-filter-by').slideUp(200);
+        $('#mobile-filter-list').slideDown(200);
+    });
+
+    $('#filter-back-show').click(() => {
+        $('#mobile-filter-list').slideDown(200);
+        $('#mobile-filter-show').slideUp(200);
+    });
 })
 
 

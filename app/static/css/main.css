@@ -1154,6 +1154,7 @@ a {
         padding-right: 10px;
         color: white;
         justify-content: center;
+        cursor: pointer;
     }
 
     .filter-list {
@@ -1179,6 +1180,7 @@ a {
         justify-content: center;
         position: sticky;
         top: 0;
+        cursor: pointer;
     }
 
 }
