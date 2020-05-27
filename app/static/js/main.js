@@ -805,9 +805,9 @@ function generateVillagerHTML(k, v) {
         genderIcon = './static/image/icons/svg/male.svg';
     };
     
-    var icon = "./static/image/villagers/" + k + ".webp";
+    var icon = "./static/image/villagers/" + v.name + ".webp";
     if (isIOS) {
-        icon = "./static/image/villagers/png/" + k + ".webp";
+        icon = "./static/image/villagers/png/" + v.name + ".png";
     };
 
 
@@ -815,7 +815,7 @@ function generateVillagerHTML(k, v) {
             $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append([
-                    $('<div/>', {'class': 'villager-name', 'text':v.name}),
+                    $('<div/>', {'class': 'villager-name', 'text':v.name_formatted}),
                     $('<img/>', {'class': 'villager-gender-icon', 'src': genderIcon})
                 ]),
                 $('<div/>', {'class': 'critter-divider'}),
@@ -852,11 +852,11 @@ async function getVillagers() {
             month: m
         },
         success: function(data) {
-            
+            console.log(data)
             var $elementsToAppend = [];
             var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
-                $elementsToAppend.push(generateVillagerHTML($elem, k , v));
+                $elementsToAppend.push(generateVillagerHTML(k, v));
             })
             $elem.append($elementsToAppend)
             $('.wrapper-skeleton').remove();

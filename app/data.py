@@ -240,7 +240,7 @@ def get_n_sorted_villagers(month, date, n):
         date = str(data['date'])
         if len(date) == 1:
             date = "0"+date
-        villager_list.append([name, data['gender'], data['personality'], data['species'], month_normalisation[data['month']], date, data['catchphrase'], data['icon']])
+        villager_list.append([name, data['name_formatted'], data['gender'], data['personality'], data['species'], month_normalisation[data['month']], date, data['catchphrase']])
 
     sorted_day = sorted(villager_list, key=itemgetter(5))
     sorted_month = sorted(sorted_day, key=itemgetter(4))
@@ -267,7 +267,7 @@ def get_n_sorted_villagers(month, date, n):
 
     count = 0
     for item in sorted_month:
-        out[count] = {'name': item[0], 'gender': item[1], 'personality': item[2], 'species': item[3], 'month': month_name[month_denormalisation[item[4]]], 'date': int(item[5]), 'catchphrase':item[6], 'icon':item[7]}
+        out[count] = {'name': item[0], 'name_formatted': item[1], 'gender': item[2], 'personality': item[3], 'species': item[4], 'month': month_name[month_denormalisation[item[5]]], 'date': int(item[6]), 'catchphrase':item[7]}
         count+=1
 
     output = {}

@@ -226,13 +226,14 @@ def get_villager_data(out):
     }
 
 
-    soup = BeautifulSoup(open("./data/villagers"), 'html.parser')
+    soup = BeautifulSoup(open("villagers"), 'html.parser')
     test = soup.find_all("tr")
     for item in test:
         temp_dict = {}
         td = item.find_all("td")
 
-        name = td[0].text.strip("\n")
+        formatted_name = td[0].text.strip("\n")
+        name = td[0].text.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").lower().strip("\n")
         gender_personality = td[2].text.strip().split(" ")
         temp_dict['gender'] = "f" if gender_personality[0] == "\u2640" else "m"
         temp_dict['personality'] = gender_personality[1]
@@ -243,9 +244,10 @@ def get_villager_data(out):
         temp_dict['date'] = birth_month_date[1][:-2:]
         temp_dict['catchphrase'] = td[5].text.strip().strip('"')
 
-        name.replace("SporkNACracklePAL", "Spork-Crackle")
-        name.replace("JacobNAJakeyPAL", "Jacob-Jakey")
-        temp_dict['icon'] = f"./static/image/villagers/{name}.webp"
+        formatted_name.replace("SporkNACracklePAL", "Spork/Crackle")
+        formatted_name.replace("JacobNAJakeyPAL", "Jacob/Jakey")
+
+        temp_dict["name_formatted"] = formatted_name
 
         out[name] = temp_dict
 
@@ -309,9 +311,8 @@ def run_villager():
     get_villager_data(out)
     villagers = get_villager_data(out)
 
-    with open('villagers.json', 'w') as f:
+    with open('../app/data/villagers.json', 'w') as f:
         json.dump(villagers, f)
 
 
-run_bugs()
-run_fish()
+run_villager()
