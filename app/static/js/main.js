@@ -189,8 +189,7 @@ $(async function() {  //Chores tab click
             }
         })
     });
-    var chores = await getCaught("chores")
-    console.log(chores)
+    var chores = await getCaught("chores");
 
     var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
     trailColor: '#d5ccab',
@@ -984,12 +983,10 @@ async function setActiveTabIcon(tab) {
 };
 
 function makeTabIconActive(tab) {
-    $('.' + tab + '-container').css('background-color', '#F9F6E3');
     $('.' + tab + '-icon').css('opacity', '1');
 }
 
 function makeTabIconInactive(tab) {
-    $('.' + tab + '-container').css('background-color', '#F9F6E3');
     $('.' + tab + '-icon').css('opacity', '0.5');
 }
 
