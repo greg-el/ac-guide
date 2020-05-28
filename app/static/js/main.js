@@ -137,9 +137,7 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 */
 
 $(() => {
-    $('#mobile-filter').click(() => {
-        $('#mobile-filter-list').slideToggle(200);
-    });
+
 
     $('#filter-location').click(() => {
         $('#mobile-filter-list').slideUp(200);

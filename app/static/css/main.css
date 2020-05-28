@@ -162,10 +162,6 @@ a {
     text-align: center;
 }
 
-#window-wrapper {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-}
 
 
 #tab-bar {
@@ -873,8 +869,9 @@ a {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 10px;
-        padding-right: 20px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 0px;
         padding-left: 10px;
         position: sticky;
         top: 0;
@@ -887,20 +884,9 @@ a {
         border-radius: 5px;
         line-height: 155%;
         width: 60%;
-    }
-    #search-icon {
-        display: none;
-        /*
-        height: 100%;
-        width: auto;
-        background: url('../image/icons/svg/search.svg');
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: 70%;
-        background-color: #C8BC9C;
-        border-radius: 8px;
-        align-self: center;
-        */
+        animation-name: slideLeft;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
     }
 
     .critter-divider {
@@ -1146,15 +1132,27 @@ a {
     #mobile-filter {
         display: flex;
         height: 100%;
-        background-color: var(--green);
+        background-color: var(--tab-bar);
         font-size: 150%;
         line-height: 150%;
-        border-radius: 16px;
+        border-radius: 10px 0 0 10px;
         padding-left: 10px;
         padding-right: 10px;
         color: white;
-        justify-content: center;
+        justify-content: flex-start;
+        padding-right: 5%;
         cursor: pointer;
+
+    }
+
+    #mobile-filter:active {
+        animation-name: slideLeft;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+        animation-play-state: paused;
+        animation-iteration-count: 1;
+        -webkit-animation-play-state: paused;
+        -webkit-animation-iteration-count: 1;
     }
 
     .filter-list {
@@ -1172,15 +1170,33 @@ a {
         width: 15%;
         justify-content: center;
         align-items: center;
-        background-color: var(--green);
+        background-color: var(--tab-bar);
         font-size: 150%;
         line-height: 150%;
-        border-radius: 16px;
+        border-radius: 10px;
         color: white;
         justify-content: center;
         position: sticky;
         top: 0;
         cursor: pointer;
+    }
+
+    @keyframes slideLeft {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-3000px);
+        }
+    }
+
+    @keyframes slideRight {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(+200%);
+        }
     }
 
 }
