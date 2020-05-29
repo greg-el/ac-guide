@@ -144,7 +144,7 @@ $(() => {
             $('#search').addClass("moveSearchOffLeft")
             $('#mobile-filter').removeClass("moveToRight");
             $('#mobile-filter').addClass("moveToLeft");
-            setTimeout(() => $('#mobile-filter-text').text("Search >"), 100);
+            setTimeout(() => $('#mobile-filter-text').text("Search >"), 20);
             setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
         } else {
             $('#mobile-filter').removeClass("moveToLeft");
