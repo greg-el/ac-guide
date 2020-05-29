@@ -1128,6 +1128,7 @@ a {
         border-radius: 20px;
     }
 
+
     #mobile-filter {
         display: flex;
         height: 100%;
@@ -1167,6 +1168,7 @@ a {
         position: sticky;
         top: 0;
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .filter-option {
@@ -1238,6 +1240,9 @@ a {
     }
 
     @keyframes slideLeft {
+        0% {
+            content: "< Filter"
+        }
         20% {
             color: var(--tab-bar);
         }
@@ -1246,6 +1251,7 @@ a {
             
         }
         100% {
+            content: "Search >";
             color: white;
             border-radius: 0 10px 10px 0;
             margin-left: -10px;
@@ -1263,11 +1269,13 @@ a {
             width: 35vw;
             color: var(--tab-bar);
         }
+        95% {
+            width: 35vw;
+        }
         100% {
             color: white;
-            margin-left: -10px;
             border-radius: 10px 0 0 10px;
-            width: 20vw;
+            width: 25vw;
         }
     }
 
