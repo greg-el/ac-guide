@@ -137,27 +137,23 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 */
 
 $(() => {
-
-
-    $('#filter-location').click(() => {
-        $('#mobile-filter-list').slideUp(200);
-        $('#mobile-filter-by').slideToggle(200);
-    });
-
-    $('#filter-show').click(() => { //Show/Hide
-        $('#mobile-filter-list').slideUp(200);
-        $('#mobile-filter-show').slideToggle(200);
-    });
-
-    $('#filter-back-by').click(() => {
-        $('#mobile-filter-by').slideUp(200);
-        $('#mobile-filter-list').slideDown(200);
-    });
-
-    $('#filter-back-show').click(() => {
-        $('#mobile-filter-list').slideDown(200);
-        $('#mobile-filter-show').slideUp(200);
-    });
+    $('#mobile-filter').click(() => {
+        if ($("#search").width() != 0) {
+            $('#search').removeClass("moveSearchInRight");
+            $('#search').addClass("moveSearchOffLeft")
+            $('#mobile-filter').removeClass("moveToRight");
+            $('#mobile-filter').addClass("moveToLeft");
+            setTimeout(() => $('#mobile-filter-text').text("Search >"), 300);
+            setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
+        } else {
+            $('#search').removeClass("moveSearchOffLeft");
+            $('#search').addClass("moveSearchInRight");
+            $('#mobile-filter').removeClass("moveToLeft");
+            $('#mobile-filter').addClass("moveToRight");
+            setTimeout(() => $('#mobile-filter-text').text("< Filter"), 300);
+            setTimeout(() => $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none"), 200);
+        }
+    })
 })
 
 
