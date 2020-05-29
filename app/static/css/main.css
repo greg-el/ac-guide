@@ -865,6 +865,7 @@ a {
         align-items: center;
     }
     .search-wrapper {
+        font-size: 2.5vh;
         background-color: #EEE4CB;
         display: flex;
         flex-direction: row;
@@ -877,12 +878,11 @@ a {
         top: 0;
     }
     #search {
-        font-size: 150%;
+        font-size: 2.5vh;
         background-color: var(--light);
         border: none;
         color: #C8BC9C;
         border-radius: 5px;
-        line-height: 150%;
         width: 60%;
         position: absolute;
         left: 1%;
@@ -1136,8 +1136,6 @@ a {
         padding-left: 2%;
         border: 1px var(--tab-bar) solid; /* to match up with the search bar height so it doesnt get smaller on animation*/
         background-color: var(--tab-bar);
-        font-size: 150%;
-        line-height: 150%;
         border-radius: 10px 0 0 10px;
         color: white;
         justify-content: center;
@@ -1160,8 +1158,6 @@ a {
         justify-content: center;
         align-items: center;
         background-color: var(--tab-bar);
-        font-size: 150%;
-        line-height: 150%;
         border-radius: 10px;
         color: white;
         justify-content: center;
