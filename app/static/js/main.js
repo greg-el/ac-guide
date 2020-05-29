@@ -138,19 +138,20 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 
 $(() => {
     $('#mobile-filter').click(() => {
-        if ($("#search").width() != 0) {
+        console.log($("#search").position().left)
+        if ($("#search").position().left > 0) {
             $('#search').removeClass("moveSearchInRight");
             $('#search').addClass("moveSearchOffLeft")
             $('#mobile-filter').removeClass("moveToRight");
             $('#mobile-filter').addClass("moveToLeft");
-            setTimeout(() => $('#mobile-filter-text').text("Search >"), 300);
+            setTimeout(() => $('#mobile-filter-text').text("Search >"), 100);
             setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
         } else {
-            $('#search').removeClass("moveSearchOffLeft");
-            $('#search').addClass("moveSearchInRight");
             $('#mobile-filter').removeClass("moveToLeft");
             $('#mobile-filter').addClass("moveToRight");
-            setTimeout(() => $('#mobile-filter-text').text("< Filter"), 300);
+            $('#search').removeClass("moveSearchOffLeft");
+            $('#search').addClass("moveSearchInRight");
+            setTimeout(() => $('#mobile-filter-text').text("< Filter"), 200);
             setTimeout(() => $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none"), 200);
         }
     })
