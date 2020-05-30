@@ -137,16 +137,14 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 */
 
 $(() => {
-    var searchBar = $('#search');
+    var searchBar = $('#search-wrapper');
     var filterButton = $('#mobile-filter-button');
     var searchButton = $('#mobile-search-button');
     filterButton.click(() => {
         searchBar.removeClass("moveElemInFromLeft");
         searchBar.addClass("moveElemOutLeft")
-        searchBar.css("display", "none");
         filterButton.removeClass("moveFilterInFromRight");
         filterButton.addClass("moveFilterOffRight");
-        //filterButton.css("display", "none");
         searchButton.removeClass("moveElemOutLeft");
         setTimeout(() => searchButton.addClass("moveElemInFromLeft"), 200);
         searchButton.css("display","flex");
@@ -159,7 +157,6 @@ $(() => {
         filterButton.css("display", "flex");
         searchButton.removeClass("moveElemInFromLeft");
         searchButton.addClass("moveElemOutLeft");
-        searchButton.css("display","none");
         searchBar.removeClass("moveElemOutLeft");
         searchBar.addClass("moveElemInFromLeft");
         searchBar.css("display", "flex");
@@ -1008,13 +1005,6 @@ $(document).ready( () => {
             } else {
                 $($critterChildren[i]).removeClass('_search_filter');
             }
-        }
-    })
-    $('#search').on('blur', function() {
-        this.value = "";
-        $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
-        for (var i=0; i<$critterChildren.length; i++) {
-            $($critterChildren[i]).removeClass('_search_filter');
         }
     })
 })

@@ -37,20 +37,7 @@ a {
     pointer-events: none;
 }
 
-input:focus::-webkit-input-placeholder{
-    color: transparent!important;
-    border-radius: 20px;
-}
-input:focus::-moz-placeholder{
-    color: transparent!important;
-    border-radius: 20px;
 
-}
-input:focus:-moz-placeholder{
-    color: transparent!important;
-    border-radius: 20px;
-
-}
 
 @media (orientation: landscape) {
     #page-wrapper {
@@ -344,7 +331,7 @@ input:focus:-moz-placeholder{
 }
 
 
-.search-wrapper {
+.search-filter-wrapper {
     background-color: #EEE4CB;
     display: flex;
     flex-direction: row;
@@ -875,32 +862,7 @@ input:focus:-moz-placeholder{
         width: 90%;
         align-items: center;
     }
-    .search-wrapper {
-        font-size: 5vw;
-        height: 7vw;
-        background-color: #EEE4CB;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: center;
-        padding-top: 8px;
-        padding-bottom: 8px;
-        padding-right: 0px;
-        padding-left: 10px;
-        position: sticky;
-        top: 0;
-    }
-    #search {
-        font-size: 5vw;
-        background-color: var(--light);
-        border: none;
-        color: #C8BC9C;
-        border-radius: 5px;
-        width: 60%;
-        height: 7vw;
-        padding-left: 10px;
-        margin-right: auto;
-    }
+
 
     .critter-divider {
         height: 1px;
@@ -1129,6 +1091,7 @@ input:focus:-moz-placeholder{
         text-align: center;
     }
 
+
     #modal-critter-caught-button {
         width: 100%;
         font-size: 300%;
@@ -1140,6 +1103,43 @@ input:focus:-moz-placeholder{
         text-align: center;
         justify-content: center;
         border-radius: 20px;
+    }
+
+    #search-wrapper {
+        margin-right: auto;
+    }
+
+    .search-filter-wrapper {
+        font-size: 5vw;
+        height: 7vw;
+        background-color: #EEE4CB;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 0px;
+        padding-left: 10px;
+        position: sticky;
+        top: 0;
+    }
+    #search {
+        font-size: 5vw;
+        background-color: var(--light);
+        border: none;
+        color: #C8BC9C;
+        border-radius: 5px;
+        width: 60%;
+        height: 7vw;
+        padding-left: 10px;
+        margin-right: auto;
+    }
+    
+    #search-clear {
+        position: absolute;
+        top: 8px;
+        left: 40%;
     }
 
     .sf-button {
