@@ -1144,12 +1144,11 @@ input:focus:-moz-placeholder{
 
     .sf-button {
         display: flex;
-        height: 80%;
+        height: 7vw;
         width: 20vw;
         background-color: var(--tab-bar);
         color: white;
         cursor: pointer;
-        height: 80%;
         align-items: center;
     }
 
