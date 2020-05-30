@@ -866,6 +866,7 @@ a {
     }
     .search-wrapper {
         font-size: 2.5vh;
+        height: 3.5vh;
         background-color: #EEE4CB;
         display: flex;
         flex-direction: row;
@@ -1129,18 +1130,32 @@ a {
         border-radius: 20px;
     }
 
-
-    #mobile-filter {
+    .sf-button {
         display: flex;
-        height: 100%;
+        height: 80%;
         width: 20vw;
-        padding-left: 2%;
-        border: 1px var(--tab-bar) solid; /* to match up with the search bar height so it doesnt get smaller on animation*/
         background-color: var(--tab-bar);
-        border-radius: 10px 0 0 10px;
         color: white;
-        justify-content: center;
         cursor: pointer;
+        height: 80%;
+        align-items: center;
+    }
+
+    #mobile-search-button {
+        opacity: 0;
+        padding-left: 80px;
+        padding-right: 10px;
+        margin-left: -10px;
+        position: relative;
+        transform: translateX(-110%);
+        left:0;
+        border-radius: 0 10px 10px 0;
+    }
+
+    #mobile-filter-button {
+        position: relative;
+        padding-left: 10px;
+        border-radius: 10px 0 0 10px;
     }
 
     .filter-list {
@@ -1172,35 +1187,21 @@ a {
         display: none;
     }
 
-    .moveToLeft {
-        animation-name: slideLeft ;
-        -webkit-animation-name: slideLeft;
-        animation-duration: 0.5s;
-        -webkit-animation-duration: 0.5s;
-        animation-fill-mode: forwards;
-        -webkit-animation-fill-mode: forwards;
-        animation-iteration-count: 1;
-
-    }
-
-    .moveToRight {
-        animation-name: slideRight;
-        animation: slideRight 0.2s;
-        -webkit-animation: slideRight 0.2s;
+    .moveFilterOffRight {
+        animation: slideFilterRight 0.2s;
+        -webkit-animation: slideFilterRight 0.2s;
         animation-fill-mode: forwards;
     }
 
-    .moveSearchOffLeft {
-        animation-name: slideSearchOffLeft;
-        animation: slideSearchOffLeft 0.2s;
-        -webkit-animation: slideSearchOffLeft 0.2s;
+    .moveElemOutLeft {
+        animation: slideOffLeft 0.2s;
+        -webkit-animation: slideOffLeft 0.2s;
         animation-fill-mode: forwards;
     }
 
-    .moveSearchInRight {
-        animation-name: slideSearchInRight;
-        animation: slideSearchInRight 0.2s;
-        -webkit-animation: slideSearchInRight 0.2s;
+    .moveElemInFromLeft {
+        animation: slideInRight 0.5s;
+        -webkit-animation: slideInRight 0.5s;
         animation-fill-mode: forwards;
     }
 
@@ -1218,44 +1219,48 @@ a {
         animation-fill-mode: forwards;
     }
 
-    @keyframes slideSearchOffLeft {
+    @keyframes slideOffLeft {
         from {
+            opacity: 1;
             transform: translateX(0);
         }
         to {
+            opacity: 0;
             transform: translateX(-110%);
         }
     }
 
-    @keyframes slideSearchInRight {
+    @keyframes slideInRight {
         from {
+            opacity: 0;
             transform: translateX(-110%);
         }
         to {
+            opacity: 1;
             transform: translateX(0%);
         }
     }
 
-    @keyframes slideLeft {
-        0% {
-            content: "< Filter"
+    @keyframes slideFilterRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
         }
-        20% {
-            color: var(--tab-bar);
+        to {
+            opacity: 0;
+            transform: translateX(+500%);
         }
-        60% {
-            margin-left: -10px;
+    }
+
+    @keyframes slideFilterLeft {
+        from {
+            opacity: 0;
+            transform: translateX(+100%);
+
         }
-        80% {
-            color: var(--tab-bar);
-            margin-left: -10px;
-        }
-        100% {
-            content: "Search >";
-            color: white;
-            border-radius: 0 10px 10px 0;
-            margin-left: -10px;
-            width: 35vw;
+        to {
+            opacity: 1;
+            transform: translateX(0);
         }
     }
     

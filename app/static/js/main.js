@@ -137,22 +137,20 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 */
 
 $(() => {
-    $('#mobile-filter').click(() => {
-        console.log($("#search").position().left)
-        if ($("#search").position().left > 0) {
-            $('#search').removeClass("moveSearchInRight");
-            $('#search').addClass("moveSearchOffLeft")
-            $('#mobile-filter').removeClass("moveToRight");
-            $('#mobile-filter').addClass("moveToLeft");
-            setTimeout(() => $('#mobile-filter-text').text("Search"), 100);
+    $('#mobile-filter-button').click(() => {
+        if ($('#search').position().left > 0) {
+            $('#search').removeClass("moveElemInFromLeft");
+            $('#search').addClass("moveElemOutLeft")
+            $('#mobile-filter-button').removeClass("moveToRight");
+            $('#mobile-filter-button').addClass("moveFilterOffRight");
+            setTimeout(() => $('#mobile-search-button').addClass("moveElemInFromLeft"), 400);
             setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
         } else {
-            $('#mobile-filter').removeClass("moveToLeft");
-            $('#mobile-filter').addClass("moveToRight");
-            $('#search').removeClass("moveSearchOffLeft");
-            $('#search').addClass("moveSearchInRight");
-            setTimeout(() => $('#mobile-filter-text').text("Filter"), 200);
-            setTimeout(() => $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none"), 200);
+            $('#search').removeClass("moveElemOutLeft");
+            $('#search').addClass("moveElemInFromLeft")
+            $('#mobile-filter-button').removeClass("moveFilterOffRight");
+            $('#mobile-filter-button').addClass("moveToRight");
+            setTimeout(() => $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "flex"), 200);
         }
     })
 })
