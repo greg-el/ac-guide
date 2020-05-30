@@ -137,22 +137,34 @@ MOBILE FILTER FUNCTIONS --------------------------------------------------------
 */
 
 $(() => {
-    $('#mobile-filter-button').click(() => {
-        if ($('#search').position().left > 0) {
-            $('#search').removeClass("moveElemInFromLeft");
-            $('#search').addClass("moveElemOutLeft")
-            $('#mobile-filter-button').removeClass("moveToRight");
-            $('#mobile-filter-button').addClass("moveFilterOffRight");
-            setTimeout(() => $('#mobile-search-button').addClass("moveElemInFromLeft"), 400);
-            setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
-        } else {
-            $('#search').removeClass("moveElemOutLeft");
-            $('#search').addClass("moveElemInFromLeft")
-            $('#mobile-filter-button').removeClass("moveFilterOffRight");
-            $('#mobile-filter-button').addClass("moveToRight");
-            setTimeout(() => $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "flex"), 200);
-        }
-    })
+    var searchBar = $('#search');
+    var filterButton = $('#mobile-filter-button');
+    var searchButton = $('#mobile-search-button');
+    filterButton.click(() => {
+        searchBar.removeClass("moveElemInFromLeft");
+        searchBar.addClass("moveElemOutLeft")
+        searchBar.css("display", "none");
+        filterButton.removeClass("moveFilterInFromRight");
+        filterButton.addClass("moveFilterOffRight");
+        //filterButton.css("display", "none");
+        searchButton.removeClass("moveElemOutLeft");
+        setTimeout(() => searchButton.addClass("moveElemInFromLeft"), 200);
+        searchButton.css("display","flex");
+        setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
+    });
+
+    searchButton.click(() => {
+        filterButton.removeClass("moveFilterOffRight")
+        filterButton.addClass("moveFilterInFromRight")
+        filterButton.css("display", "flex");
+        searchButton.removeClass("moveElemInFromLeft");
+        searchButton.addClass("moveElemOutLeft");
+        searchButton.css("display","none");
+        searchBar.removeClass("moveElemOutLeft");
+        searchBar.addClass("moveElemInFromLeft");
+        searchBar.css("display", "flex");
+        $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none");
+    });
 })
 
 
