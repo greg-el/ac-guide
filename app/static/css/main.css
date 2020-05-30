@@ -1243,9 +1243,12 @@ a {
         20% {
             color: var(--tab-bar);
         }
+        60% {
+            margin-left: -10px;
+        }
         80% {
             color: var(--tab-bar);
-            
+            margin-left: -10px;
         }
         100% {
             content: "Search >";
