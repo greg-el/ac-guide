@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="17.535397"
+   height="17.535397"
+   viewBox="0 0 17.535397 17.535397"
+   fill="none"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="search-clear.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2504"
+     inkscape:window-height="1318"
+     id="namedview6"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:zoom="7.35"
+     inkscape:cx="-15.14226"
+     inkscape:cy="9.2286404"
+     inkscape:window-x="1108"
+     inkscape:window-y="334"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4" />
+  <path
+     style="fill:#ded7bd;fill-opacity:1"
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="m 14.967398,14.967398 c 3.423999,-3.424 3.423999,-8.9753905 0,-12.3993905 -3.424,-3.42401 -8.9753905,-3.42401 -12.3993905,0 -3.42401,3.424 -3.42401,8.9753905 0,12.3993905 3.424,3.423999 8.9753905,3.423999 12.3993905,0 z M 4.7822075,3.0108375 l -1.77134,1.77135 3.98553,3.98551 -3.98553,3.9854995 1.77134,1.771401 3.98549,-3.9855 3.9856005,3.9855 1.7713,-1.771401 -3.9855,-3.9854995 3.9855,-3.98551 -1.7713,-1.77135 -3.9856005,3.98556 z"
+     fill="#c8bc9c"
+     id="path2" />
+</svg>

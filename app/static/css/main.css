@@ -1107,6 +1107,7 @@ a {
 
     #search-wrapper {
         margin-right: auto;
+        display: inline-flex;
     }
 
     .search-filter-wrapper {
@@ -1130,20 +1131,25 @@ a {
         border: none;
         color: #C8BC9C;
         border-radius: 5px;
-        width: 60%;
         height: 7vw;
         padding-left: 10px;
         margin-right: auto;
     }
     
     #search-clear {
-        position: absolute;
-        top: 8px;
-        left: 40%;
+        display: none;
+        position: relative;
+        left: -6vw;
+        bottom: -1.5vw;
+        background-image: url("../image/search-clear.svg");
+        height: 4vw;
+        width: 4vw;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
     }
 
     .sf-button {
-        display: flex;
         height: 7vw;
         width: 20vw;
         background-color: var(--tab-bar);

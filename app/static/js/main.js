@@ -162,6 +162,15 @@ $(() => {
         searchBar.css("display", "flex");
         $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none");
     });
+
+    $('#search-clear').click(() => {
+        $('#search').val('');
+        $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
+        for (var i=0; i<$critterChildren.length; i++) {
+            $($critterChildren[i]).removeClass('_search_filter');
+        };
+        $('#search-clear').css("display", "none");
+    })
 })
 
 
@@ -997,7 +1006,12 @@ SEARCH BOX -----------------------------------------------------------------
 */
 
 $(document).ready( () => {
-    $('#search').on('keyup', function() {
+    $('#search').on('input', function() {
+        if ($('#search').val().length > 0) {
+            $('#search-clear').css('display', 'block');
+        } else {
+            $('#search-clear').css('display', 'none');
+        }
         $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
         for (var i=0; i<$critterChildren.length; i++) {
             if (!$critterChildren[i].id.includes(this.value)) {
