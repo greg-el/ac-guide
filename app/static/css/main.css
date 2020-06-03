@@ -14,6 +14,9 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+html {
+    overflow-y: scroll;
+}
 
 body {
     width: 100%;
@@ -121,11 +124,14 @@ a {
     line-height: 350%;
 }
 
+.time-container {
+    align-items: center;
+}
+
 .time-container-mod {
     display: flex;
     flex-direction: column;
     align-items: baseline;
-    line-height: 350%;
 }
 
 #time {
@@ -748,6 +754,7 @@ a {
     body {
         margin: 0;
         background-image: none;
+        background-color: var(--light);
         }
     #page-wrapper {
         display: flex;
@@ -858,7 +865,7 @@ a {
         background-color:#FBF6E3;
     }
     .critter-name {
-        font-size: 25px;
+        font-size: 6vw;
         width: 90%;
         align-items: center;
     }
@@ -878,16 +885,19 @@ a {
         display: grid;
         grid-template-columns: 50% 50%;
         grid-gap: 10px;
-        font-size: 18px;
+        font-size: 5vw;
         line-height: 125%;
     }
     .data-text-modifier {
-        font-size: 14px;
-        margin-bottom: -35%;
+        font-size: 3vw;
+        line-height: 3vw;
     }
     .icon-text {
         display: flex;
         flex-direction: row;
+        align-items: baseline;
+    }
+    .time-container {
         align-items: center;
     }
     .critter-wrapper {

@@ -528,6 +528,16 @@ function addCaughtToggle(k, tab, data) {
 )};
 
 
+function clearSearch(tab) {
+    $('#search').val("");
+    $('#search-clear').css('display', 'none');
+    $critterChildren = $('#' + tab + '-data-wrapper').children();
+    for (var i=0; i<$critterChildren.length; i++) {
+        $($critterChildren[i]).removeClass('_search_filter');
+    }
+    
+}
+
 /*
 FISH FUNCTIONS -----------------------------------------------------------------
 */
@@ -538,11 +548,12 @@ $(function() {  //Fish tab click
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
             $('#chores-timer-wrapper').css('display', 'none');
-
         }
+        
         hidePrevTab();
         setPrevTabIconInactive();
         prevTab = "fish"
+        clearSearch("bugs");
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
@@ -578,7 +589,7 @@ function createFishHTMLElement(k, v, userDict) {
 
     var icon = "./static/image/fish/" + k + ".webp";
     if (isIOS) {
-        icon = "./static/image/fish/png/" + k + ".webp";
+        icon = "./static/image/fish/png/" + k + ".png";
     };
 
 
@@ -676,6 +687,7 @@ $(function() { //bugs tab click
         showTab("bugs");
         hidePrevTab();
         setPrevTabIconInactive();
+        clearSearch("fish");
         prevTab = "bugs"
         if (!gotBugs) {
             createSkeletonHTML("bugs");
