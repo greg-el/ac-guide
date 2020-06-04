@@ -382,8 +382,6 @@ a {
     box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
     border-radius: 4px;
     margin: 5px;
-    width: 350px;
-    height: 130px;
     cursor: pointer;
 }
 
@@ -488,7 +486,6 @@ a {
     transition: all .4s ease-in-out;
     border-radius: 30px;
 }
-
 @keyframes placeHolderShimmer{
     0% {
         background-position: -1700px 0;
@@ -772,7 +769,7 @@ a {
         border-bottom: 3px solid #B7B19B;
         align-items: center;
         height: 5%;
-        padding: 10px;
+        padding: 5px;
     }
 
     #signal {
@@ -780,9 +777,9 @@ a {
         background-image: url("../image/bar/mobile-signal.svg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: cover;
-        height: 42px;
-        width: 75px;
+        background-size: contain;
+        height: 8vw;
+        width: 14vw;
         margin-left: 10px;
         margin-right: 10px;
     }
@@ -792,9 +789,9 @@ a {
         background-image: url("../image/bar/mobile-nook.svg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: cover;
-        height: 40px;
-        width: 50px;
+        background-size: contain;
+        height: 10vw;
+        width: 10vw;
     }
 
     #cog {
@@ -802,9 +799,9 @@ a {
         background-image: url("../image/bar/mobile-cog.svg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: cover;
-        height: 40px;
-        width: 40px;
+        background-size: contain;
+        height: 10vw;
+        width: 10vw;
         margin-left: auto;
         margin-right: 20px;
         cursor: pointer;
@@ -813,8 +810,6 @@ a {
     #new, #horizons, #tab-bar, #datetime-container, #login-container{
         display: none;
     }
-
-    
 
     #tab-mobile-bar {
         width: 100%;
@@ -869,8 +864,6 @@ a {
         width: 90%;
         align-items: center;
     }
-
-
     .critter-divider {
         height: 1px;
         background: #B7B19B;
@@ -878,12 +871,12 @@ a {
         margin-bottom: 5px;
     }
     .icon {
-        width: 5vw;
-        height: 5vw;
+        width: 4vw;
+        height: 4vw;
     }
     .data-grid {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 60% 40%;
         grid-gap: 10px;
         font-size: 5vw;
         line-height: 125%;
@@ -911,46 +904,54 @@ a {
         width: 90%;
     }
 
+    .critter-icon {
+        margin-right: 5px;
+        height: 30vw;
+        width: 30vw;
+    }
+
     .wrapper-skeleton {
-        width: 98%;
-        height: 40vw;
+        width: 99%;
     }
     
     .image-skeleton {
-        height: 100px;
-        width: 100px;
-        margin: 30px 20px 30px 20px;
+        height: 20vw;
+        width: 20vw;
+        margin:5vw 5vw 5vw 5vw;
         background-color: #E2DFCE;
-        margin-right: 15px;
         border-radius: 50px;
+    }
+
+    .skeleton-data {
+        width: 65%;
     }
     
     .name-skeleton {
-        height: 20px;
-        width: 70%;
-        background: #FF4875;
+        height: 6vw;
+        align-items: center;
         border-radius: 20px;
-        opacity: 50%;
+        opacity: 30%;
     }
     
     .data-container-skeleton {
         display: flex;
         flex-direction: row;
+        width: 90%;
+        align-items: center;
     }
     
     .icon-skeleton {
         background: #E2DFCE;
-        height: 20px;
-        width: 20px;
+        height: 4vw;
+        width: 4vw;
         border-radius: 5px;
         margin-right: 5px;
         margin-left: 10px;
     }
     
     .text-skeleton {
-        height: 15px;
+        height: 5vw;
         width: 75%;
-        background: #E2DFCE;
         border-radius: 5px;
         opacity: 50%;
         margin-top: 3px;
@@ -1251,6 +1252,14 @@ a {
         animation-fill-mode: forwards;
     }
 
+    .slideElemDown {
+        animation: slideDown 0.5s forwards;
+    }
+
+    .slideElemUp {
+        animation: slideUp 0.5s forwards;
+    }
+
     @keyframes slideOffLeft {
         from {
             transform: translateX(0);
@@ -1313,6 +1322,26 @@ a {
         }
         to {
             opacity: 0%;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            font-size: 100%;
+            height: 100%;
+        }
+        to {
+            font-size: 0%;
+            height: 0%;
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            height: 100%;
+        }
+        to {
+            height: 0%;
         }
     }
 

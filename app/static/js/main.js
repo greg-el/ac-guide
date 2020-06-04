@@ -170,6 +170,10 @@ $(() => {
             $($critterChildren[i]).removeClass('_search_filter');
         };
         $('#search-clear').css("display", "none");
+    });
+
+    $('#filter-show').click(() => {
+        $('#mobile-filter-list').addClass("slideElemUp");
     })
 })
 
