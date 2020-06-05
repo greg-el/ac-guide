@@ -205,7 +205,13 @@ $(async function() {  //Chores tab click
         })
     });
     var chores = await getCaught("chores");
+    //if (!isMobile()) {
+    //    createDesktopChores(chores);
+    //}
+});
 
+
+function createDesktopChores(chores) {
     var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
     trailColor: '#d5ccab',
     strokeWidth: 8,
@@ -306,7 +312,8 @@ $(async function() {  //Chores tab click
             }
         }
     })
-});
+}
+
 
 
 

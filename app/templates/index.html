@@ -185,7 +185,16 @@
                     <div id="filter-back-show" class="mobile-filter-option show-filter">Back</div>
                 </div>
                 <div id="chores-tab" class="data-container" style="display:none;">
-                    <div id="chores-data-wrapper" class="data-wrapper">
+                    <div id="chores-mobile-wrapper" class="mobile-chore-wrapper">
+                        <div id="rocks-mobile-wrapper">
+                            <div id="rocks-mobile-icon"></div>
+                            <div id="rocks-prog-name-wrapper">
+                                <div id="rocks-mobile-label" class="critter-name">Smash Rocks!</div>
+                                <div id="rocks-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chores-data-wrapper" class="data-wrapper" style="display:none;">
                         <div id="rocks-wrapper" class="chores-container">
                             <div id="rock-wrapper" class="chore-wrapper">
                                 <div class="progress-circle" id="rock"></div>
@@ -194,41 +203,40 @@
                                 </div>
                             </div>
                         </div>
-
-                            <div id="money-rock-wrapper" class="chore-wrapper">
-                                <div class="progress-circle" id="money-rock"></div>
-                                <div id ="rock-title-container" class="chore-title-container">
-                                    <div id="rock-title" class="chore-title">Money Rock</div>
-                                </div>
+                        <div id="money-rock-wrapper" class="chore-wrapper">
+                            <div class="progress-circle" id="money-rock"></div>
+                            <div id ="rock-title-container" class="chore-title-container">
+                                <div id="rock-title" class="chore-title">Money Rock</div>
                             </div>
-                            <div id="fossils-wrapper" class="chore-wrapper">
-                                <div class="progress-circle" id="fossils"></div>
-                                <div id ="fossil-title-container" class="chore-title-container">
-                                    <div id="fossil-title" class="chore-title">Find Fossils</div>
-                                </div>
+                        </div>
+                        <div id="fossils-wrapper" class="chore-wrapper">
+                            <div class="progress-circle" id="fossils"></div>
+                            <div id ="fossil-title-container" class="chore-title-container">
+                                <div id="fossil-title" class="chore-title">Find Fossils</div>
                             </div>
-                            <div id="bottles-wrapper" class="chore-wrapper">
-                                <div class="progress-circle" id="bottle"></div>
-                                <div id ="bottle-title-container" class="chore-title-container">
-                                    <div id="bottle-title" class="chore-title">DIY Recipe</div>
-                                </div>
+                        </div>
+                        <div id="bottles-wrapper" class="chore-wrapper">
+                            <div class="progress-circle" id="bottle"></div>
+                            <div id ="bottle-title-container" class="chore-title-container">
+                                <div id="bottle-title" class="chore-title">DIY Recipe</div>
                             </div>
-                            <div id="crack-wrapper" class="chore-wrapper">
-                                <div class="progress-circle" id="crack"></div>
-                                <div id ="crack-title-container" class="chore-title-container">
-                                    <div id="crack-title" class="chore-title">Find The Glow!</div>
-                                </div>
+                        </div>
+                        <div id="crack-wrapper" class="chore-wrapper">
+                            <div class="progress-circle" id="crack"></div>
+                            <div id ="crack-title-container" class="chore-title-container">
+                                <div id="crack-title" class="chore-title">Find The Glow!</div>
                             </div>
-                            <div id="turnips-wrapper" class="chore-wrapper">
-                                <div id="turnip-timer-wrapper">
-                                    <div id="turnip-title" class="timer-title">New Price In:</div>
-                                    <div id="turnip-time" class="timer-time"></div>
-                                </div>
-                                <div class="progress-circle" id="turnips"></div>
-                                <div id ="turnips-title-container" class="chore-title-container">
-                                    <div id="turnips-title" class="chore-title">Turnip Prices</div>
-                                </div>
+                        </div>
+                        <div id="turnips-wrapper" class="chore-wrapper">
+                            <div id="turnip-timer-wrapper">
+                                <div id="turnip-title" class="timer-title">New Price In:</div>
+                                <div id="turnip-time" class="timer-time"></div>
                             </div>
+                            <div class="progress-circle" id="turnips"></div>
+                            <div id ="turnips-title-container" class="chore-title-container">
+                                <div id="turnips-title" class="chore-title">Turnip Prices</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="fish-tab" class="data-container">
@@ -252,7 +260,7 @@
                         <object class="tab-mobile-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/mobile/bugs.svg') }}" style="opacity: 0.5;"></object>
                     </div>
                     <div class="tab-mobile-container villagers-container">
-                            <object class="tab-mobile-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/mobile/villagers.svg') }}" style="opacity: 0.5"></object>
+                            <object class="tab-mobile-icon villagers-icon" data="{{ url_for('static', filename = 'image/bar/mobile/villagers.svg') }}" style="opacity: 0.5"></object>
                     </div>
                 </div>
             </div>

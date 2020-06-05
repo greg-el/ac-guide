@@ -295,7 +295,6 @@ a {
 
 .timer-time {
     color: white;
-    font-size: 150%;
     background-color: #c1b996;
     border-radius: 10px;
     padding-left: 5px;
@@ -914,6 +913,38 @@ a {
         width: 99%;
     }
     
+    .mobile-chore-wrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background: #F9F6E3;
+        border: 1px solid #E2DFCE;
+        box-sizing: border-box;
+        box-shadow: 0px 2px 0px #B7B19B, inset 0px 3px 0px rgba(255, 255, 255, 0.35);
+        border-radius: 4px;
+        margin: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    #rocks-mobile-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #rocks-prog-name-wrapper {
+        width: 100%;
+    }
+
+    #rocks-mobile-icon {
+        background-image: url("../image/rock.svg");
+        height: 20vw;
+        width: 20vw;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
     .image-skeleton {
         height: 20vw;
         width: 20vw;
