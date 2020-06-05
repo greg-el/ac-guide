@@ -1028,12 +1028,13 @@ $(document).ready( () => {
         } else {
             $('#search-clear').css('display', 'none');
         }
-        $critterChildren = $('#' + getActiveTab() + '-data-wrapper').children();
-        for (var i=0; i<$critterChildren.length; i++) {
-            if (!$critterChildren[i].id.includes(this.value)) {
-                $($critterChildren[i]).addClass('_search_filter');
+        critterChildren = document.getElementById(getActiveTab() + '-data-wrapper').children;
+        for (var i=0; i<critterChildren.length; i++) {
+            let formatted_name = critterChildren[i].children[1].children[0].children[0].innerHTML.toLowerCase();
+            if (!formatted_name.includes(this.value.toLowerCase())) {
+                critterChildren[i].classList.add('_search_filter');
             } else {
-                $($critterChildren[i]).removeClass('_search_filter');
+                critterChildren[i].classList.remove('_search_filter');
             }
         }
     })
