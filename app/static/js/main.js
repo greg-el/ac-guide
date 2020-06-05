@@ -1030,8 +1030,8 @@ $(document).ready( () => {
         }
         critterChildren = document.getElementById(getActiveTab() + '-data-wrapper').children;
         for (var i=0; i<critterChildren.length; i++) {
-            let formatted_name = critterChildren[i].children[1].children[0].children[0].innerHTML.toLowerCase();
-            if (!formatted_name.includes(this.value.toLowerCase())) {
+            let formatted_name = critterChildren[i].children[1].children[0].children[0].innerHTML.toLowerCase().trim();
+            if (!formatted_name.includes(this.value.toLowerCase().trim())) {
                 critterChildren[i].classList.add('_search_filter');
             } else {
                 critterChildren[i].classList.remove('_search_filter');
