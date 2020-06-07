@@ -222,11 +222,14 @@ function increaseBarLength(barElem, prevWidth, newWidth) {
 };
 
 $(() => {
+    var rocksCount = 0;
     $('#rocks-mobile-wrapper').click(() => {
         let totalWidth = document.getElementById("rocks-bar-background").offsetWidth;
         let barElem = document.getElementById("rocks-bar");
         let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
         let newWidth = prevWidth + 20;
+        rocksCount++;
+        setTimeout(() => document.getElementById("rocks-count").innerHTML = rocksCount + "/5", 200);
         increaseBarLength(barElem, prevWidth, newWidth);
     })
 })
