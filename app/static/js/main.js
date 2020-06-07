@@ -211,6 +211,26 @@ $(async function() {  //Chores tab click
 });
 
 
+function increaseBarLength(barElem, prevWidth, newWidth) {
+    barElem.animate([
+        {width: prevWidth + "%"},
+        {width: newWidth + "%"}
+    ], {
+        duration: 200,
+        fill: "forwards"
+    });
+};
+
+$(() => {
+    $('#rocks-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("rocks-bar-background").offsetWidth;
+        let barElem = document.getElementById("rocks-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 20;
+        increaseBarLength(barElem, prevWidth, newWidth);
+    })
+})
+
 function createDesktopChores(chores) {
     var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
     trailColor: '#d5ccab',
