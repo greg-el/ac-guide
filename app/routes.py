@@ -54,7 +54,7 @@ def get_user_data():
         return "401"
     if uid:
         try:
-            requested_data = request.headers.get('species')
+            requested_data = request.headers.get('group')
             conn = mypool.getconn()
             data = get_from_db(conn, uid, requested_data)
             mypool.putconn(conn)
@@ -78,11 +78,11 @@ def update_user_data():
         data = {'detail': 'The update failed.'}
         return jsonify(data), 400
     if uid:
-        species = request.headers.get('species')
-        critter = request.headers.get('critter')
+        group = request.headers.get('group')
+        item = request.headers.get('item')
         value = request.headers.get('value')
         conn = mypool.getconn()
-        update_inventory(conn, uid, species, critter, value)
+        update_inventory(conn, uid, group, item, value)
         mypool.putconn(conn)
         return "200"
     

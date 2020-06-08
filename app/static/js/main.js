@@ -41,15 +41,15 @@ $(document).ready(function() {
     })
 });
 
-function updateJSON(updateSpecies, updateCritter, updateValue) {
+function updateJSON(updateGroup, updateItem, updateValue) {
     var idToken = getCookie("user");
     if (idToken != "") {
         $.ajax({
             url: "/update",
             headers: {
                 token: idToken,
-                species: updateSpecies,
-                critter: updateCritter,
+                group: updateGroup,
+                item: updateItem,
                 value: updateValue
             }
         })
@@ -58,7 +58,7 @@ function updateJSON(updateSpecies, updateCritter, updateValue) {
     }
 }
 
-function getCaught(speciesType) {
+function getUserData(updateGroup) {
     return new Promise(function(resolve, reject) {
         var idToken = getCookie("user");
         if (idToken != "") {
@@ -66,7 +66,7 @@ function getCaught(speciesType) {
                 url: "/get",
                 headers: {
                     token: idToken,
-                    species: speciesType
+                    group: updateGroup
                 },
                 success: function(data) {
                     resolve(JSON.parse(data));
@@ -196,15 +196,10 @@ $(async function() {  //Chores tab click
         $('#search').css('display', 'none');
         $('.search-wrapper').css('justify-content', 'center');
         $('#chores-timer-wrapper').css('display', 'flex');
-        var data = await getCaught("chores");
-        $.each(data, function(k, v) {
-            if (v == true) {
-                $('#'+k).removeClass('chore-wrapper');
-                $('#'+k).addClass('chore-wrapper-ticked');
-            }
-        })
+        var data = await getUserData("chores");
+        
     });
-    var chores = await getCaught("chores");
+    var chores = await getUserData("chores");
     //if (!isMobile()) {
     //    createDesktopChores(chores);
     //}
@@ -524,42 +519,12 @@ function getAltCritterLocationPlainHTML(v) {
 }
 
 
-function addCaughtToggle(k, tab, data) {
+function addModalToElement(k, data) {
     document.getElementById(k.id+'-modal-button').addEventListener("click", function(event) {
         event.stopPropagation();
         createModal(k, data)
     });
-    k.addEventListener("click", (function() {
-        var thisCritter = this
-        if (thisCritter.getAttribute('data-checked') == 'true') {
-            updateValue = 'false'; 
-            thisCritter.classList.remove("critter-wrapper-checked")
-            thisCritter.classList.add("critter-wrapper")
-        }
-        if (thisCritter.getAttribute('data-checked') == 'false') {
-            updateValue = 'true';
-            thisCritter.classList.add("critter-wrapper-checked");
-            thisCritter.classList.remove("critter-wrapper");
-        }
-        thisCritter.setAttribute('data-checked', updateValue);
-        if (getCookie("user") != "") {
-            var idToken = getCookie("user");
-            if (idToken != "") {
-                $.ajax({
-                    url: "/update",
-                    headers: {
-                        token: idToken,
-                        species: tab,
-                        critter: thisCritter.id,
-                        value: updateValue
-                    }
-                })
-            } else {
-                console.log("No one signed in")
-            }
-        }
-    })
-)};
+}
 
 
 function clearSearch(tab) {
@@ -596,13 +561,8 @@ $(function() {  //Fish tab click
 });
 
 
-function createFishHTMLElement(k, v, userDict) {
-    var checkedFilter = "critter-wrapper"
-    var isChecked = false;
-    if (userDict && userDict.hasOwnProperty(k)) {
-        isChecked = userDict[k];
-        checkedFilter = "critter-wrapper-checked";
-    }
+function createFishHTMLElement(k, v) {
+
 
     if (v.hasOwnProperty('timeAlt')) {
         var plainAltTime = getAltCritterTime(v.timeAlt);
@@ -627,7 +587,7 @@ function createFishHTMLElement(k, v, userDict) {
     };
 
 
-    template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
+    template.innerHTML = '<div id="' + k + '" class="critter-wrapper" title="' + tooltip + '">\n' +
                             '<img class="critter-icon" loading="lazy" src="' + icon + '">\n' +
                             '<div class="critter-data">\n' +
                                 '<div class="name-container critter-name">\n' +
@@ -655,32 +615,17 @@ function createFishHTMLElement(k, v, userDict) {
 
 async function getAllFish() {
     var modalTempList = {};
-    var userDict = false;
-    var idToken = getCookie("user");
-    if (idToken != "") {
-        userDict = await getCaught("fish");
-    }
     $.getJSON('/fish/all', function(data) {
         var elem = document.getElementById("fish-data-wrapper");
         $.each(data, function(k, v) {
-            fishElements.push(createFishHTMLElement(k, v, userDict));
+            fishElements.push(createFishHTMLElement(k, v));
             modalTempList[k] = v;
         });
         for (var i=0; i<fishElements.length; i++) {
             elem.appendChild(fishElements[i]);
-            addCaughtToggle(fishElements[i], "fish", modalTempList[fishElements[i].id]);
+            addModalToElement(fishElements[i], modalTempList[fishElements[i].id]);
         }
         $('.wrapper-skeleton').remove();
-    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or not
-        if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters();
-        }else {
-            showCaughtCritters();
-        }
-        if ($('#caught-checkbox')[0].checked) {
-            markAvailiable("fish").then(() => markAvailiable("bugs"));
-        }
-        
     })
 };
 
@@ -733,14 +678,7 @@ $(function() { //bugs tab click
     });
 });
 
-function generateBugsHTML(k, v, userDict) {
-    var checkedFilter = "critter-wrapper"
-    var isChecked = false;
-    if (userDict && userDict.hasOwnProperty(k)) {
-        isChecked = userDict[k];
-        checkedFilter = "critter-wrapper-checked";
-    }
-
+function generateBugsHTML(k, v) {
     if (v.hasOwnProperty('timeAlt')) {
         var plainAltTime = getAltCritterTime(v.timeAlt);
         var plainTimeHTML = getCritterTimePlainHTML(v.time, plainAltTime);
@@ -764,7 +702,7 @@ function generateBugsHTML(k, v, userDict) {
         icon = "./static/image/bugs/png/" + k + ".png";
     };
 
-    template.innerHTML = '<div id="' + k + '" class="'+checkedFilter+'" data-checked="' + isChecked + '" title="' + tooltip + '">\n' +
+    template.innerHTML = '<div id="' + k + '" class="critter-wrapper" title="' + tooltip + '">\n' +
                 '<img class="critter-icon" loading="lazy" src="' + icon + '">\n' +
                 '<div class="critter-data">\n' +
                     '<div class="name-container critter-name">\n' +
@@ -786,29 +724,18 @@ function generateBugsHTML(k, v, userDict) {
 }
 
 async function getAllBugs() {
-    var userDict = false;
-    var idToken = getCookie("user");
-    if (idToken != "") {
-        userDict = await getCaught("bugs");
-    }
     $.getJSON('/bugs/all', function(data) {
         var modalTempObj = {}
         var elem = document.getElementById("bugs-data-wrapper")
         $.each(data, function(k, v) {
-            bugsElements.push(generateBugsHTML(k, v, userDict));
+            bugsElements.push(generateBugsHTML(k, v));
             modalTempObj[k] = v;
         });
         for (var i=0; i<bugsElements.length; i++) {
             elem.appendChild(bugsElements[i]);
-            addCaughtToggle(fishElements[i], "bugs", modalTempObj[bugsElements[i].id]);
+            addModalToElement(fishElements[i], "bugs", modalTempObj[bugsElements[i].id]);
         }
         $('.wrapper-skeleton').remove();
-    }).done(function() { //Hides/shows check off fish on page load depending on if the global hide is checked or no
-        if ($('#caught-checkbox')[0].checked) {
-            hideCaughtCritters();
-        } else {
-            showCaughtCritters();
-        }
     })
 };
 
@@ -908,7 +835,6 @@ async function getVillagers() {
             month: m
         },
         success: function(data) {
-            console.log(data)
             var $elementsToAppend = [];
             var $elem = $("#villagers-data-wrapper");
             $.each(data, function(k, v) {
@@ -1131,47 +1057,6 @@ $(document).ready( () => {
         }
     });
 });
-
-/*
-FILTER CAUGHT CHECKBOX -----------------------------------------------------------------
-*/
-
-async function showCaughtCritters() {
-    for (var i=0; i<fishElements.length; i++) {
-        if (fishElements[i].getAttribute('data-checked') == 'true') {
-            fishElements[i].classList.remove("_caught_filter");
-        }
-    }
-    for (var i=0; i<bugsElements.length; i++) {
-        if (fishElements[i].getAttribute('data-checked') == 'true') {
-            fishElements[i].classList.remove("_caught_filter");
-        }
-    }
-}
-
-async function hideCaughtCritters() {
-    for (var i=0; i<fishElements.length; i++) {
-        if (fishElements[i].getAttribute('data-checked') == 'true') {
-            fishElements[i].classList.add("_caught_filter");
-        }
-    }
-    for (var i=0; i<bugsElements.length; i++) {
-        if (fishElements[i].getAttribute('data-checked') == 'true') {
-            fishElements[i].classList.add("_caught_filter");
-        }
-    }
-}
-
-$(document).ready( () => {
-    $('#caught-checkbox').on('click', function() {
-        if (!this.checked) {
-            showCaughtCritters();
-        } else {
-            hideCaughtCritters();
-        }
-    })
-});
-        
 
 /*
 OTHER -----------------------------------------------------------------

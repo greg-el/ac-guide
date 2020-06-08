@@ -18,11 +18,11 @@ def add_to_db(conn, uid):
     conn.commit()
 
 
-def update_inventory(conn, uid, species, critter, value):
+def update_inventory(conn, uid, group, item, value):
     cur = conn.cursor()
     cur.execute("""UPDATE inventory
     SET pocket = jsonb_set(pocket, '{%s, %s}', '%s', TRUE) 
-    WHERE uid = (%s);""", (AsIs(species), AsIs(critter), AsIs(value), uid))
+    WHERE uid = (%s);""", (AsIs(group), AsIs(item), AsIs(value), uid))
     conn.commit()
 
 
