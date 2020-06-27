@@ -896,9 +896,9 @@ a {
         width: 99%;
     }
     
-    .mobile-chores-wrapper {
+    #chores-mobile-wrapper {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         background: #F9F6E3;
         border: 1px solid #E2DFCE;
@@ -930,6 +930,14 @@ a {
 
     #rocks-mobile-icon {
         background-image: url("../image/chores/smash-square.svg");
+    }
+
+    #fossils-mobile-icon {
+        background-image: url("../image/chores/fossile-square.svg")
+    }
+
+    #glow-mobile-icon {
+        background-image: url("../image/chores/glow.svg");
     }
 
     .mobile-chore-icon {
@@ -1147,8 +1155,23 @@ a {
         color: #5B5444;
     }
     .month {
+        font-weight: bolder;
         border: 1px solid #EEE4CB;
         text-align: center;
+        color: #5B5444;
+        opacity: 50%;
+    }
+
+    .month-active {
+        font-weight: bolder;
+        border: 1px solid #EEE4CB;
+        text-align: center;
+        color: #5B5444;
+        opacity: 100%;
+    }
+
+    .month-current {
+        color: #E49366;
     }
 
 

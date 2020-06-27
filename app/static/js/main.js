@@ -92,7 +92,6 @@ $(function() {
         document.getElementById("cover").style.display ="none";
         document.documentElement.style.overflowY = "hidden";
     });
-
 })
 
 /*
@@ -114,6 +113,25 @@ $(function() {
 })
 
 function createModal(k, data) {
+    let months = ["jan", "feb", "mar", "apr", "may", "june", "july", "aug", "sept", "oct", "nov", "dec"];
+
+    for (let i = 0; i<12; i++) {
+        let elem = document.getElementById(months[i]);
+        elem.classList.remove("month-current"); //reset for new modal
+        elem.classList.remove("month-active");
+        elem.classList.add("month");
+    }
+
+    for (let i = 0; i<data.months.length; i++) {
+        let elem = document.getElementById(months[data.months[i]]);
+
+
+        elem.classList.remove("month");
+        elem.classList.add("month-active");
+        let current = document.getElementById(months[d.getMonth()])
+        current.classList.remove("months");
+        current.classList.add("month-current");
+    }
     var modal = document.getElementById("critter-modal");
     var cover = document.getElementById("cover");
     $(modal).stop().css('display','flex').hide().fadeIn(300);
@@ -223,10 +241,74 @@ $(() => {
         let barElem = document.getElementById("rocks-bar");
         let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
         let newWidth = prevWidth + 20;
-        rocksCount++;
         setTimeout(() => document.getElementById("rocks-count").innerHTML = rocksCount + "/5", 200);
-        increaseBarLength(barElem, prevWidth, newWidth);
-    })
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            rocksCount++;
+        };
+    });
+    var fossilsCount = 0;
+    $('#fossils-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("fossils-bar-background").offsetWidth;
+        let barElem = document.getElementById("fossils-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 20;
+
+        setTimeout(() => document.getElementById("fossils-count").innerHTML = fossilsCount + "/5", 200);
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            fossilsCount++;
+        };
+    });
+    var moneyRockCount = 0;
+    $('#money-rock-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("money-rock-bar-background").offsetWidth;
+        let barElem = document.getElementById("money-rock-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 100;
+        setTimeout(() => document.getElementById("money-rock-count").innerHTML = moneyRockCount + "/1", 200);
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            moneyRockCount++;
+        };
+    });
+    var diyRecipeCount = 0;
+    $('#diy-recipe-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("diy-recipe-bar-background").offsetWidth;
+        let barElem = document.getElementById("diy-recipe-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 100;
+        setTimeout(() => document.getElementById("diy-recipe-count").innerHTML = diyRecipeCount + "/1", 200);
+        
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            diyRecipeCount++;
+        };
+    });
+    var glowCount = 0;
+    $('#glow-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("glow-bar-background").offsetWidth;
+        let barElem = document.getElementById("glow-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 100;
+        setTimeout(() => document.getElementById("glow-count").innerHTML = glowCount + "/1", 200);
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            glowCount++;
+        };
+    });
+    var turnipsCount = 0;
+    $('#turnips-mobile-wrapper').click(() => {
+        let totalWidth = document.getElementById("turnips-bar-background").offsetWidth;
+        let barElem = document.getElementById("turnips-bar");
+        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
+        let newWidth = prevWidth + 50;
+        setTimeout(() => document.getElementById("turnips-count").innerHTML = turnipsCount + "/2", 200);
+        if (prevWidth < 100) {
+            increaseBarLength(barElem, prevWidth, newWidth);
+            turnipsCount++;
+        };
+    });
 })
 
 function createDesktopChores(chores) {
