@@ -1,6 +1,7 @@
 ACTIVE_TAB = "fish";
 var gotBugs = false;
 var gotVillagers = false;
+var gotChores = false;
 var prevTab = "fish"
 var fishElements = [];
 var bugsElements = [];
@@ -113,6 +114,7 @@ $(function() {
 })
 
 function createModal(k, data) {
+    //Handles months highlighting of modal
     let months = ["jan", "feb", "mar", "apr", "may", "june", "july", "aug", "sept", "oct", "nov", "dec"];
 
     for (let i = 0; i<12; i++) {
@@ -124,14 +126,14 @@ function createModal(k, data) {
 
     for (let i = 0; i<data.months.length; i++) {
         let elem = document.getElementById(months[data.months[i]]);
-
-
         elem.classList.remove("month");
         elem.classList.add("month-active");
         let current = document.getElementById(months[d.getMonth()])
         current.classList.remove("months");
         current.classList.add("month-current");
     }
+    
+    
     var modal = document.getElementById("critter-modal");
     var cover = document.getElementById("cover");
     $(modal).stop().css('display','flex').hide().fadeIn(300);
@@ -203,217 +205,105 @@ CHORES FUNCTIONS ---------------------------------------------------------------
 
 $(async function() {  //Chores tab click
     $('.chores-container').bind('click', async function() {
+        if (gotChores == false) {
+            setInterval(choresTimers, 1000);
+            var data = await getUserData("chores");
+            loadMobileChores(data);
+        }
+
         hidePrevTab();
         setPrevTabIconInactive();
         prevTab = "chores";
         choresTimers();
-        setInterval(choresTimers, 1000);
         setActiveTab("chores");
         setActiveTabIcon("chores");
         showTab("chores");
         $('#search').css('display', 'none');
         $('.search-wrapper').css('justify-content', 'center');
         $('#chores-timer-wrapper').css('display', 'flex');
-        var data = await getUserData("chores");
-        
     });
-    var chores = await getUserData("chores");
-    //if (!isMobile()) {
-    //    createDesktopChores(chores);
-    //}
+
 });
 
 
-function increaseBarLength(barElem, prevWidth, newWidth) {
-    barElem.animate([
-        {width: prevWidth + "%"},
-        {width: newWidth + "%"}
-    ], {
-        duration: 200,
-        fill: "forwards"
-    });
-};
-
-$(() => {
-    var rocksCount = 0;
-    $('#rocks-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("rocks-bar-background").offsetWidth;
-        let barElem = document.getElementById("rocks-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 20;
-        setTimeout(() => document.getElementById("rocks-count").innerHTML = rocksCount + "/5", 200);
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            rocksCount++;
-        };
-    });
-    var fossilsCount = 0;
-    $('#fossils-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("fossils-bar-background").offsetWidth;
-        let barElem = document.getElementById("fossils-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 20;
-
-        setTimeout(() => document.getElementById("fossils-count").innerHTML = fossilsCount + "/5", 200);
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            fossilsCount++;
-        };
-    });
-    var moneyRockCount = 0;
-    $('#money-rock-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("money-rock-bar-background").offsetWidth;
-        let barElem = document.getElementById("money-rock-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 100;
-        setTimeout(() => document.getElementById("money-rock-count").innerHTML = moneyRockCount + "/1", 200);
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            moneyRockCount++;
-        };
-    });
-    var diyRecipeCount = 0;
-    $('#diy-recipe-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("diy-recipe-bar-background").offsetWidth;
-        let barElem = document.getElementById("diy-recipe-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 100;
-        setTimeout(() => document.getElementById("diy-recipe-count").innerHTML = diyRecipeCount + "/1", 200);
-        
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            diyRecipeCount++;
-        };
-    });
-    var glowCount = 0;
-    $('#glow-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("glow-bar-background").offsetWidth;
-        let barElem = document.getElementById("glow-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 100;
-        setTimeout(() => document.getElementById("glow-count").innerHTML = glowCount + "/1", 200);
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            glowCount++;
-        };
-    });
-    var turnipsCount = 0;
-    $('#turnips-mobile-wrapper').click(() => {
-        let totalWidth = document.getElementById("turnips-bar-background").offsetWidth;
-        let barElem = document.getElementById("turnips-bar");
-        let prevWidth = barElem.offsetWidth > 0 ? barElem.offsetWidth / totalWidth * 100  : 0;
-        let newWidth = prevWidth + 50;
-        setTimeout(() => document.getElementById("turnips-count").innerHTML = turnipsCount + "/2", 200);
-        if (prevWidth < 100) {
-            increaseBarLength(barElem, prevWidth, newWidth);
-            turnipsCount++;
-        };
-    });
-})
-
-function createDesktopChores(chores) {
-    var rock = new ProgressBar.Circle("#rock",{color: '#a6ad7c',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    var rockPercent = chores["rock"];
-    rock.animate(rockPercent)
-    $('#rock-wrapper').click(function() {
-        if (rockPercent != 1) {
-            rockPercent = rockPercent + 0.2;
-            updateJSON("chores", "rock", rockPercent)
-        }
-        rock.animate(rockPercent);
-    })
-
-    var moneyRock = new ProgressBar.Circle("#money-rock",{color: '#e3b645',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    if (chores["moneyrock"] === "undefined") {
-        updateJSON("chores", "moneyrock", 0)
-        var moneyRockPercent = 0;
-    } else {
-
+class Chore {
+    constructor(name, increase, choreTotal, animTime, startValue, startCount) {
+        this.name = name;
+        this.count = startCount;
+        this.width = startValue;
+        this.barElem = document.getElementById(name + "-bar");
+        this.increase = increase;
+        this.choreTotal = choreTotal;
+        this.animTime = animTime;
+        this.addClickHandler()
+        this.setCounter()
+        this.increaseBarLength();
     }
-        moneyRockPercent = 0;
-    $('#money-rock-wrapper').click(function() {
-        if (moneyRockPercent == 0) {
-            moneyRock.animate(1);
-            moneyRockPercent = 1
-        }
-    })
 
-    var fossil = new ProgressBar.Circle("#fossils",{color: '#736cc4',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    var fossilPercent = 0;
-    $('#fossils-wrapper').click(function() {
-        if (fossilPercent != 1) {
-            fossilPercent = fossilPercent + 0.25;
-        }
-        fossil.animate(fossilPercent);
-    })
-
-    var bottle = new ProgressBar.Circle("#bottle",{color: '#a8bbfd',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    var bottlePercent = 0;
-    $('#bottles-wrapper').click(function() {
-        if (bottlePercent == 0) {
-            bottle.animate(1);
-            bottlePercent = 1
-        }
-    })
-
-    var crack = new ProgressBar.Circle("#crack",{color: '#e5cc52',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    var crackPercent = 0;
-    $('#crack-wrapper').click(function() {
-        if (crackPercent == 0) {
-            crack.animate(1);
-            crackPercent = 1
-        }
-    })
-
-    var turnip = new ProgressBar.Circle("#turnips",{color: '#52a525',
-    trailColor: '#d5ccab',
-    strokeWidth: 8,
-    duration: 500,
-    easing: 'easeInOut'});
-    var turnipPercent = 0;
-    if (amPm == "PM") {
-        turnipPercent = 0.5;
-        turnip.animate(turnipPercent);
-        $('#turnips-wrapper').css("opacity", "40%");
-        $('#turnip-timer-wrapper').css({"diplay": "inline-block", "z-index": "1"});
-
+    setCounter() {
+        setTimeout(() => document.getElementById(this.name + "-count").innerHTML = this.count + "/" + this.choreTotal, this.animTime);
     }
-    $('#turnips-wrapper').click(function() {
-        if (turnipPercent != 1) {
-            if (amPm == "AM" && turnipPercent == 0.5) {
-                
-                console.log("No new turnip price avilable");
-            } else {
-                turnipPercent = turnipPercent + 0.5;
-                turnip.animate(turnipPercent);
-                $('#turnips').fadeTo("slow", 0.4);
-                $('#turnips-title-container').fadeTo("slow", 0.4);
-                $('#turnip-timer-wrapper').css({"diplay": "inline-block", "z-index": "1", "opacity": "100%"});
-            }
+
+    addClickHandler() {
+        if (this.name == "turnips") {
+            $('#' + this.name + '-wrapper').click(() => {
+                this.setCounter()
+                if (this.width < 100) {
+                    if (this.count = 1 && amPm == "AM") {
+                        console.log("No new turnip price available");
+                    } else {
+                        this.increaseBarLength();
+                        this.count++;
+                    }
+                }
+            })
+        } else {
+            $('#' + this.name + '-wrapper').click(() => {
+                this.setCounter()
+                if (this.width < 100) {
+                    this.increaseBarLength();
+                    this.count++
+                }
+            })
         }
-    })
+    }
+
+    increaseBarLength() {
+        this.barElem.animate([
+            {width: this.width + "%"},
+            {width: this.width + this.increase + "%"}
+        ], {
+            duration: this.animTime,
+            fill: "forwards"
+        });
+        this.width = this.width + this.increase;
+    }
+
 }
 
+function loadMobileChores(data) {
+    //Setting the values from user data
+    let chores = ['rocks', 'fossils', 'money-rock', 'diy', 'glow', 'turnips']
+    for (let i=0; i<chores.length; i++) {
+        if (data[chores[i]] === "undefined") {
+            updateJSON("chores", chores[i], 0);
+        }
+    }
+
+    var rocks = new Chore("rocks", 20, 5, 200, 0, 0);
+    var fossils = new Chore("fossils", 20, 5, 200, 0 ,0);
+    var moneyRock = new Chore("money-rock", 100, 1, 200, 0, 0);
+    var diy = new Chore("diy", 100, 1, 200, 0, 0);
+    var glow = new Chore("glow", 100, 1, 200, 0 ,0);
+
+    let turnipsCount = 0;
+    let turnipsLength = 0;
+    if (amPm == "PM") {
+        turnipsCount = 1;
+        turnipsLength = 50;
+    }
+    var turnips = new Chore("turnips", 50, 2, 200, turnipsCount, turnipsLength);
+};
 
 
 

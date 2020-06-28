@@ -591,7 +591,6 @@ a {
 }
 
 .chore-wrapper {
-    background-image: url("../image/rock.svg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -896,7 +895,7 @@ a {
         width: 99%;
     }
     
-    #chores-mobile-wrapper {
+    #chores-wrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -910,12 +909,12 @@ a {
         width: 100%;
     }
 
-    .mobile-chore-label {
+    .chore-label {
         font-size: 8vw;
         color: var(--critter-name);
     }
 
-    .mobile-chore-wrapper {
+    .chore-wrapper {
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -928,19 +927,23 @@ a {
         flex-direction: column;
     }
 
-    #rocks-mobile-icon {
+    #rocks-icon {
         background-image: url("../image/chores/smash-square.svg");
     }
 
-    #fossils-mobile-icon {
+    #fossils-icon {
         background-image: url("../image/chores/fossile-square.svg")
     }
 
-    #glow-mobile-icon {
+    #diy-icon {
+        background-image: url("../image/chores/diy.svg");
+    }
+
+    #glow-icon {
         background-image: url("../image/chores/glow.svg");
     }
 
-    .mobile-chore-icon {
+    .chore-icon {
         height: 20vw;
         width: 25vw;
         background-size: contain;
@@ -950,7 +953,7 @@ a {
         margin: 2vw;
     }
 
-    .mobile-progress-bar {
+    .progress-bar {
         height: 4vh;
         width: 0%;
         background-color: brown;
@@ -959,14 +962,13 @@ a {
         align-items: center;
     }
 
-
-    .mobile-bar-background {
+    .bar-background {
         height: 4vh;
         width: 90%;
         background-color: lightgray;
     }
 
-    #rocks-count {
+    .chore-counter {
         font-size: 3vh;
         color: var(--light);
     }
