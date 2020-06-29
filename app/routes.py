@@ -1,4 +1,4 @@
-from flask import render_template, request, Response
+from flask import render_template, request, Response, abort, redirect, jsonify
 from ac import app
 from data import *
 from db import *
@@ -9,14 +9,18 @@ from ac import mypool
 
 @app.route('/verify', methods=['POST', 'GET'])
 def verify_token():
+    id_token = request.headers.get('token')
+    expires_in datetime.timedelta(weeks=2)
     try:
-        id_token = request.headers.get('token')
-        decoded_token = auth.verify_id_token(id_token, ac_firebase)
-        uid = decoded_token['uid']
-        return "200"
+        session_cookie = auth.create_session_cookie(id_token, expires_in)
+        response = jsonify({'status': 'success'})
+        expires = datetime.datetime.now() + expires_in
+        response.set_cookie(
+            'session', session_cookie, expires=expires, httponly=True, secure=True
+        )
+        return response
     except Exception as e:
-        data = {'detail': 'The token could not be verified.'}
-        return jsonify(data), 400
+        return abort(401, 'Failed to create a session cookie')
 
 
 @app.route('/')
@@ -29,39 +33,34 @@ def login():
 
 @app.route('/add')
 def add_user():
-    uid = False
+    session_cookie = request.headers.get('token')
+    if not session_cookie:
+        return redirect('/login')
     try:
-        id_token = request.headers.get('token')
-        decoded_token = auth.verify_id_token(id_token, ac_firebase)
-        uid = decoded_token['uid']
-    except Exception as e:
-        data = {'detail': 'The user could not be added to the database.'}
-        return jsonify(data), 400
-    if uid:
+        decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         conn = mypool.getconn()
         add_to_db(conn, uid)
         mypool.putconn(conn)
-        return "200"
+    except auth.InvalidSessionCookieError:
+        return redirect('/login')
 
 @app.route('/get')
 def get_user_data():
-    uid = False
+    session_cookie = request.headers.get('token')
+    if not session_cookie:
+        return redirect('/login')
     try:
-        id_token = request.headers.get('token')
-        decoded_token = auth.verify_id_token(id_token, ac_firebase)
-        uid = decoded_token['uid']
-    except Exception as e:
-        return "401"
-    if uid:
-        try:
-            requested_data = request.headers.get('group')
-            conn = mypool.getconn()
-            data = get_from_db(conn, uid, requested_data)
-            mypool.putconn(conn)
-            return data
-        except NoSuchUidError as e:
-            data = {'detail': 'The UID request does not exist in the database.'}
-            return jsonify(data), 400
+        decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
+        requested_data = request.headers.get('group')
+        conn = mypool.getconn()
+        data = get_from_db(conn, uid, requested_data)
+        mypool.putconn(conn)
+        return data
+    except NoSuchUidError as e:
+        data = {'detail': 'The UID request does not exist in the database.'}
+        return jsonify(data), 400
+    except auth.InvalidSessionCookieError:
+        return redirect('/login')
 
 @app.route('/remove/<string:uid>', methods=['POST'])
 def remove_user(uid):
@@ -69,22 +68,20 @@ def remove_user(uid):
 
 @app.route('/update', methods=['POST', 'GET'])
 def update_user_data():
-    uid = False
+    session_cookie = request.headers.get('token')
+    if not session_cookie:
+        return redirect('/login')
     try:
-        id_token = request.headers.get('token')
-        decoded_token = auth.verify_id_token(id_token, ac_firebase)
-        uid = decoded_token['uid']
-    except Exception as e:
-        data = {'detail': 'The update failed.'}
-        return jsonify(data), 400
-    if uid:
+        decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         group = request.headers.get('group')
         item = request.headers.get('item')
         value = request.headers.get('value')
         conn = mypool.getconn()
         update_inventory(conn, uid, group, item, value)
         mypool.putconn(conn)
-        return "200"
+        return jsonify({'status': 'success'})
+    except auth.InvalidSessionCookieError
+        return redirect('/login')
     
 
 
