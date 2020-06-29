@@ -235,9 +235,9 @@ class Chore {
         this.increase = increase;
         this.choreTotal = choreTotal;
         this.animTime = animTime;
-        this.addClickHandler()
-        this.setCounter()
-        this.increaseBarLength();
+        this.addClickHandler();
+        this.setCounter();
+        this.initalBarLength();
     }
 
     setCounter() {
@@ -249,11 +249,12 @@ class Chore {
             $('#' + this.name + '-wrapper').click(() => {
                 this.setCounter()
                 if (this.width < 100) {
-                    if (this.count = 1 && amPm == "AM") {
+                    if (this.count == 1 && amPm == "AM") {
                         console.log("No new turnip price available");
                     } else {
                         this.increaseBarLength();
                         this.count++;
+                        updateJSON("chores", this.name, this.count);
                     }
                 }
             })
@@ -263,9 +264,20 @@ class Chore {
                 if (this.width < 100) {
                     this.increaseBarLength();
                     this.count++
+                    updateJSON("chores", this.name, this.count);
                 }
             })
         }
+    }
+
+    initalBarLength() {
+        this.barElem.animate([
+            {width: 0 + "%"},
+            {width: this.width + "%"}
+        ], {
+            duration: 0,
+            fill: "forwards"
+        });
     }
 
     increaseBarLength() {
@@ -283,18 +295,20 @@ class Chore {
 
 function loadMobileChores(data) {
     //Setting the values from user data
-    let chores = ['rocks', 'fossils', 'money-rock', 'diy', 'glow', 'turnips']
-    for (let i=0; i<chores.length; i++) {
-        if (data[chores[i]] === "undefined") {
-            updateJSON("chores", chores[i], 0);
+    let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0}
+    for (chore in chores) {
+        if (chore in data) {
+            chores[chore] = data[chore]
+        } else {
+            updateJSON("chores", chore, 0);
         }
     }
 
-    var rocks = new Chore("rocks", 20, 5, 200, 0, 0);
-    var fossils = new Chore("fossils", 20, 5, 200, 0 ,0);
-    var moneyRock = new Chore("money-rock", 100, 1, 200, 0, 0);
-    var diy = new Chore("diy", 100, 1, 200, 0, 0);
-    var glow = new Chore("glow", 100, 1, 200, 0 ,0);
+    var rocks = new Chore("rocks", 20, 5, 200, chores['rocks']*20, chores['rocks']);
+    var fossils = new Chore("fossils", 20, 5, 200, chores['fossils']*20 ,chores['fossils']);
+    var moneyRock = new Chore("money-rock", 100, 1, 200, chores['money-rock'], chores['money-rock']);
+    var diy = new Chore("diy", 100, 1, 200, chores['diy']*100, chores['diy']);
+    var glow = new Chore("glow", 100, 1, 200, chores['glow']*100 ,chores['glow']);
 
     let turnipsCount = 0;
     let turnipsLength = 0;
@@ -302,7 +316,7 @@ function loadMobileChores(data) {
         turnipsCount = 1;
         turnipsLength = 50;
     }
-    var turnips = new Chore("turnips", 50, 2, 200, turnipsCount, turnipsLength);
+    var turnips = new Chore("turnips", 50, 2, 200, turnipsLength, turnipsCount);
 };
 
 

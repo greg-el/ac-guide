@@ -969,6 +969,8 @@ a {
     }
 
     .chore-counter {
+        position: absolute;
+        margin-left: 30%;
         font-size: 3vh;
         color: var(--light);
     }
