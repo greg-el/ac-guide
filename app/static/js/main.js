@@ -22,6 +22,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         $('#logout').css('display', 'block');
         $('#login-link').css('display', 'none');
         firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+            user = idToken;
             setCookie("user", idToken, false, "Strict");
         });
     } else {
@@ -33,6 +34,14 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 $(document).ready(function() {
     $('#logout').click(function() {
+        firebase.auth().signOut().then(function() {
+            eraseCookie("user");
+            console.log("signout successful");
+        }).catch(function(error) {
+            console.log(error.message)
+        })
+    })
+    $('#mobile-logout-button').click(() => {
         firebase.auth().signOut().then(function() {
             eraseCookie("user");
             console.log("signout successful");
@@ -207,6 +216,7 @@ $(async function() {  //Chores tab click
     $('.chores-container').bind('click', async function() {
         if (gotChores == false) {
             setInterval(choresTimers, 1000);
+            console.log(getCookie("user"));
             var data = await getUserData("chores");
             loadMobileChores(data);
         }
@@ -294,6 +304,7 @@ class Chore {
 }
 
 function loadMobileChores(data) {
+    console.log(user);
     //Setting the values from user data
     let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0}
     for (chore in chores) {
@@ -310,12 +321,12 @@ function loadMobileChores(data) {
     var diy = new Chore("diy", 100, 1, 200, chores['diy']*100, chores['diy']);
     var glow = new Chore("glow", 100, 1, 200, chores['glow']*100 ,chores['glow']);
 
-    let turnipsCount = 0;
-    let turnipsLength = 0;
-    if (amPm == "PM") {
+    let turnipsCount  = chores['turnips'];
+    if (amPm == "PM" && turnipsCount == 0) {
         turnipsCount = 1;
-        turnipsLength = 50;
     }
+    turnipsLength = turnipsCount * 50;
+
     var turnips = new Chore("turnips", 50, 2, 200, turnipsLength, turnipsCount);
 };
 
@@ -872,6 +883,10 @@ function getCookie(cname) {
     }
     return "";
 };
+
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
 
 async function setDefaultHemisphereCookie() {
     setCookie("hemisphere", "north", 365);

@@ -1069,10 +1069,27 @@ a {
         text-align: center;
         justify-content: center;
         border-radius: 20px;
+        cursor: pointer;
     }
 
     #mobile-login-text {
         font-size: 200%;
+    }
+
+    #mobile-logout-button {
+        position: absolute;
+        width: 50%;
+        height: 10%;
+        background-color: var(--green);
+        color: white;
+        margin-left: 25%;
+        margin-top: 100%;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        border-radius: 20px;
+        cursor: pointer;
     }
 
     #critter-modal {
