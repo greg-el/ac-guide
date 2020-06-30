@@ -1,18 +1,18 @@
 function createUser(email, password) {
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
-        firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(user => {
+        user.user.getIdToken(true).then(idToken => {
             $.ajax({
-                url: "/verify",
+                url: "/session",
                 headers: {
                     token: idToken
                 },
-                success: function(data) {
+                success: () => {
                     $.ajax({
                         url: "/add",
                         headers: {
                             token: idToken
                         },
-                        success: function(data) {
+                        success: () => {
                             console.log("Successfully added user");
                             window.location.replace("/");
                         }
@@ -28,15 +28,14 @@ function createUser(email, password) {
 }
 
 function loginUser(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
-        firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(user => {
+        user.user.getIdToken(true).then(idToken => {
             $.ajax({
-                url: "/verify",
+                url: "/session",
                 headers: {
                     token: idToken
                 },
-                success: function(data) {
-                    console.log(user);
+                success: () => {
                     window.location.replace("/");
                 }
             })
@@ -70,3 +69,18 @@ $(document).ready( () => {
         $('#create-button').css('display', 'block')
     });
 });
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+};

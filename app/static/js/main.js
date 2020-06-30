@@ -13,18 +13,37 @@ var amPm = "";
 var isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
 !window.MSStream
+
+var userState;
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
 
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
+async function IsLoggedIn() {
+    try {
+        await new Promise((resolve, reject) => {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    resolve(user)
+                } else {
+                    reject("No one logged in.")
+                }
+            })
+        })
+    return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+
+
+
+$(() => {
+    if (IsLoggedIn() != null) {
+        userState = true;
         $('#logout').css('display', 'block');
         $('#login-link').css('display', 'none');
-        firebase.auth().currentUser.getIdToken(true).then(function(idToken) {
-            user = idToken;
-            setCookie("user", idToken, false, "Strict");
-        });
     } else {
         $('#logout').css('display', 'none');
         $('#login-link').css('display', 'block');
@@ -35,15 +54,19 @@ firebase.auth().onAuthStateChanged(function(user) {
 $(document).ready(function() {
     $('#logout').click(function() {
         firebase.auth().signOut().then(function() {
-            eraseCookie("user");
-            console.log("signout successful");
+            $.ajax ({
+                url: "/logout",
+                success: () => {
+                    console.log("signout successful");
+                }
+            })
         }).catch(function(error) {
             console.log(error.message)
         })
     })
     $('#mobile-logout-button').click(() => {
         firebase.auth().signOut().then(function() {
-            eraseCookie("user");
+            eraseCookie("session");
             console.log("signout successful");
         }).catch(function(error) {
             console.log(error.message)
@@ -52,12 +75,10 @@ $(document).ready(function() {
 });
 
 function updateJSON(updateGroup, updateItem, updateValue) {
-    var idToken = getCookie("user");
-    if (idToken != "") {
+    if (userState != null) {
         $.ajax({
             url: "/update",
             headers: {
-                token: idToken,
                 group: updateGroup,
                 item: updateItem,
                 value: updateValue
@@ -70,18 +91,16 @@ function updateJSON(updateGroup, updateItem, updateValue) {
 
 function getUserData(updateGroup) {
     return new Promise(function(resolve, reject) {
-        var idToken = getCookie("user");
-        if (idToken != "") {
+        if (userState != null) {
             $.ajax({
                 url: "/get",
                 headers: {
-                    token: idToken,
                     group: updateGroup
                 },
-                success: function(data) {
+                success: data => {
                     resolve(JSON.parse(data));
                 },
-                error: function(data) {
+                error: () => {
                     reject(new Error("UID not in database"))
                 }
             })
@@ -216,7 +235,6 @@ $(async function() {  //Chores tab click
     $('.chores-container').bind('click', async function() {
         if (gotChores == false) {
             setInterval(choresTimers, 1000);
-            console.log(getCookie("user"));
             var data = await getUserData("chores");
             loadMobileChores(data);
         }
@@ -866,7 +884,7 @@ function setCookie(cname, cvalue, exdays) {
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
         var expires = "expires="+d.toUTCString() + ";";
     }
-    document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=Strict;" + "path=/";
+    document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=Strict;" + "Secure=True;" + "path=/";
 };
   
 function getCookie(cname) {

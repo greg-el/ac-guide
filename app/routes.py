@@ -7,10 +7,10 @@ from firebase_admin import auth
 from ac import mypool
 
 
-@app.route('/verify', methods=['POST', 'GET'])
-def verify_token():
+@app.route('/session', methods=['POST', 'GET'])
+def get_session_cookie():
     id_token = request.headers.get('token')
-    expires_in datetime.timedelta(weeks=2)
+    expires_in = datetime.timedelta(weeks=2)
     try:
         session_cookie = auth.create_session_cookie(id_token, expires_in)
         response = jsonify({'status': 'success'})
@@ -31,12 +31,21 @@ def index():
 def login():
     return render_template('login.html')
 
+@app.route('/logout')
+def session_logout():
+    response = response(redirect('/login'))
+    response.set_cookie('session', expires=0)
+    return response
+
 @app.route('/add')
 def add_user():
-    session_cookie = request.headers.get('token')
+    id_token = request.headers.get('token')
+    session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         conn = mypool.getconn()
         add_to_db(conn, uid)
@@ -46,10 +55,11 @@ def add_user():
 
 @app.route('/get')
 def get_user_data():
-    session_cookie = request.headers.get('token')
+    session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
+        #TODO: NEED TO ADD UID IN HERE
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         requested_data = request.headers.get('group')
         conn = mypool.getconn()
@@ -68,7 +78,7 @@ def remove_user(uid):
 
 @app.route('/update', methods=['POST', 'GET'])
 def update_user_data():
-    session_cookie = request.headers.get('token')
+    session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
@@ -80,7 +90,7 @@ def update_user_data():
         update_inventory(conn, uid, group, item, value)
         mypool.putconn(conn)
         return jsonify({'status': 'success'})
-    except auth.InvalidSessionCookieError
+    except auth.InvalidSessionCookieError:
         return redirect('/login')
     
 
