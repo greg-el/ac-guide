@@ -55,11 +55,13 @@ def add_user():
 
 @app.route('/get')
 def get_user_data():
+    id_token = request.headers.get('token')
     session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
-        #TODO: NEED TO ADD UID IN HERE
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         requested_data = request.headers.get('group')
         conn = mypool.getconn()

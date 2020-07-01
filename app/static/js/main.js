@@ -37,11 +37,9 @@ async function IsLoggedIn() {
 }
 
 
-
-
-$(() => {
-    if (IsLoggedIn() != null) {
-        userState = true;
+$(async function() {
+    userState = await IsLoggedIn();
+    if (userState == true) {
         $('#logout').css('display', 'block');
         $('#login-link').css('display', 'none');
     } else {
@@ -89,26 +87,27 @@ function updateJSON(updateGroup, updateItem, updateValue) {
     }
 }
 
-function getUserData(updateGroup) {
-    return new Promise(function(resolve, reject) {
-        if (userState != null) {
-            $.ajax({
-                url: "/get",
-                headers: {
-                    group: updateGroup
-                },
-                success: data => {
-                    resolve(JSON.parse(data));
-                },
-                error: () => {
-                    reject(new Error("UID not in database"))
-                }
+async function getUserData(updateGroup) {
+    if (userState == true) {
+        return new Promise((resolve, reject) => {
+            firebase.auth().currentUser.getIdToken(true).then(idToken => {
+                $.ajax({
+                    url: "/get",
+                    headers: {
+                        token: idToken,
+                        group: updateGroup
+                    },
+                    success: data => {
+                        resolve(JSON.parse(data));
+                    },
+                    error: () => {
+                        reject(new Error("UID not in database"))
+                    }
+                })
             })
-        } else {
-            reject(new Error("No user"));
-        }
-    })
-};
+        })
+    }
+}
 
 
 /*
@@ -119,7 +118,7 @@ $(function() {
     $('#modal-close-container').click(() => {
         document.getElementById("critter-modal").style.display ="none";
         document.getElementById("cover").style.display ="none";
-        document.documentElement.style.overflowY = "hidden";
+        //document.documentElement.style.overflowY = "hidden";
     });
 })
 
@@ -231,12 +230,13 @@ $(() => {
 CHORES FUNCTIONS -----------------------------------------------------------------
 */
 
-$(async function() {  //Chores tab click
+$(() =>  {  //Chores tab click
     $('.chores-container').bind('click', async function() {
         if (gotChores == false) {
             setInterval(choresTimers, 1000);
-            var data = await getUserData("chores");
+            let data = await getUserData("chores");
             loadMobileChores(data);
+            gotChores = true;
         }
 
         hidePrevTab();
@@ -322,9 +322,9 @@ class Chore {
 }
 
 function loadMobileChores(data) {
-    console.log(user);
+    
     //Setting the values from user data
-    let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0}
+    let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0};
     for (chore in chores) {
         if (chore in data) {
             chores[chore] = data[chore]
