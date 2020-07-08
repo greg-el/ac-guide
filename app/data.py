@@ -34,7 +34,7 @@ def get_available_fish(hour, month):
         months = data['months']
         hours = data['time']
         if month in months and hour in hours: 
-                out[name] = {'name_formatted':data['name_formatted'], 'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
+                out[name] = {'name_formatted':data['name_formatted'], 'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'time': data['time']}
 
     return jsonify(out)
 
@@ -89,7 +89,7 @@ def get_available_bugs(hour, month):
         months = data['months']
         hours = data['time']
         if month in months and hour in hours:
-            out[name] = {'price': data['price'],'location': data['location'], 'icon': data['icon']}
+            out[name] = {'price': data['price'],'location': data['location']}
                 
     return jsonify(out)
 

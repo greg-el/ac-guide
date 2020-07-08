@@ -183,31 +183,58 @@ function createModal(k, data, critter) {
 MOBILE FILTER FUNCTIONS -----------------------------------------------------------------
 */
 
+class ElementAnimator {
+    constructor(elem, show, hide, hideCss = false, showCss = false, showDelay=0) {
+        this.elem = $(elem);
+        this.showAnim = show;
+        this.hideAnim = hide;
+        this.showDelay = showDelay;
+        this.showCss = showCss;
+        this.hideCss = hideCss;
+
+    }
+
+    getElem() {
+        return this.elem;
+    }
+
+    show() {
+        setTimeout(() => {
+            this.elem.removeClass(this.hideAnim);
+            this.elem.addClass(this.showAnim);
+            if (this.showCss) {
+                this.elem.css(this.showCss);
+            }
+        }, this.showDelay);
+    }
+
+    hide() {
+        this.elem.removeClass(this.showAnim);
+            this.elem.addClass(this.hideAnim);
+        if (this.hideCss) {
+            this.elem.css(this.hideCss);
+        }
+    }
+}
+
 $(() => {
-    var searchBar = $('#search-wrapper');
-    var filterButton = $('#mobile-filter-button');
-    var searchButton = $('#mobile-search-button');
-    filterButton.click(() => {
-        searchBar.removeClass("moveElemInFromLeft");
-        searchBar.addClass("moveElemOutLeft")
-        filterButton.removeClass("moveFilterInFromRight");
-        filterButton.addClass("moveFilterOffRight");
-        searchButton.removeClass("moveElemOutLeft");
-        setTimeout(() => searchButton.addClass("moveElemInFromLeft"), 200);
-        searchButton.css("display","flex");
-        setTimeout(() => $('.filter-option').removeClass("fadeOut").addClass("fadeIn").css("display", "flex"), 200);
+    var searchBar = new ElementAnimator("#search-wrapper", "moveElemInFromLeft", "moveElemOutLeft");
+    var filterButton = new ElementAnimator("#mobile-filter-button", "moveFilterInFromRight", "moveFilterOffRight");
+    var searchButton = new ElementAnimator("#mobile-search-button", "moveElemInFromLeft", "moveElemOutLeft", 200);
+    var filterOptions = new ElementAnimator(".filter-option", "fadeIn", "fadeOut", {"display": "none"}, {"display": "flex"}, 200);
+
+    filterButton.getElem().click(() => {
+        searchBar.hide();
+        filterButton.hide();
+        searchButton.show();
+        filterOptions.show();
     });
 
-    searchButton.click(() => {
-        filterButton.removeClass("moveFilterOffRight")
-        filterButton.addClass("moveFilterInFromRight")
-        filterButton.css("display", "flex");
-        searchButton.removeClass("moveElemInFromLeft");
-        searchButton.addClass("moveElemOutLeft");
-        searchBar.removeClass("moveElemOutLeft");
-        searchBar.addClass("moveElemInFromLeft");
-        searchBar.css("display", "flex");
-        $('.filter-option').removeClass("fadeIn").addClass("fadeOut").css("display", "none");
+    searchButton.getElem().click(() => {
+        filterButton.show()
+        searchButton.hide()
+        searchBar.show()
+        filterOptions.hide()
     });
 
     $('#search-clear').click(() => {
@@ -881,12 +908,10 @@ $(function() { //bugs tab click
         prevTab = "bugs"
         if (!gotBugs) {
             createSkeletonHTML("bugs");
-        }
-        if (!gotBugs) {
             getAllBugs();
             gotBugs = true;
         }
-    });
+    })
 });
 
 function generateBugsPlainHTML(k, v) {
@@ -1334,6 +1359,51 @@ $(document).ready( () => {
         }
     });
 });
+
+
+/*
+MOBILE-DROPDOWN -----------------------------------------------------------------
+*/
+
+$(document).ready(() => {
+    let selected = $('#dropdown-selected');
+    let cover = $('#cover');
+    let dropdownContent = $('#dropdown-content');
+    let allButton = $('#all-button');
+    let availableButton = $('#available-button');
+    allButton.click(() => {
+        cover.css('display', 'none');
+        unmarkAll("fish").then(() => unmarkAll("bugs"));
+        selected.text('All');
+        availableButton.css('order', '1');
+        allButton.css('order', '0');
+    })
+
+    availableButton.click(() => {
+        markAvailiable("fish").then(() => markAvailiable("bugs"));
+        cover.css('display', 'none');
+        selected.text('Available');
+        availableButton.css('order', '0');
+        allButton.css('order', '1');
+    })
+
+    //Aligns the dropdown with the text 
+    let selectionHeight = $('#dropdown-selected').outerHeight()+1; 
+    dropdownContent.css({'margin-top': '-' + selectionHeight + 'px', 'margin-left': '-1px'});
+    $('#dropdown-selected').click(() => {
+        dropdownContent.css('display', 'flex');
+        cover.css('display', 'flex');
+        cover.click(() => {
+            cover.css('display', 'none');
+            dropdownContent.css('display', 'none');
+        });
+        $('.dropdown-option').click(() => {
+            cover.css('display', 'none');
+            dropdownContent.css('display', 'none');
+        })
+        
+    })
+})
 
 /*
 OTHER -----------------------------------------------------------------
