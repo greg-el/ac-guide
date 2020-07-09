@@ -849,43 +849,27 @@ async function getAllFishPlainHTML() {
 };
 
 async function getAllFish() {
-    let modalTempList = {};
-    $.getJSON('/fish/all', function(data) {
-        var $elementsToAppend = []
-        var $elem = $("#fish-data-wrapper");
-        $.each(data, function(k, v) {
-            let fishElem = createFishHTMLElement(k, v);
-            fishElements.push(fishElem);
-            $elementsToAppend.push(fishElem)
-            modalTempList[k] = v;
-        });
-        $elem.append($elementsToAppend);
-        for (var i=0; i<fishElements.length; i++) {
-            addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
-        }
-        $('.wrapper-skeleton').remove();
+    new Promise((resolve, reject) => {
+        let modalTempList = {};
+        $.getJSON('/fish/all', function(data) {
+            var $elementsToAppend = []
+            var $elem = $("#fish-data-wrapper");
+            $.each(data, function(k, v) {
+                let fishElem = createFishHTMLElement(k, v);
+                fishElements[k] = fishElem;
+                $elementsToAppend.push(fishElem)
+                modalTempList[k] = v;
+            });
+            $elem.append($elementsToAppend);
+            for (var i=0; i<fishElements.length; i++) {
+                addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
+            }
+            $('.wrapper-skeleton').remove();
+            resolve("resolved");
+        })
     })
 }
 
-async function getFish() {
-    var date = new Date();
-    var h = date.getHours();
-    var m = date.getMonth()+1;
-    $.ajax({
-        url: '/fish/available',
-        dataType: 'json',
-        headers: {
-            hour: h,
-            month: m
-        },
-        success: function(data) {
-            var $elem = $(document.getElementById("fish-data-wrapper"));
-            $.each(data, function(k, v) {
-                generateFishHTML($elem, k, v);
-            })
-        }
-    })
-};
 
 
 /*
@@ -1194,9 +1178,9 @@ async function setDefaultHemisphereCookie() {
     setHemisphereIcon("north");
     if ($('#availiable-checkbox')[0].checked) {
         if (getActiveTab() == "fish") {
-            markAvailiable("fish");
+            markAvailable("fish");
         } else if (getActiveTab() == "bugs") {
-            markAvailiable("bugs");
+            markAvailable("bugs");
         }
     }
 }
@@ -1209,9 +1193,9 @@ $(function() {
             setCookie("hemisphere", "south", 365);
             if ($('#availiable-checkbox')[0].checked) {
                 if (getActiveTab() == "fish") {
-                    markAvailiable("fish");
+                    markAvailable("fish");
                 } else if (getActiveTab() == "bugs") {
-                    markAvailiable("bugs");
+                    markAvailable("bugs");
                 }
             }
         } else if (cookie == "south") {
@@ -1219,9 +1203,9 @@ $(function() {
             setCookie("hemisphere", "north", 365);
             if ($('#availiable-checkbox')[0].checked) {
                 if (getActiveTab() == "fish") {
-                    markAvailiable("fish");
+                    markAvailable("fish");
                 } else if (getActiveTab() == "bugs") {
-                    markAvailiable("bugs");
+                    markAvailable("bugs");
                 }
             }
         } else {
@@ -1317,7 +1301,7 @@ async function unmarkAll(tab) {
     }
 }
 
-async function markAvailiable(tab) {
+async function markAvailable(tab) {
     var date = new Date();
     var h = date.getHours();
     var m = date.getMonth()+1;
@@ -1353,7 +1337,7 @@ $(document).ready( () => {
             $('#caught-checkbox').prop('checked', false);
         }
         if (this.checked) {
-            markAvailiable("fish").then(() => markAvailiable("bugs"));
+            markAvailable("fish").then(() => markAvailable("bugs"));
         } else {
             unmarkAll("fish").then(() => unmarkAll("bugs"));
         }
@@ -1366,43 +1350,52 @@ MOBILE-DROPDOWN ----------------------------------------------------------------
 */
 
 $(document).ready(() => {
-    let selected = $('#dropdown-selected');
+    let selected = $('#dropdown-selected-text');
     let cover = $('#cover');
     let dropdownContent = $('#dropdown-content');
-    let allButton = $('#all-button');
-    let availableButton = $('#available-button');
+    let allButton = $('#all');
+    let availableButton = $('#available');
+    let allArrow = $('#dropdown-arrow-all');
+    let availableArrow = $('#dropdown-arrow-available');
+
     allButton.click(() => {
         cover.css('display', 'none');
         unmarkAll("fish").then(() => unmarkAll("bugs"));
         selected.text('All');
         availableButton.css('order', '1');
         allButton.css('order', '0');
+        allArrow.css('display', 'flex');
+        availableArrow.css('display', 'none');
     })
 
     availableButton.click(() => {
-        markAvailiable("fish").then(() => markAvailiable("bugs"));
+        markAvailable("fish").then(() => markAvailable("bugs"));
         cover.css('display', 'none');
         selected.text('Available');
         availableButton.css('order', '0');
         allButton.css('order', '1');
+        availableArrow.css('display', 'flex');
+        allArrow.css('display', 'none');
     })
 
     //Aligns the dropdown with the text 
-    let selectionHeight = $('#dropdown-selected').outerHeight()+1; 
-    dropdownContent.css({'margin-top': '-' + selectionHeight + 'px', 'margin-left': '-1px'});
-    $('#dropdown-selected').click(() => {
+
+    $('#dropdown-selected-wrapper').click(() => {
+        let selectionHeight = $('#dropdown-wrapper').outerHeight()+1; 
+        dropdownContent.css({'margin-top': '-' + selectionHeight + 'px', 'margin-left': '-1px'});
         dropdownContent.css('display', 'flex');
-        cover.css('display', 'flex');
-        cover.click(() => {
-            cover.css('display', 'none');
-            dropdownContent.css('display', 'none');
-        });
-        $('.dropdown-option').click(() => {
-            cover.css('display', 'none');
-            dropdownContent.css('display', 'none');
-        })
-        
-    })
+        cover.css({'display': 'flex', 'opacity': '0%'});
+    });
+
+    $('.dropdown-option-wrapper').click(() => {
+        cover.css({'display': 'none', 'opacity': '50%'});
+        dropdownContent.css('display', 'none');
+    });
+
+    cover.click(() => {
+        cover.css('display', 'none');
+        dropdownContent.css('display', 'none');
+    });
 })
 
 /*
@@ -1493,7 +1486,7 @@ function setActiveTab(tab) {
     ACTIVE_TAB = tab;
 }
 
-function createSkeletonHTML(tab) {
+async function createSkeletonHTML(tab) {
     var element = $("#" + tab + "-data-wrapper");
     if (tab == "fish") {
         var fishDominant = ["rgb(19, 43, 53)","rgb(253, 208, 15)","rgb(99, 76, 69)","rgb(164, 65, 37)","rgb(112, 89, 82)",
@@ -1617,7 +1610,7 @@ function createSkeletonHTML(tab) {
 }
 
 
-$(function() {
+$(async function() {
     if (getCookie("hemisphere") == "") {
         setDefaultHemisphereCookie().then(() => setHemisphereIcon(getCookie("hemisphere")));
     } else {
@@ -1625,6 +1618,6 @@ $(function() {
     }
     createSkeletonHTML("fish");
     datetime();
-    getAllFish();
+    await getAllFish().then((value) => console.log(value));
     showTab("fish");
-});
+})
