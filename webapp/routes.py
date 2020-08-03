@@ -1,10 +1,9 @@
 from flask import render_template, request, Response, abort, redirect, jsonify
-from ac import app
-from data import *
-from db import *
-from ac import ac_firebase
-from firebase_admin import auth
-from ac import mypool
+from webapp.ac import app
+from webapp.data import *
+from webapp.db import *
+from firebase_admin import auth, exceptions
+from webapp.ac import mypool
 
 
 @app.route('/session', methods=['POST', 'GET'])
@@ -19,7 +18,7 @@ def get_session_cookie():
             'session', session_cookie, expires=expires, httponly=True, secure=True
         )
         return response
-    except Exception as e:
+    except exceptions.FirebaseError:
         return abort(401, 'Failed to create a session cookie')
 
 
@@ -27,15 +26,18 @@ def get_session_cookie():
 def index():
     return render_template('index.html')
 
+
 @app.route('/login')
 def login():
     return render_template('login.html')
 
+
 @app.route('/logout')
 def session_logout():
-    response = response(redirect('/login'))
+    response = Response(redirect('/login'))
     response.set_cookie('session', expires=0)
     return response
+
 
 @app.route('/add')
 def add_user():
@@ -51,6 +53,7 @@ def add_user():
         return jsonify({"detail": "Success"}), 200
     except auth.InvalidSessionCookieError:
         return redirect('/login')
+
 
 @app.route('/get')
 def get_user_data():
@@ -71,9 +74,11 @@ def get_user_data():
     except auth.InvalidSessionCookieError:
         return redirect('/login')
 
+
 @app.route('/remove/<string:uid>', methods=['POST'])
 def remove_user(uid):
     remove_from_db(uid)
+
 
 @app.route('/update', methods=['POST', 'GET'])
 def update_user_data():
@@ -92,7 +97,6 @@ def update_user_data():
     except auth.InvalidSessionCookieError:
         return redirect('/login')
     
-
 
 @app.route('/bugs/<string:call>')
 def bug_data(call):
@@ -128,6 +132,7 @@ def villager_data_n():
     day = request.headers.get("day")
     month = request.headers.get("month")
     return get_n_sorted_villagers(int(month), int(day), int(n))
+
 
 @app.route('/villagers-sorted-after/<int:n>')
 def villager_data_after_n(n):

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+python setup.py
+flask db migrate -m "auto"
+flask db upgrade
