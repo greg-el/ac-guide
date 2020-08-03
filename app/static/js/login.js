@@ -10,7 +10,6 @@ function createUser(email, password) {
                     $.ajax({
                         url: "/add",
                         headers: {
-                            token: idToken
                         },
                         success: () => {
                             console.log("Successfully added user");

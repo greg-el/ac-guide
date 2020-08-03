@@ -39,31 +39,28 @@ def session_logout():
 
 @app.route('/add')
 def add_user():
-    id_token = request.headers.get('token')
     session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
-        decoded_token = auth.verify_id_token(id_token)
-        uid = decoded_token['uid']
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
+        uid = decoded_claims['user_id']
         conn = mypool.getconn()
         add_to_db(conn, uid)
         mypool.putconn(conn)
+        return jsonify({"detail": "Success"}), 200
     except auth.InvalidSessionCookieError:
         return redirect('/login')
 
 @app.route('/get')
 def get_user_data():
-    id_token = request.headers.get('token')
     session_cookie = request.cookies.get('session')
     if not session_cookie:
         return redirect('/login')
     try:
-        decoded_token = auth.verify_id_token(id_token)
-        uid = decoded_token['uid']
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
         requested_data = request.headers.get('group')
+        uid = decoded_claims['user_id']
         conn = mypool.getconn()
         data = get_from_db(conn, uid, requested_data)
         mypool.putconn(conn)
@@ -85,9 +82,9 @@ def update_user_data():
         return redirect('/login')
     try:
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
-        group = request.headers.get('group')
-        item = request.headers.get('item')
-        value = request.headers.get('value')
+        uid = decoded_claims['user_id']
+        headers = request.headers
+        group, item, value = headers.get('group'), headers.get('item'), headers.get('value')
         conn = mypool.getconn()
         update_inventory(conn, uid, group, item, value)
         mypool.putconn(conn)
