@@ -6,6 +6,7 @@ import psycopg2
 import os
 from flask_migrate import Migrate
 from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.types import String
 from sqlalchemy import Column
 import uuid
 
@@ -22,6 +23,7 @@ class Inventory(db.Model):
     __tablename__ = "inventory"
 
     uid = Column(UUID, primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    firebase_user_id = Column(String, nullable=False)
     pocket = Column(JSONB, nullable=False)
 
     def __repr__(self):

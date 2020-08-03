@@ -46,9 +46,9 @@ def add_user():
         return redirect('/login')
     try:
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
-        uid = decoded_claims['user_id']
+        firebase_user_id = decoded_claims['user_id']
         conn = mypool.getconn()
-        add_to_db(conn, uid)
+        add_to_db(conn, firebase_user_id)
         mypool.putconn(conn)
         return jsonify({"detail": "Success"}), 200
     except auth.InvalidSessionCookieError:

@@ -7,7 +7,7 @@ from operator import itemgetter
 #GET DATA
 
 def get_all_fish():
-    with open('data/fish.json') as f:
+    with open('./webapp/data/fish.json') as f:
         fish_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -20,7 +20,7 @@ def get_all_fish():
 
 def get_available_fish(hour, month):
     out = {}
-    with open('data/fish.json') as f:
+    with open('./webapp/data/fish.json') as f:
         fish_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -41,7 +41,7 @@ def get_available_fish(hour, month):
 
 def get_unavailable_fish(hour, month):
     out = {}
-    with open('data/fish.json') as f:
+    with open('./webapp/data/fish.json') as f:
         fish_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -62,7 +62,7 @@ def get_unavailable_fish(hour, month):
 
 def get_all_bugs():
     out = {}
-    with open('data/bugs.json') as f:
+    with open('./webapp/data/bugs.json') as f:
         bug_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -75,7 +75,7 @@ def get_all_bugs():
 
 def get_available_bugs(hour, month):
     out = {}
-    with open('data/bugs.json') as f:
+    with open('./webapp/data/bugs.json') as f:
         bug_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -96,7 +96,7 @@ def get_available_bugs(hour, month):
 
 def get_unavailable_bugs(hour, month):
     out = {}
-    with open('data/bugs.json') as f:
+    with open('./webapp/data/bugs.json') as f:
         bug_data = json.load(f)
 
     if request.cookies.get('hemisphere') == "north":
@@ -152,7 +152,7 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
 
     
     out = {}
-    with open('villagers.json') as f:
+    with open('./webapp/data/villagers.json') as f:
         villager_data = json.load(f)
 
     villager_list = []
@@ -231,7 +231,7 @@ def get_n_sorted_villagers(month, date, n):
 
     
     out = {}
-    with open('./data/villagers.json') as f:
+    with open('./webapp/data/villagers.json') as f:
         villager_data = json.load(f)
 
     villager_list = []
@@ -282,7 +282,7 @@ def get_n_sorted_villagers(month, date, n):
 
 def get_n_after_sorted_villagers(n):
     out = {}
-    with open('data/villagers-sorted.json') as f:
+    with open('./webapp/data/villagers-sorted.json') as f:
         villager_data = json.load(f)
 
     for i in range(n, len(villager_data)):

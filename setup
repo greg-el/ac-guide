@@ -1,5 +1,5 @@
 #!/bin/sh
 
-python setup.py
+python db-setup.py
 flask db migrate -m "auto"
 flask db upgrade
