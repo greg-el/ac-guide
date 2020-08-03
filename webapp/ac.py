@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import firebase_admin
 from firebase_admin import credentials, initialize_app
 import psycopg2.pool
 import psycopg2
@@ -31,15 +32,17 @@ class Inventory(db.Model):
                              self.uid, self.pocket)
 
 
-# Firebase init
-cred = credentials.Certificate({
-    "type": "service_account",
-    "private_key": os.environ['PRIVATE_KEY'].replace('\\n', '\n'),
-    "client_email": os.environ['CLIENT_EMAIL'],
-    "project_id": os.environ['PROJECT_ID'],
-    "token_uri": "https://oauth2.googleapis.com/token"})
 
-ac_firebase = initialize_app(cred)
+# Firebase init
+if not firebase_admin._apps:
+	cred = credentials.Certificate({
+	    "type": "service_account",
+		"private_key": os.environ['PRIVATE_KEY'].replace('\\n', '\n'),
+	    "client_email": os.environ['CLIENT_EMAIL'],
+		"project_id": os.environ['PROJECT_ID'],
+	    "token_uri": "https://oauth2.googleapis.com/token"})
+
+	ac_firebase = initialize_app(cred)
 
 sslmode = 'disable' if '127.0.0.1' in os.environ['DATABASE_URL'] else 'require'
 mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, os.environ['DATABASE_URL'], sslmode=sslmode)
