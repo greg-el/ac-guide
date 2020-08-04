@@ -1,11 +1,13 @@
 from flask import jsonify, request
 import json
 from operator import itemgetter
+import os
 
 
 def get_all_fish():
+    print(os.getcwd())
     fish = None
-    with open('/webapp/data/fish.json') as f:
+    with open('./data/fish.json') as f:
         fish_data = json.load(f)
     if request.cookies.get('hemisphere') == "north":
         fish = fish_data['northern']
