@@ -11,7 +11,6 @@ from sqlalchemy.types import String
 from sqlalchemy import Column
 
 
-
 app = Flask(__name__, static_folder='./static', instance_relative_config=True)
 app.config.from_object('webapp.config.DevelopmentConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
