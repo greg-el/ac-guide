@@ -23,32 +23,31 @@ migrate = Migrate(app, db)
 class Inventory(db.Model):
     __tablename__ = "inventory"
 
-    uid = Column(UUID, primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    firebase_user_id = Column(String, nullable=False)
-    pocket = Column(JSONB, nullable=False)
+    firebase_user_id = Column(String, primary_key=True, nullable=True)
+    chores = Column(JSONB, nullable=True)
+    fish = Column(JSONB, nullable=True)
+    bugs = Column(JSONB, nullable=True)
+    dive = Column(JSONB, nullable=True)
 
     def __repr__(self):
         return "<User(uid='%s', pocket='%s')>" % (
                              self.uid, self.pocket)
 
 
-
-# Firebase init
 if not firebase_admin._apps:
-	cred = credentials.Certificate({
-	    "type": "service_account",
-		"private_key": os.environ['PRIVATE_KEY'].replace('\\n', '\n'),
-	    "client_email": os.environ['CLIENT_EMAIL'],
-		"project_id": os.environ['PROJECT_ID'],
-	    "token_uri": "https://oauth2.googleapis.com/token"})
+    cred = credentials.Certificate({
+        "type": "service_account",
+        "private_key": os.environ['PRIVATE_KEY'].replace('\\n', '\n'),
+        "client_email": os.environ['CLIENT_EMAIL'],
+        "project_id": os.environ['PROJECT_ID'],
+        "token_uri": "https://oauth2.googleapis.com/token"})
 
-	ac_firebase = initialize_app(cred)
+    ac_firebase = initialize_app(cred)
 
 sslmode = 'disable' if '127.0.0.1' in os.environ['DATABASE_URL'] else 'require'
 mypool = psycopg2.pool.ThreadedConnectionPool(1, 20, os.environ['DATABASE_URL'], sslmode=sslmode)
 
 import webapp.routes
-
 
 if __name__ == "__main__":
     app.run()

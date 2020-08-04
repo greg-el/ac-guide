@@ -1,20 +1,16 @@
 from flask import jsonify, request
 import json
-import datetime
 from operator import itemgetter
 
 
-#GET DATA
-
 def get_all_fish():
+    fish = None
     with open('./webapp/data/fish.json') as f:
         fish_data = json.load(f)
-
     if request.cookies.get('hemisphere') == "north":
         fish = fish_data['northern']
     elif request.cookies.get('hemisphere') == "south":
         fish = fish_data['southern']
-
     return fish
 
 
@@ -34,7 +30,13 @@ def get_available_fish(hour, month):
         months = data['months']
         hours = data['time']
         if month in months and hour in hours: 
-                out[name] = {'name_formatted':data['name_formatted'], 'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'time': data['time']}
+            out[name] = {
+                'name_formatted': data['name_formatted'],
+                'price': data['price'],
+                'location': data['location'],
+                'shadow': data['shadow'],
+                'time': data['time']
+                }
 
     return jsonify(out)
 
@@ -55,21 +57,25 @@ def get_unavailable_fish(hour, month):
         months = data['months']
         hours = data['time']
         if month not in months or hour not in hours:
-                out[name] = {'price': data['price'],'location': data['location'], 'shadow': data['shadow'], 'icon': data['icon'], 'time': data['time']}
+            out[name] = {
+                'price': data['price'],
+                'location': data['location'],
+                'shadow': data['shadow'],
+                'icon': data['icon'],
+                'time': data['time']
+            }
 
     return jsonify(out)
 
 
 def get_all_bugs():
-    out = {}
+    bug = None
     with open('./webapp/data/bugs.json') as f:
         bug_data = json.load(f)
-
     if request.cookies.get('hemisphere') == "north":
         bug = bug_data['northern']
     elif request.cookies.get('hemisphere') == "south":
         bug = bug_data['southern']
-
     return bug
 
 
@@ -89,7 +95,10 @@ def get_available_bugs(hour, month):
         months = data['months']
         hours = data['time']
         if month in months and hour in hours:
-            out[name] = {'price': data['price'],'location': data['location']}
+            out[name] = {
+                'price': data['price'],
+                'location': data['location']
+             }
                 
     return jsonify(out)
 
@@ -110,12 +119,16 @@ def get_unavailable_bugs(hour, month):
         months = data['months']
         hours = data['time']
         if month not in months or hour not in hours:
-            out[name] = {'price': data['price'],'location': data['location'], 'icon': data['icon']}
+            out[name] = {
+                'price': data['price'],
+                'location': data['location'],
+                'icon': data['icon']
+            }
                 
     return jsonify(out)
 
 
-def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by closest to current time to furthest
+def sorted_villager_gen(month, date):  # Sorts villagers into birthdays ordered by closest to current time to furthest
     month_name = {
         1: "January",
         2: "February",
@@ -131,9 +144,8 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
         12: "December"
     }
 
+    MONTH = month
 
-    MONTH = month #int with no leading zeros
-    DATE = date#int with no leading zeros
 
     month_normalisation = {}
     month_denormalisation = {}
@@ -141,7 +153,6 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
     for i in range(12):
         if dict_month > 11:
             dict_month = 0
-
         if i < 10:
             month_normalisation[dict_month] = "0"+str(i)
             month_denormalisation["0"+str(i)] = dict_month+1
@@ -150,7 +161,6 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
             month_denormalisation[str(i)] = dict_month+1
         dict_month += 1
 
-    
     out = {}
     with open('./webapp/data/villagers.json') as f:
         villager_data = json.load(f)
@@ -161,7 +171,16 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
         date = str(data['date'])
         if len(date) == 1:
             date = "0"+date
-        villager_list.append([name, data['gender'], data['personality'], data['species'], month_normalisation[data['month']], date, data['catchphrase'], data['icon']])
+        villager_list.append([
+            name,
+            data['gender'],
+            data['personality'],
+            data['species'],
+            month_normalisation[data['month']],
+            date,
+            data['catchphrase'],
+            data['icon']
+        ])
 
     sorted_day = sorted(villager_list, key=itemgetter(5))
     sorted_month = sorted(sorted_day, key=itemgetter(4))
@@ -175,7 +194,7 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
         else:
             month = str(month)
 
-        if item[4] == month and int(item[5]) < DATE :
+        if item[4] == month and int(item[5]) < date :
             index_to_delete.append(index)
 
         index += 1
@@ -184,12 +203,19 @@ def sorted_villager_gen(month, date):#Sorts villagers into birthdays ordered by 
         sorted_month.append(sorted_month[item])
        
     for item in reversed(index_to_delete):
-         del sorted_month[item]
+        del sorted_month[item]
 
     count = 0
     for item in sorted_month:
-        out[count] = {'name': item[0], 'gender': item[1], 'personality': item[2], 'species': item[3], 'month': month_name[month_denormalisation[item[4]]], 'date': int(item[5]), 'catchphrase':item[6], 'icon':item[7]}
-        count+=1
+        out[count] = {'name': item[0],
+                      'gender': item[1],
+                      'personality': item[2],
+                      'species': item[3],
+                      'month': month_name[month_denormalisation[item[4]]],
+                      'date': int(item[5]),
+                      'catchphrase': item[6],
+                      'icon': item[7]}
+        count += 1
 
     return jsonify(out)
 
@@ -210,17 +236,14 @@ def get_n_sorted_villagers(month, date, n):
         12: "December"
     }
 
-
-    MONTH = month #int with no leading zeros
-    DATE = date #int with no leading zeros
+    MONTH = month
 
     month_normalisation = {}
     month_denormalisation = {}
-    dict_month = MONTH-1
+    dict_month = month-1
     for i in range(12):
         if dict_month > 11:
             dict_month = 0
-
         if i < 10:
             month_normalisation[dict_month] = "0"+str(i)
             month_denormalisation["0"+str(i)] = dict_month+1
@@ -229,7 +252,6 @@ def get_n_sorted_villagers(month, date, n):
             month_denormalisation[str(i)] = dict_month+1
         dict_month += 1
 
-    
     out = {}
     with open('./webapp/data/villagers.json') as f:
         villager_data = json.load(f)
@@ -254,7 +276,7 @@ def get_n_sorted_villagers(month, date, n):
         else:
             month = str(month)
 
-        if item[4] == month and int(item[5]) < DATE :
+        if item[4] == month and int(item[5]) < date :
             index_to_delete.append(index)
 
         index += 1
@@ -263,12 +285,21 @@ def get_n_sorted_villagers(month, date, n):
         sorted_month.append(sorted_month[item])
        
     for item in reversed(index_to_delete):
-         del sorted_month[item]
+        del sorted_month[item]
 
     count = 0
     for item in sorted_month:
-        out[count] = {'name': item[0], 'name_formatted': item[1], 'gender': item[2], 'personality': item[3], 'species': item[4], 'month': month_name[month_denormalisation[item[5]]], 'date': int(item[6]), 'catchphrase':item[7]}
-        count+=1
+        out[count] = {
+            'name': item[0],
+            'name_formatted': item[1],
+            'gender': item[2],
+            'personality': item[3],
+            'species': item[4],
+            'month': month_name[month_denormalisation[item[5]]],
+            'date': int(item[6]),
+            'catchphrase': item[7]}
+
+        count += 1
 
     output = {}
     if n == 0:

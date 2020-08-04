@@ -4,6 +4,7 @@ from webapp.data import *
 from webapp.db import *
 from firebase_admin import auth, exceptions
 from webapp.ac import mypool
+import datetime
 
 
 @app.route('/session', methods=['POST', 'GET'])
@@ -46,9 +47,9 @@ def add_user():
         return redirect('/login')
     try:
         decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
-        firebase_user_id = decoded_claims['user_id']
+        uid = decoded_claims['user_id']
         conn = mypool.getconn()
-        add_to_db(conn, firebase_user_id)
+        add_to_db(conn, uid)
         mypool.putconn(conn)
         return jsonify({"detail": "Success"}), 200
     except auth.InvalidSessionCookieError:
@@ -91,7 +92,14 @@ def update_user_data():
         headers = request.headers
         group, item, value = headers.get('group'), headers.get('item'), headers.get('value')
         conn = mypool.getconn()
-        update_inventory(conn, uid, group, item, value)
+        if group == "chores":
+            update_chores(conn, uid, item, value)
+        elif group == "fish":
+            update_fish(conn, uid, item, value)
+        elif group == "bugs":
+            update_bugs(conn, uid, item, value)
+        elif group == "dive":
+            update_dive(conn, uid, item, value)
         mypool.putconn(conn)
         return jsonify({'status': 'success'})
     except auth.InvalidSessionCookieError:
