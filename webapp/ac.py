@@ -15,7 +15,7 @@ import uuid
 app = Flask(__name__, static_folder='./static', instance_relative_config=True)
 app.config.from_object('webapp.config.DevelopmentConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ac@127.0.0.1/acguide"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
