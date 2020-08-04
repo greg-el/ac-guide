@@ -6,10 +6,10 @@ import psycopg2.pool
 import psycopg2
 import os
 from flask_migrate import Migrate
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import String
 from sqlalchemy import Column
-import uuid
+
 
 
 app = Flask(__name__, static_folder='./static', instance_relative_config=True)
@@ -18,6 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 
 class Inventory(db.Model):

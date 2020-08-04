@@ -1,4 +1,4 @@
-from flask import render_template, request, Response, abort, redirect, jsonify
+from flask import render_template, Response, abort, redirect
 from webapp.ac import app
 from webapp.data import *
 from webapp.db import *
