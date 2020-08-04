@@ -1,1 +1,1 @@
-web: gunicorn --chdir webapp ac:app
+web: flask db upgrade; gunicorn --chdir webapp ac:app
