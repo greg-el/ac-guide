@@ -34,7 +34,7 @@ def get_available_fish(hour, month):
     for name, data in fish.items():
         months = data['months']
         hours = data['time']
-        if month in months and hour in hours: 
+        if month in months and hour in hours:
             out[name] = {
                 'name_formatted': data['name_formatted'],
                 'price': data['price'],
@@ -101,9 +101,12 @@ def get_available_bugs(hour, month):
         hours = data['time']
         if month in months and hour in hours:
             out[name] = {
+                'name_formatted': data['name_formatted'],
                 'price': data['price'],
-                'location': data['location']
+                'location': data['location'],
+                'time': data['time']
              }
+    print(len(out))
                 
     return jsonify(out)
 

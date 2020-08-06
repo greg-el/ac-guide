@@ -30,8 +30,7 @@ class Inventory(db.Model):
     dive = Column(JSONB, nullable=True)
 
     def __repr__(self):
-        return "<User(uid='%s', pocket='%s')>" % (
-                             self.uid, self.pocket)
+        return "<User(uid='%s', pocket='%s')>" % (self.uid, self.pocket)
 
 
 if not firebase_admin._apps:

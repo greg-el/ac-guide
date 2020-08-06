@@ -1,4 +1,5 @@
 ACTIVE_TAB = "fish";
+let gotFish = false;
 let gotBugs = false;
 let gotVillagers = false;
 let gotChores = false;
@@ -14,6 +15,7 @@ let isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
     !window.MSStream
 
 let userState;
+let mode = "available";
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -26,7 +28,6 @@ async function getLoggedInUser() {
 
 $(document).ready(async function() {
     userState = await getLoggedInUser();
-    console.log(userState)
     if (userState !== false) {
         $('#logout').css('display', 'block');
         $('#login-link').css('display', 'none');
@@ -323,7 +324,7 @@ class Chore {
 }
 
 function loadMobileChores(data) {
-    
+
     //Setting the values from user data
     let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0};
     for (let chore in chores) {
@@ -404,136 +405,168 @@ function choresTimers() {
 CRITTER HTML GEN FUNCTIONS -----------------------------------------------------------------
 */
 
-function getCritterTime(v, altTime) {
-    var timeHTML = "";
-    if (v.length === 24) {
-        timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-            $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-            $('<div/>', {'class': 'data-text', 'text': "All day"})
-            ])
-    } else {
-        let startTime = v[0];
-        let endTime = v[v.length - 1];
-        const startAMPM = startTime >= 12 ? "PM" : "AM";
-        startTime = startTime % 12
-        startTime = startTime ? startTime : 12;
-        finalStart = startTime + startAMPM;
+class CritterHtmlConfig {
+    constructor(k, v) {
+        this.k = k
+        this.v = v
+        this.months = v.months;
+        this.location = v.location;
+        this.time = v.time;
+        this.name_formatted = v.name_formatted;
+        this.price = v.price;
+        this.altLocation = v.hasOwnProperty("locationAlt") ? v.locationAlt : false;
+        this.altTime = v.hasOwnProperty("timeAlt") ? v.altTime : false;
+        this.shadow = v.hasOwnProperty("shadow") ? v.shadow : false;
+        this.tooltip = 'Click to mark as caught or uncaught';
 
-        var endAMPM = endTime >= 12 ? "PM" : "AM";
-        endTime = endTime % 12
-        endTime = endTime ? endTime : 12;
-        finalEnd = endTime+1 + endAMPM;
 
-        finalTime = finalStart + "-" + finalEnd;
+        this.altTimeHTML = false;
+        this.altLocationHTML = false;
+        this.main()
+    }
 
-        if (altTime === false) {
-            timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-                $('<div/>', {'class': 'data-text', 'text': finalTime})
+    main() {
+        if (this.altTime !== false) {
+            this.getAltCritterTime();
+        }
+        this.getCritterTime();
+
+
+        if (this.altLocation !== false) {
+            this.getAltCritterLocation()
+        }
+        this.getCritterLocation();
+
+        let extension = isIOS ? ".png" : ".webp";
+        let critter = this.shadow ? "fish" : "bugs";
+        
+        this.icon = "./static/image/" + critter + "/" + this.k + extension;
+    }
+
+
+    getCritterTime() {
+        if (this.v.length === 24) {
+            this.timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
+                $('<div/>', {'class': 'data-text', 'text': "All day"})
             ])
         } else {
-            timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
-                $('<img/>', {'class': 'time-icon', 'src': './static/image/icons/svg/timer.svg'}),
-                $('<div/>', {'class': 'time-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': finalTime}),
-                    $('<div/>', {'class': 'data-text', 'text': altTime})
+            let startTime = this.time[0];
+            let endTime = this.time[this.time.length - 1];
+            const startAMPM = startTime >= 12 ? "PM" : "AM";
+            startTime = startTime % 12
+            startTime = startTime ? startTime : 12;
+            let finalStart = startTime + startAMPM;
+
+            let endAMPM = endTime >= 12 ? "PM" : "AM";
+            endTime = endTime % 12
+            endTime = endTime ? endTime : 12;
+            let finalEnd = endTime+1 + endAMPM;
+
+            let finalTime = finalStart + "-" + finalEnd;
+
+            if (this.altTime === false) {
+                this.timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
+                    $('<div/>', {'class': 'data-text', 'text': finalTime})
                 ])
-            ])
+            } else {
+                this.timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
+                    $('<div/>', {'class': 'time-container-mod'}).append([
+                        $('<div/>', {'class': 'data-text', 'text': finalTime}),
+                        $('<div/>', {'class': 'data-text', 'text': this.altTime})
+                    ])
+                ])
+            }
         }
     }
-    return timeHTML
-}
 
-function getCritterLocation(v, secondLocationExists, secondLocation) {
-    var locationHTML = {}
-    if (secondLocationExists) {
-        if (v.includes("(")) {
-            var locationSplit = v.split("(");
-            var location = locationSplit[0];
-            var locationModifier = locationSplit[1];
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
-                $('<div/>', {'class': 'location-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
-                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-                ]),
-                secondLocation
-            ])
+    getCritterLocation() {
+        if (this.altLocation !== false) {
+            if (this.location.includes("(")) {
+                let locationSplit = this.location.split("(");
+                let location = locationSplit[0];
+                let locationModifier = locationSplit[1];
+                this.locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
+                    $('<div/>', {'class': 'location-container-mod'}).append([
+                        $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
+                        $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+                    ]),
+                    this.altLocationHTML
+                ])
+            } else {
+                this.locationHTML = $('<div/>', {'class': 'location-container'}).append([
+                    $('<div/>', {'class': 'data-text', 'text': this.v})
+                ])
+            }
         } else {
-            locationHTML = $('<div/>', {'class': 'location-container'}).append([
-                $('<div/>', {'class': 'data-text', 'text': v})
-            ])
+            if (this.location.includes("(")) {
+                let locationSplit = this.location.split("(");
+                let location = locationSplit[0];
+                let locationModifier = locationSplit[1];
+
+                this.locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
+                    $('<div/>', {'class': 'location-container-mod'}).append([
+                        $('<div/>', {'class': 'data-text', 'text': location.trim()}),
+                        $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
+                    ])
+                ])
+            } else {
+                this.locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
+                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
+                    $('<div/>', {'class': 'location-container'}).append(
+                        $('<div/>', {'class': 'data-text', 'text': this.location})
+                    )
+                )
+            }
         }
-    } else {
-        if (v.includes("(")) {
-            let locationSplit = v.split("(");
+    }
+
+    getAltCritterLocation() {
+        if (this.altLocation.includes("(")) {
+            let locationSplit = this.altLocation.split("(");
             let location = locationSplit[0];
             let locationModifier = locationSplit[1];
-            
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
-                $('<div/>', {'class': 'location-container-mod'}).append([
-                    $('<div/>', {'class': 'data-text', 'text': location.trim()}),
-                    $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-                ])
+            this.altLocationHTML = $('<div/>', {'class': 'location-container-mod'}).append([
+                $('<div/>', {'class': 'data-text', 'text': location.trim() + ','}),
+                $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
             ])
         } else {
-            locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
-                $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
+            this.altLocationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
                 $('<div/>', {'class': 'location-container'}).append(
-                    $('<div/>', {'class': 'data-text', 'text': v})
+                    $('<div/>', {'class': 'data-text', 'text': this.location})
                 )
             )
         }
     }
-    return locationHTML;
-}
 
-function getAltCritterLocation(v) {
-    let locationHTML = {}
-    if (v.includes("(")) {
-        let locationSplit = v.split("(");
-        let location = locationSplit[0];
-        let locationModifier = locationSplit[1];
-        locationHTML = $('<div/>', {'class': 'location-container-mod'}).append([
-            $('<div/>', {'class': 'data-text', 'text': location.trim() + comma}),
-            $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
-        ])
-    } else {
-        locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append(
-            $('<div/>', {'class': 'location-container'}).append(
-                $('<div/>', {'class': 'data-text', 'text': v})
-            )
-        )
+    getAltCritterTime() {
+        let finalTime = "";
+        if (this.time.length === 24) {
+            this.altTime = "All Day";
+        } else {
+            let startTime = this.time[0];
+            let endTime = this.time[this.time.length-1];
+            let startAMPM = startTime >= 12 ? "PM" : "AM";
+            startTime = startTime % 12
+            startTime = startTime ? startTime : 12;
+            let finalStart = startTime + startAMPM;
+
+            let endAMPM = endTime >= 12 ? "PM" : "AM";
+            endTime = endTime % 12
+            endTime = endTime ? endTime : 12;
+            let finalEnd = endTime+1 + endAMPM;
+
+            this.altTime = finalStart + "-" + finalEnd;
+        }
     }
-    return locationHTML;
 }
 
-function getAltCritterTime(v) {
-    let finalTime = "";
-    if (v.length === 24) {
-        finalTime = "All Day";
-    } else {
-        let startTime = v[0];
-        let endTime = v[v.length-1];
-        let startAMPM = startTime >= 12 ? "PM" : "AM";
-        startTime = startTime % 12
-        startTime = startTime ? startTime : 12;
-        let finalStart = startTime + startAMPM;
-
-        let endAMPM = endTime >= 12 ? "PM" : "AM";
-        endTime = endTime % 12
-        endTime = endTime ? endTime : 12;
-        let finalEnd = endTime+1 + endAMPM;
-
-        finalTime = finalStart + "-" + finalEnd;
-
-    }
-    return finalTime
-}
 
 function addModalToElement(k, data, critter) {
-    console.log(k.id, data);
     document.getElementById(k.id+'-modal-button').addEventListener("click", function(event) {
         event.stopPropagation();
         createModal(k, data, critter)
@@ -547,7 +580,7 @@ function clearSearch(tab) {
     for (let i=0; i<$critterChildren.length; i++) {
         $($critterChildren[i]).removeClass('_search_filter');
     }
-    
+
 }
 
 /*
@@ -561,7 +594,7 @@ $(function() {  //Fish tab click
             $('.search-wrapper').css('justify-content', 'flex-start');
             $('#chores-timer-wrapper').css('display', 'none');
         }
-        
+
         hidePrevTab();
         setPrevTabIconInactive();
         prevTab = "fish"
@@ -569,38 +602,27 @@ $(function() {  //Fish tab click
         setActiveTab("fish");
         setActiveTabIcon("fish");
         showTab("fish");
+        if (gotFish === false) {
+            createSkeletonHTML("fish");
+            if (mode === "available") {
+                getAvailableFish();
+                gotFish = "available";
+            } else {
+                getAllFish();
+                gotFish = true;
+            }
+        }
     });
     return false;
 });
 
 
-function createFishHTMLElement(k, v) {
-    if (v.hasOwnProperty('timeAlt')) {
-        altTime = getAltCritterTime(v.timeAlt);
-        var timeHTML = getCritterTime(v.time, altTime);
-    } else {
-        altTime = false;
-        var timeHTML = getCritterTime(v.time, altTime);
-    }
+function createFishHTMLElement(k, v, count) {
+    let config = new CritterHtmlConfig(k, v);
+    let loading = (count <= 5) ? 'auto': 'lazy'
 
-    
-    if (v.hasOwnProperty('locationAlt')) {
-        var altLocationHTML = getAltCritterLocation(v.locationAlt)
-        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
-    } else {
-        var locationHTML = getCritterLocation(v.location, false);
-    }
-
-    var tooltip = 'Click to mark as caught or uncaught';
-
-    var icon = "./static/image/fish/" + k + ".webp";
-    if (isIOS) {
-        icon = "./static/image/fish/png/" + k + ".png";
-    };
-
-    
-    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title': tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':icon}),
+    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title': config.tooltip}).append([
+            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append(
                     $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
@@ -608,12 +630,12 @@ function createFishHTMLElement(k, v) {
                 ),
             $('<div/>', {'class': 'critter-divider'}),
             $('<div/>', {'class': 'data-grid'}).append([
-                locationHTML,
+                config.locationHTML,
                 $('<div/>', {'class': 'bell-container icon-text'}).append([
                     $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
                     $('<div/>', {'class': 'data-text', 'text': v.price})
                 ]),
-                timeHTML,
+                config.timeHTML,
                 $('<div/>', {'class': 'shadow-container icon-text'}).append([
                     $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/shadow.svg'}),
                     $('<div/>', {'class': 'data-text', 'text': v.shadow})
@@ -623,26 +645,59 @@ function createFishHTMLElement(k, v) {
         ])
 }
 
-async function getAllFish(onlyShowAvailable) {
+async function getAllFish() {
     let modalTempList = {};
     $.getJSON('/fish/all', function(data) {
-        var $elementsToAppend = []
-        var $elem = $("#fish-data-wrapper");
+        let $elementsToAppend = []
+        let $elem = $("#fish-data-wrapper");
+        let count = 0;
         $.each(data, function(k, v) {
-            let fishElem = createFishHTMLElement(k, v);
-            fishElements[k] = fishElem;
-            $elementsToAppend.push(fishElem)
-            modalTempList[k] = v;
+            if (!fishElements.includes(k)) {
+                let fishElem = createFishHTMLElement(k, v, count);
+                fishElements[k] = fishElem;
+                $elementsToAppend.push(fishElem)
+                modalTempList[k] = v;
+                count++;
+            }
         });
         $elem.append($elementsToAppend);
-        for (var i=0; i<fishElements.length; i++) {
+        for (let i=0; i<fishElements.length; i++) {
             addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
         }
         $('.wrapper-skeleton').remove();
-        if (onlyShowAvailable === true) {
-            showAvailable("fish");
+    })
+}
+
+async function getAvailableFish() {
+    let modalTempList = {};
+    let date = new Date();
+    let m = date.getMonth()+1;
+    let h = date.getHours();
+    let data = await $.ajax({
+        url: '/fish/available',
+        dataType: 'json',
+        headers: {
+            hour: h,
+            month: m
         }
     })
+    let $elementsToAppend = [];
+    let $elem = $('#fish-data-wrapper');
+    let count = 0;
+    $.each(data, (k, v) => {
+        let fishElem = createFishHTMLElement(k, v, count);
+        if (!fishElements.includes[k]) {
+            fishElements[k] = fishElem;
+        }
+        $elementsToAppend.push(fishElem);
+        modalTempList[k] = v;
+        count++
+    })
+    $elem.append($elementsToAppend);
+    for (let i=0; i<fishElements.length; i++) {
+        addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
+    }
+    $('.wrapper-skeleton').remove();
 }
 
 
@@ -654,66 +709,36 @@ $(function() { //bugs tab click
     $('.bugs-container, #bug-icon').click(async function() {
         setActiveTab("bugs");
         setActiveTabIcon("bugs");
-        if (prevTab == "chores") {
+        if (prevTab === "chores") {
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
             $('#chores-timer-wrapper').css('display', 'none');
+        }
+        if (gotBugs === false && mode === "available") {
+            getAvailableBugs();
+        } else {
+            getAllBugs();
         }
         showTab("bugs");
         hidePrevTab();
         setPrevTabIconInactive();
         clearSearch("fish");
         prevTab = "bugs"
-        if (!gotBugs) {
-            createSkeletonHTML("bugs");
-            getAllBugs();
-            gotBugs = true;
-        }
+
+        gotBugs = true;
     })
-});
+})
 
-class CritterHtmlConfig {
-    constructor(k, v) {
-        this.k = k
-        this.v = v
-        this.timeHTML;
-        this.locationHTML;
-        this.altLocationHTML;
-        this.tooltip = 'Click to mark as caught or uncaught';
-        this.icon = "./static/image/bugs/" + this.k + ".webp";
-        this.main()
-    }   
-    
-    main() {
-        if (this.v.hasOwnProperty('timeAlt')) {
-            this.altTime = getAltCritterTime(this.v.timeAlt);
-            this.timeHTML = getCritterTime(this.v.time, this.altTime);
-        } else {
-            this.altTime = false;
-            this.timeHTML = getCritterTime(this.v.time, this.altTime);
-        }
 
-        if (this.v.hasOwnProperty('locationAlt')) {
-            this.altLocationHTML = getAltCritterLocation(this.v.locationAlt)
-            this.locationHTML = getCritterLocation(this.v.location, true, this.altLocationHTML);
-        } else {
-            this.locationHTML = getCritterLocation(this.v.location, false);
-        }
-
-        if (isIOS) {
-            this.icon = "./static/image/bugs/png/" + this.k + ".png";
-        }
-    }
-}
-
-function createBugsHTMLElement(k, v) {
-    let config = CritterHtmlConfig(k, v);
+function createBugsHTMLElement(k, v, count) {
+    let config = new CritterHtmlConfig(k, v);
+    let loading = (count <= 5) ? 'auto': 'lazy'
 
     return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title':config.tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':config.icon}),
+            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append(
-                    $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
+                    $('<div/>', {'class': 'critter-name', 'text':config.name_formatted}),
                     $('<div/>', {'id': k+'-modal-button', 'class': 'modal-button'})
                 ),
                     $('<div/>', {'class': 'critter-divider'}),
@@ -730,15 +755,18 @@ function createBugsHTMLElement(k, v) {
 }
 
 async function getAllBugs() {
+    console.log("getAll")
     let modalTempList = {};
     $.getJSON('/bugs/all', function(data) {
         var $elementsToAppend = [];
         var $elem = $("#bugs-data-wrapper");
+        let count = 0;
         $.each(data, function(k, v) {
-            let bugsElem = createBugsHTMLElement(k, v);
+            let bugsElem = createBugsHTMLElement(k, v, count);
             bugsElements.push(bugsElem);
             $elementsToAppend.push(bugsElem);
             modalTempList[k] = v;
+            count++;
         });
         $elem.append($elementsToAppend);
         for (var i=0; i<bugsElements.length; i++) {
@@ -748,23 +776,45 @@ async function getAllBugs() {
     })
 }
 
-function refreshBugs() {
-    $.getJSON('/bugs/available',
-    function(data) {
-        $("#data-wrapper").empty()
-        var $elem = $(document.getElementById("bugs-data-wrapper"))
-        $.each(data, function(k, v) {
-            generateBugsHTML($elem, k, v);
-        })
-    });
-};
+async function getAvailableBugs() {
+    console.log("getAvail")
+    let modalTempList = {};
+    let date = new Date();
+    let m = date.getMonth()+1;
+    let h = date.getHours();
+    let data = await $.ajax({
+        url: '/bugs/available',
+        dataType: 'json',
+        headers: {
+            hour: h,
+            month: m
+        }
+    })
+    let $elementsToAppend = [];
+    let $elem = $('#bugs-data-wrapper');
+    let count = 0;
+    $.each(data, (k, v) => {
+        let bugsElem = createBugsHTMLElement(k, v, count);
+        if (!bugsElements.includes[k]) {
+            bugsElements[k] = bugsElem;
+        }
+        $elementsToAppend.push(bugsElem);
+        modalTempList[k] = v;
+        count++
+    })
+    $elem.append($elementsToAppend);
+    for (let i=0; i<bugsElements.length; i++) {
+        addModalToElement(bugsElements[i][0], modalTempList[bugsElements[i][0].id], "bugs");
+    }
+    $('.wrapper-skeleton').remove();
+}
 
 /*
 BIRTHDAY FUNCTIONS -----------------------------------------------------------------
 */
 
 
-$(function() { //Birthdays tab click 
+$(function() { //Birthdays tab click
     $('.villagers-container').bind('click', function() {
         if (prevTab == "chores") {
             $('#search').css('display', 'flex');
@@ -795,7 +845,7 @@ function generateVillagerHTML(k, v) {
     if (v.gender == "m") {
         genderIcon = './static/image/icons/svg/male.svg';
     };
-    
+
     var icon = "./static/image/villagers/" + v.name + ".webp";
     if (isIOS) {
         icon = "./static/image/villagers/png/" + v.name + ".png";
@@ -856,7 +906,7 @@ async function getVillagers() {
         }
     })
 }
-        
+
 async function getBirthdaysAfterN() {
     $.getJSON('/villagers-sorted-after/30',function(data) {
         var $elem = $("#villager-data-wrapper");
@@ -879,7 +929,7 @@ function setCookie(cname, cvalue, exdays) {
     }
     document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=Strict;" + "Secure=True;" + "path=/";
 };
-  
+
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -895,17 +945,17 @@ function getCookie(cname) {
     return "";
 };
 
-function eraseCookie(name) {   
-    document.cookie = name+'=; Max-Age=-99999999;';  
+function eraseCookie(name) {
+    document.cookie = name+'=; Max-Age=-99999999;';
 }
 
 async function setDefaultHemisphereCookie() {
     setCookie("hemisphere", "north", 365);
     setHemisphereIcon("north");
     if ($('#availiable-checkbox')[0].checked) {
-        if (getActiveTab() == "fish") {
+        if (getActiveTab() === "fish") {
             showAvailable("fish");
-        } else if (getActiveTab() == "bugs") {
+        } else if (getActiveTab() === "bugs") {
             showAvailable("bugs");
         }
     }
@@ -914,23 +964,23 @@ async function setDefaultHemisphereCookie() {
 $(function() {
     $("#hemisphere-button").click(() => {
         var cookie = getCookie("hemisphere");
-        if (cookie == "north") {
+        if (cookie === "north") {
             setHemisphereIcon("south");
             setCookie("hemisphere", "south", 365);
             if ($('#availiable-checkbox')[0].checked) {
-                if (getActiveTab() == "fish") {
+                if (getActiveTab() === "fish") {
                     showAvailable("fish");
-                } else if (getActiveTab() == "bugs") {
+                } else if (getActiveTab() === "bugs") {
                     showAvailable("bugs");
                 }
             }
-        } else if (cookie == "south") {
+        } else if (cookie === "south") {
             setHemisphereIcon("north");
             setCookie("hemisphere", "north", 365);
             if ($('#availiable-checkbox')[0].checked) {
-                if (getActiveTab() == "fish") {
+                if (getActiveTab() === "fish") {
                     showAvailable("fish");
-                } else if (getActiveTab() == "bugs") {
+                } else if (getActiveTab() === "bugs") {
                     showAvailable("bugs");
                 }
             }
@@ -996,8 +1046,8 @@ $(document).ready( () => {
         } else {
             $('#search-clear').css('display', 'none');
         }
-        critterChildren = document.getElementById(getActiveTab() + '-data-wrapper').children;
-        for (var i=0; i<critterChildren.length; i++) {
+        let critterChildren = document.getElementById(getActiveTab() + '-data-wrapper').children;
+        for (let i=0; i<critterChildren.length; i++) {
             let formatted_name = critterChildren[i].children[1].children[0].children[0].innerHTML.toLowerCase().trim();
             if (!formatted_name.includes(this.value.toLowerCase().trim())) {
                 critterChildren[i].classList.add('_search_filter');
@@ -1014,18 +1064,18 @@ SHOW ALL CHECK BOX -------------------------------------------------------------
 */
 
 async function showAll(tab) {
-    var $elemChildren = $("#" + tab + "-data-wrapper").children();
-    for (var i=0; i < $elemChildren.length; i++) {
+    let $elemChildren = $("#" + tab + "-data-wrapper").children();
+    for (let i=0; i < $elemChildren.length; i++) {
         $("#" + $elemChildren[i].id).removeClass('_all_filter');
     }
 }
 
 async function showAvailable(tab) {
-    var date = new Date();
-    var h = date.getHours();
-    var m = date.getMonth()+1;
-    var $alreadyChecked = [];
-    var $elemChildren = $("#" + tab + "-data-wrapper").children();
+    let date = new Date();
+    let h = date.getHours();
+    let m = date.getMonth()+1;
+    let $alreadyChecked = [];
+    let $elemChildren = $("#" + tab + "-data-wrapper").children();
     $.ajax({
         url: '/' + tab + '/available',
         dataType: 'json',
@@ -1035,8 +1085,8 @@ async function showAvailable(tab) {
         },
         success: function(data) {
             $.each(data, function(k, v) {
-                for (var i=0; i < $elemChildren.length; i++) {
-                    if (k == $elemChildren[i].id) {
+                for (let i=0; i < $elemChildren.length; i++) {
+                    if (k === $elemChildren[i].id) {
                         $("#" + $elemChildren[i].id).removeClass('_all_filter');
                         $alreadyChecked.push($elemChildren[i].id);
                         break;
@@ -1085,6 +1135,16 @@ $(document).ready(() => {
         allButton.css('order', '0');
         allArrow.css('display', 'flex');
         availableArrow.css('display', 'none');
+        if (mode === "available") {
+            mode = "all";
+        }
+        if (gotFish !== false) {
+            getAllFish();
+        }
+        if (gotBugs !== false) {
+            getAllBugs();
+        }
+
     })
 
     availableButton.click(() => {
@@ -1095,12 +1155,13 @@ $(document).ready(() => {
         allButton.css('order', '1');
         availableArrow.css('display', 'flex');
         allArrow.css('display', 'none');
+        mode = "available";
     })
 
-    //Aligns the dropdown with the text 
+    //Aligns the dropdown with the text
 
     $('#dropdown-selected-wrapper').click(() => {
-        let selectionHeight = $('#dropdown-wrapper').outerHeight()+1; 
+        let selectionHeight = $('#dropdown-wrapper').outerHeight()+1;
         dropdownContent.css({'margin-top': '-' + selectionHeight + 'px', 'margin-left': '-1px'});
         dropdownContent.css('display', 'flex');
         cover.css({'display': 'flex', 'opacity': '0%'});
@@ -1151,16 +1212,15 @@ function datetime() {
     hours = hours % 12
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes;
-    timeElem.textContent = strTime;
+    timeElem.textContent = hours + ':' + minutes;
     timeAMPM.textContent = amPm;
     dateElem.textContent = date + " " + months[d.getMonth()];
-    if (CURRENT_HOUR != hours) {
+    if (CURRENT_HOUR !== hours) {
         showAvailable("fish");
         showAvailable("bugs");
         CURRENT_HOUR = hours;
     }
-    var t = setTimeout(datetime, 1000);
+    let t = setTimeout(datetime, 1000);
     CURRENT_TIME = d;
 
     if (dayElem.data === "") {
@@ -1168,7 +1228,7 @@ function datetime() {
     }
 
 
-    if (document.getElementById("day").data != dayElem.data) {
+    if (document.getElementById("day").data !== dayElem.data) {
         dayElem.data = "./static/image/icons/days/" + dayIcons[d.getDay()] + ".svg"
     }
 
@@ -1177,10 +1237,8 @@ function datetime() {
 }
 
 function isMobile() {
-     if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-        return true
-     } 
-     return false
+     return /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+
 }
 
 function getActiveTab() {
@@ -1192,9 +1250,9 @@ function setActiveTab(tab) {
 }
 
 async function createSkeletonHTML(tab) {
-    var element = $("#" + tab + "-data-wrapper");
-    if (tab == "fish") {
-        var fishDominant = ["19, 43, 53","253, 208, 15","99, 76, 69","164, 65, 37","112, 89, 82",
+    let element = $("#" + tab + "-data-wrapper");
+    if (tab === "fish") {
+        let fishDominant = ["19, 43, 53","253, 208, 15","99, 76, 69","164, 65, 37","112, 89, 82",
     "101, 75, 47","24, 40, 52","40, 48, 60","32, 49, 67","129, 82, 67","40, 52, 39",
     "22, 55, 69","11, 30, 38","88, 77, 24","97, 93, 76","114, 100, 61","43, 54, 62",
     "100, 91, 71","145, 110, 22","103, 88, 72","183, 159, 115","222, 220, 207","32, 46, 63",
@@ -1208,7 +1266,7 @@ async function createSkeletonHTML(tab) {
     ,"24, 32, 41","39, 45, 52","147, 92, 34","167, 157, 117","24, 40, 63","200, 163, 21"
     ,"6, 38, 54","111, 100, 58","103, 101, 61","108, 100, 70","241, 152, 56","14, 44, 39"
     ,"29, 35, 54","150, 87, 26","93, 109, 47"]
-        for (var i=0; i<50; i++) {
+        for (let i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
                     $('<div/>', {'class': 'image-skeleton', 'css':{'background-color': "rgb("+fishDominant[i]+")", 'opacity': '50%'}}),
@@ -1239,8 +1297,8 @@ async function createSkeletonHTML(tab) {
                 ])
             ])
         }
-    } else if (tab == "bugs") {
-        var bugsDominant = ["102, 110, 50","83, 87, 18","78, 13, 16","147, 94, 17",
+    } else if (tab === "bugs") {
+        let bugsDominant = ["102, 110, 50","83, 87, 18","78, 13, 16","147, 94, 17",
         "30, 40, 29","11, 27, 10","11, 30, 12","18, 47, 11","124, 96, 48",
         "116, 95, 43","87, 86, 83","110, 84, 49","27, 15, 17","30, 47, 41",
         "94, 73, 53","157, 86, 20","37, 14, 46","35, 37, 35","57, 48, 53",
@@ -1256,7 +1314,7 @@ async function createSkeletonHTML(tab) {
         "12, 47, 37","53, 75, 44","98, 50, 45","18, 17, 15","25, 25, 28",
         "70, 93, 110","134, 86, 43","143, 176, 32","12, 8, 7","89, 81, 74",
         "160, 77, 26","138, 85, 20","1, 0, 0","113, 104, 62","18, 20, 32","134, 85, 31"]
-        for (var i=0; i<50; i++) {
+        for (let i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
                     $('<div/>', {'class': 'image-skeleton', 'css':{'background-color': "rgb("+bugsDominant[i]+")", 'opacity': '50%'}}),
@@ -1283,8 +1341,8 @@ async function createSkeletonHTML(tab) {
                 ])
             ])
         }
-    } else if (tab == "villagers") {
-        for (var i=0; i<50; i++) {
+    } else if (tab === "villagers") {
+        for (let i=0; i<50; i++) {
             element.append([
                 $('<div/>', {'class': 'wrapper-skeleton'}).append([
                     $('<div/>', {'class': 'image-skeleton'}),
@@ -1316,13 +1374,13 @@ async function createSkeletonHTML(tab) {
 
 
 $(async function() {
-    if (getCookie("hemisphere") == "") {
+    if (getCookie("hemisphere") === "") {
         setDefaultHemisphereCookie().then(() => setHemisphereIcon(getCookie("hemisphere")));
     } else {
         setHemisphereIcon(getCookie("hemisphere"));
     }
     createSkeletonHTML("fish");
     datetime();
-    await getAllFish(true);
+    await getAvailableFish();
     showTab("fish");
 })
