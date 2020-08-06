@@ -51,12 +51,23 @@ def update_dive(conn, uid, item, value):
 def get_from_db(conn, uid, requested_data):
     cur = conn.cursor()
     cur.execute("SELECT %s FROM inventory WHERE firebase_user_id = %s", (AsIs(requested_data), str(uid)))
-    data = cur.fetchone()[0]
+    data = cur.fetchone()
+    if data is None:
+        raise NoSuchUidError
+
+    cur.close()
+    return data[0]
+
+
+def get_user_from_db(conn, uid):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM inventory WHERE firebase_user_id = %s", (str(uid),))
+    data = cur.fetchone()
     if data is None:
         raise NoSuchUidError
     
     cur.close()
-    return data
+    return data[0]
 
 
 def remove_from_db(conn, uid):

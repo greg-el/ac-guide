@@ -1,4 +1,4 @@
-from flask import render_template, Response, abort, redirect
+from flask import render_template, Response, abort, redirect, make_response
 from webapp.ac import app
 from webapp.data import *
 from webapp.db import *
@@ -33,9 +33,9 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/logout')
+@app.route('/session-logout', methods=['POST'])
 def session_logout():
-    response = Response(redirect('/login'))
+    response = make_response(redirect('/login'))
     response.set_cookie('session', expires=0)
     return response
 
@@ -56,6 +56,28 @@ def add_user():
         return redirect('/login')
 
 
+@app.route('/get-logged-in-user')
+def get_logged_in_user():
+    session_cookie = request.cookies.get('session')
+    if not session_cookie:
+        response = {'detail': 'No Logged In User.'}
+        return jsonify(response), 200
+    try:
+        decoded_claims = auth.verify_session_cookie(session_cookie, check_revoked=True)
+        uid = decoded_claims['user_id']
+        conn = mypool.getconn()
+        data = get_user_from_db(conn, uid)
+        mypool.putconn(conn)
+        if data is not None:
+            return data, 200
+        else:
+            return jsonify({'detail': 'No Logged In User.'}), 200
+    except NoSuchUidError:
+        return jsonify({'detail': 'No Logged In User.'}), 200
+    except auth.InvalidSessionCookieError:
+        return redirect('/login')
+
+
 @app.route('/get')
 def get_user_data():
     session_cookie = request.cookies.get('session')
@@ -69,7 +91,7 @@ def get_user_data():
         data = get_from_db(conn, uid, requested_data)
         mypool.putconn(conn)
         return data
-    except NoSuchUidError as e:
+    except NoSuchUidError:
         data = {'detail': 'The UID request does not exist in the database.'}
         return jsonify(data), 400
     except auth.InvalidSessionCookieError:

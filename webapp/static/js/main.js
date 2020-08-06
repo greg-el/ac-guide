@@ -1,79 +1,56 @@
 ACTIVE_TAB = "fish";
-var gotBugs = false;
-var gotVillagers = false;
-var gotChores = false;
-var prevTab = "fish"
-var fishElements = [];
-var bugsElements = [];
-var d = new Date();
-var CURRENT_HOUR_24 = d.getHours() 
-var CURRENT_HOUR = CURRENT_HOUR_24 % 12 ? CURRENT_HOUR_24 % 12 : 12;
-amPm = d.getHours() >= 12 ? "PM" : "AM";
-var amPm = "";
-var isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-!window.MSStream
+let gotBugs = false;
+let gotVillagers = false;
+let gotChores = false;
+let prevTab = "fish"
+let fishElements = [];
+let bugsElements = [];
+let d = new Date();
+let CURRENT_HOUR_24 = d.getHours()
+let CURRENT_HOUR = CURRENT_HOUR_24 % 12 ? CURRENT_HOUR_24 % 12 : 12;
+let amPm = d.getHours() >= 12 ? "PM" : "AM";
+let isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+    !window.MSStream
 
-var userState;
+let userState;
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
 
-async function IsLoggedIn() {
-    try {
-        await new Promise((resolve, reject) => {
-            firebase.auth().onAuthStateChanged(user => {
-                if (user) {
-                    resolve(user)
-                } else {
-                    reject("No one logged in.")
-                }
-            })
-        })
-    return true;
-    } catch (error) {
-        return false;
-    }
+
+async function getLoggedInUser() {
+    return await $.get("/get-logged-in-user");
 }
 
 
-$(async function() {
-    userState = await IsLoggedIn();
-    if (userState === true) {
+$(document).ready(async function() {
+    userState = await getLoggedInUser();
+    console.log(userState)
+    if (userState !== false) {
         $('#logout').css('display', 'block');
         $('#login-link').css('display', 'none');
+        $('#mobile-login-link').css('display', 'none')
+        $('#mobile-logout-link').css('display', 'block')
     } else {
         $('#logout').css('display', 'none');
         $('#login-link').css('display', 'block');
-        console.log("No one signed in");
+        $('#mobile-logout-link').css('display', 'none')
+        $('#mobile-login-link').css('display', 'block')
     }
 });
 
 $(document).ready(function() {
     $('#logout').click(function() {
-        firebase.auth().signOut().then(function() {
-            $.ajax ({
-                url: "/logout",
-                success: () => {
-                    console.log("signout successful");
-                }
-            })
-        }).catch(function(error) {
-            console.log(error.message)
-        })
+            $.post("/session-logout");
     })
-    $('#mobile-logout-button').click(() => {
-        firebase.auth().signOut().then(function() {
-            eraseCookie("session");
-            console.log("signout successful");
-        }).catch(function(error) {
-            console.log(error.message)
-        })
+    $('#mobile-logout-link').click(() => {
+        $.post("/session-logout");
     })
 });
 
 function updateJSON(updateGroup, updateItem, updateValue) {
-    if (userState != null) {
+    if (userState !== false) {
         $.ajax({
             url: "/update",
             headers: {
@@ -88,7 +65,7 @@ function updateJSON(updateGroup, updateItem, updateValue) {
 }
 
 async function getUserData(updateGroup) {
-    if (userState === true) {
+    if (userState !== false) {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/get",
@@ -467,29 +444,6 @@ function getCritterTime(v, altTime) {
     return timeHTML
 }
 
-function getAltCritterTime(v) {
-    var finalTime = "";
-    if (v.length == 24) {
-        var finalTime = "All Day";
-    } else {
-        var startTime = v[0];
-        var endTime = v[v.length-1];
-        var startAMPM = startTime >= 12 ? "PM" : "AM";
-        startTime = startTime % 12
-        startTime = startTime ? startTime : 12;
-        finalStart = startTime + startAMPM;
-
-        var endAMPM = endTime >= 12 ? "PM" : "AM";
-        endTime = endTime % 12
-        endTime = endTime ? endTime : 12;
-        finalEnd = endTime+1 + endAMPM;
-
-        finalTime = finalStart + "-" + finalEnd;
-
-    }
-    return finalTime
-}
-
 function getCritterLocation(v, secondLocationExists, secondLocation) {
     var locationHTML = {}
     if (secondLocationExists) {
@@ -512,9 +466,9 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
         }
     } else {
         if (v.includes("(")) {
-            var locationSplit = v.split("(");
-            var location = locationSplit[0];
-            var locationModifier = locationSplit[1];
+            let locationSplit = v.split("(");
+            let location = locationSplit[0];
+            let locationModifier = locationSplit[1];
             
             locationHTML = $('<div/>', {'class': 'location-container icon-text'}).append([
                 $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/pin.svg'}),
@@ -536,11 +490,11 @@ function getCritterLocation(v, secondLocationExists, secondLocation) {
 }
 
 function getAltCritterLocation(v) {
-    var locationHTML = {}
+    let locationHTML = {}
     if (v.includes("(")) {
-        var locationSplit = v.split("(");
-        var location = locationSplit[0];
-        var locationModifier = locationSplit[1];
+        let locationSplit = v.split("(");
+        let location = locationSplit[0];
+        let locationModifier = locationSplit[1];
         locationHTML = $('<div/>', {'class': 'location-container-mod'}).append([
             $('<div/>', {'class': 'data-text', 'text': location.trim() + comma}),
             $('<div/>', {'class': 'data-text-modifier', 'text': "(" + locationModifier})
@@ -556,21 +510,21 @@ function getAltCritterLocation(v) {
 }
 
 function getAltCritterTime(v) {
-    var finalTime = "";
+    let finalTime = "";
     if (v.length === 24) {
         finalTime = "All Day";
     } else {
-        var startTime = v[0];
-        var endTime = v[v.length-1];
-        var startAMPM = startTime >= 12 ? "PM" : "AM";
+        let startTime = v[0];
+        let endTime = v[v.length-1];
+        let startAMPM = startTime >= 12 ? "PM" : "AM";
         startTime = startTime % 12
         startTime = startTime ? startTime : 12;
-        finalStart = startTime + startAMPM;
+        let finalStart = startTime + startAMPM;
 
-        var endAMPM = endTime >= 12 ? "PM" : "AM";
+        let endAMPM = endTime >= 12 ? "PM" : "AM";
         endTime = endTime % 12
         endTime = endTime ? endTime : 12;
-        finalEnd = endTime+1 + endAMPM;
+        let finalEnd = endTime+1 + endAMPM;
 
         finalTime = finalStart + "-" + finalEnd;
 
@@ -718,33 +672,45 @@ $(function() { //bugs tab click
     })
 });
 
-Class HtmlConfig()
+class CritterHtmlConfig {
+    constructor(k, v) {
+        this.k = k
+        this.v = v
+        this.timeHTML;
+        this.locationHTML;
+        this.altLocationHTML;
+        this.tooltip = 'Click to mark as caught or uncaught';
+        this.icon = "./static/image/bugs/" + this.k + ".webp";
+        this.main()
+    }   
+    
+    main() {
+        if (this.v.hasOwnProperty('timeAlt')) {
+            this.altTime = getAltCritterTime(this.v.timeAlt);
+            this.timeHTML = getCritterTime(this.v.time, this.altTime);
+        } else {
+            this.altTime = false;
+            this.timeHTML = getCritterTime(this.v.time, this.altTime);
+        }
+
+        if (this.v.hasOwnProperty('locationAlt')) {
+            this.altLocationHTML = getAltCritterLocation(this.v.locationAlt)
+            this.locationHTML = getCritterLocation(this.v.location, true, this.altLocationHTML);
+        } else {
+            this.locationHTML = getCritterLocation(this.v.location, false);
+        }
+
+        if (isIOS) {
+            this.icon = "./static/image/bugs/png/" + this.k + ".png";
+        }
+    }
+}
 
 function createBugsHTMLElement(k, v) {
-    if (v.hasOwnProperty('timeAlt')) {
-        altTime = getAltCritterTime(v.timeAlt);
-        var timeHTML = getCritterTime(v.time, altTime);
-    } else {
-        altTime = false;
-        var timeHTML = getCritterTime(v.time, altTime);
-    }
+    let config = CritterHtmlConfig(k, v);
 
-    if (v.hasOwnProperty('locationAlt')) {
-        var altLocationHTML = getAltCritterLocation(v.locationAlt)
-        var locationHTML = getCritterLocation(v.location, true, altLocationHTML);
-    } else {
-        var locationHTML = getCritterLocation(v.location, false);
-    }
-
-    var tooltip = 'Click to mark as caught or uncaught';
-
-    var icon = "./static/image/bugs/" + k + ".webp";
-    if (isIOS) {
-        icon = "./static/image/bugs/png/" + k + ".png";
-    };
-
-    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title':tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':icon}),
+    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title':config.tooltip}).append([
+            $('<img/>', {'class': 'critter-icon', 'loading': 'lazy', 'src':config.icon}),
             $('<div/>', {'class': 'critter-data'}).append([
                 $('<div/>', {'class': 'name-container critter-name'}).append(
                     $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
@@ -752,12 +718,12 @@ function createBugsHTMLElement(k, v) {
                 ),
                     $('<div/>', {'class': 'critter-divider'}),
                     $('<div/>', {'class': 'data-grid'}).append([
-                        locationHTML,
+                        config.locationHTML,
                         $('<div/>', {'class': 'bell-container icon-text'}).append([
                             $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
                             $('<div/>', {'class': 'data-text', 'text': v.price})
                             ]),
-                        timeHTML
+                        config.timeHTML
                     ])
                 ])
             ])

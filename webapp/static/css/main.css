@@ -1078,7 +1078,7 @@ a {
         font-size: 200%;
     }
 
-    #mobile-logout-button {
+    #mobile-logout-link {
         position: absolute;
         width: 50%;
         height: 10%;
