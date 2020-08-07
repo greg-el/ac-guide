@@ -24,27 +24,59 @@ class TabActions {
         this.name = name;
         this.receivedState = receivedState;
         this.elements = elements;
-        this.tabElem = $('#' + this.name + '-tab');
-        this.tabIcon = $('.' + this.name + '-icon');
+        $(document).ready(() => {
+            this.tabElem = $('#' + this.name.toLowerCase() + '-tab');
+            this.tabIcon = $('#' + this.name.toLowerCase() + '-icon-m');
+            this.otherTabs = this.getOtherTabs();
+            this.otherTabIcons = this.getOtherTabIcons();
+        });
         this.active = active;
         this.prev = prev;
+
+    }
+
+    getOtherTabs() {
+        let output = [];
+        Object.keys(tabs).map(k => {
+            if (this.name !== k) {
+                output.push($('#' + k.toLowerCase() + '-tab'));
+            }
+        })
+        return output
+    }
+
+    getOtherTabIcons() {
+        let output = [];
+        Object.keys(tabs).map(k => {
+            if (this.name !== k) {
+                output.push($('#' + k.toLowerCase() + '-icon-m'));
+            }
+        })
+        return output
     }
 
     makeTabIconActive() {
         this.tabIcon.css('opacity', '1');
+        this.disableOtherTabIcons();
     }
 
-    makeTabIconInactive() {
-        this.tabIcon.css('opacity', '0.5');
+    disableOtherTabIcons() {
+        for (let i=0; i<this.otherTabs.length; i++) {
+            console.log(this.otherTabs[i]);
+            this.otherTabIcons[i].css('opacity', '0.5');
+        }
     }
 
-    hideTab() {
-        console.log(this.tabElem)
-        this.tabElem.css('display', 'none');
+    hideOtherTabs() {
+        for (let i=0; i<this.otherTabs.length; i++) {
+            this.otherTabs[i].css('display', 'none');
+        }
     }
 
     showTab() {
         this.tabElem.css('display', 'flex');
+        this.hideOtherTabs();
+
     }
 
     async showAll() {
@@ -86,6 +118,7 @@ class TabActions {
 class Chores extends TabActions {
     constructor(name, received, elements, active, prev) {
         super(name, received, elements, active, prev);
+        this.self = this;
     }
 
     onTabIconClick() {
@@ -93,7 +126,7 @@ class Chores extends TabActions {
             if (this.receivedState === receivedState.NONE) {
                 setInterval(choresTimers, 1000);
                 let data = await getUserData("chores");
-                loadMobileChores(data);
+                this.self.loadMobileChores();
                 gotChores = true;
             }
 
@@ -202,9 +235,7 @@ class Fish extends TabActions {
                 $('.search-wrapper').css('justify-content', 'flex-start');
                 $('#chores-timer-wrapper').css('display', 'none');
             }
-            console.log("hi")
             clearSearch("bugs");
-            setActiveTab("fish");
             this.active = tabs.FISH;
             if (this.receivedState === receivedState.NONE && mode === "available") {
                 self.getAvailableFish();
@@ -325,11 +356,6 @@ class Bugs extends TabActions {
             } else if (gotBugs !== "all" && mode === "all") {
                 getAllBugs();
             }
-            tabs.BUGS.showTab()
-            clearSearch("fish");
-            prevTab = "bugs"
-
-            gotBugs = true;
         })
     }
 }
@@ -346,12 +372,14 @@ const receivedState = {
     ALL: "all"
 }
 
+
 const tabs = {
-    CHORES: new Chores("chores", receivedState.NONE, [], false, false),
-    FISH: new Fish("fish", receivedState.NONE, [], true, true),
-    BUGS: new Bugs("bugs",receivedState.NONE, [], false, false),
-    VILLAGERS: new Villagers("villagers", receivedState.NONE, [], false, false)
+    CHORES: new Chores("CHORES", receivedState.NONE, [], false, false),
+    FISH: new Fish("FISH", receivedState.NONE, [], true, true),
+    BUGS: new Bugs("BUGS", receivedState.NONE, [], false, false),
+    VILLAGERS: new Villagers("BUGS", receivedState.NONE, [], false, false)
 }
+
 
 
 
