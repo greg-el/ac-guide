@@ -1,4 +1,3 @@
-ACTIVE_TAB = "fish";
 let gotFish = false;
 let gotBugs = false;
 let gotVillagers = false;
@@ -16,6 +15,376 @@ let isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
 
 let userState;
 let mode = "available";
+
+
+
+
+class TabActions {
+    constructor(name, receivedState, elements, active, prev) {
+        this.name = name;
+        this.receivedState = receivedState;
+        this.elements = elements;
+        this.tabElem = $('#' + this.name + '-tab');
+        this.tabIcon = $('.' + this.name + '-icon');
+        this.active = active;
+        this.prev = prev;
+    }
+
+    makeTabIconActive() {
+        this.tabIcon.css('opacity', '1');
+    }
+
+    makeTabIconInactive() {
+        this.tabIcon.css('opacity', '0.5');
+    }
+
+    hideTab() {
+        console.log(this.tabElem)
+        this.tabElem.css('display', 'none');
+    }
+
+    showTab() {
+        this.tabElem.css('display', 'flex');
+    }
+
+    async showAll() {
+        let $elemChildren = $("#" + this.name + "-data-wrapper").children();
+
+        for (let i=0; i < $elemChildren.length; i++) {
+            $("#" + $elemChildren[i].id).removeClass('_all_filter');
+        }
+    }
+
+    async showAvailable() {
+        let date = new Date();
+        let h = date.getHours();
+        let m = date.getMonth()+1;
+        let $alreadyChecked = [];
+        let $elemChildren = $("#" + this.name + "-data-wrapper").children();
+        let data = await $.ajax({
+            url: '/' + this.name + '/available',
+            dataType: 'json',
+            headers: {
+                hour: h,
+                month: m
+            }
+        });
+        $.each(data, function(k, v) {
+            for (let i=0; i < $elemChildren.length; i++) {
+                if (k === $elemChildren[i].id) {
+                    $("#" + $elemChildren[i].id).removeClass('_all_filter');
+                    $alreadyChecked.push($elemChildren[i].id);
+                    break;
+                } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
+                    $("#" + $elemChildren[i].id).addClass('_all_filter');
+                }
+            }
+        })
+    }
+}
+
+class Chores extends TabActions {
+    constructor(name, received, elements, active, prev) {
+        super(name, received, elements, active, prev);
+    }
+
+    onTabIconClick() {
+        $('.chores-container').bind('click', async function () {
+            if (this.receivedState === receivedState.NONE) {
+                setInterval(choresTimers, 1000);
+                let data = await getUserData("chores");
+                loadMobileChores(data);
+                gotChores = true;
+            }
+
+            prevTab = "chores";
+            choresTimers();
+            setActiveTab(tabs.CHORES);
+            tabs.CHORES.makeTabIconActive();
+            $('#search').css('display', 'none');
+            $('.search-wrapper').css('justify-content', 'center');
+            $('#chores-timer-wrapper').css('display', 'flex');
+        });
+    }
+
+    loadMobileChores() {
+        let data = getUserData("chores");
+        let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0};
+        for (let chore in chores) {
+            if (chore in data) {
+                chores[chore] = data[chore]
+            } else {
+                updateJSON("chores", chore, 0);
+            }
+        }
+
+        let rocks = new Chore("rocks", 20, 5, 200, chores['rocks']*20, chores['rocks']);
+        let fossils = new Chore("fossils", 20, 5, 200, chores['fossils']*20 ,chores['fossils']);
+        let moneyRock = new Chore("money-rock", 100, 1, 200, chores['money-rock'], chores['money-rock']);
+        let diy = new Chore("diy", 100, 1, 200, chores['diy']*100, chores['diy']);
+        let glow = new Chore("glow", 100, 1, 200, chores['glow']*100 ,chores['glow']);
+
+        let turnipsCount  = chores['turnips'];
+        if (amPm === "PM" && turnipsCount === 0) {
+            turnipsCount = 1;
+        }
+        let turnipsLength = turnipsCount * 50;
+
+        let turnips = new Chore("turnips", 50, 2, 200, turnipsLength, turnipsCount);
+    }
+
+
+
+    minutesUntilMidnight() {
+        let midnight = new Date();
+        midnight.setHours(24);
+        midnight.setMinutes(0);
+        midnight.setSeconds(0);
+        midnight.setMilliseconds(0);
+        return (midnight.getTime() - new Date().getTime()) /1000/60;
+    }
+
+    minutesUntilMidday() {
+        let midday = new Date();
+        midday.setHours(12);
+        midday.setMinutes(0);
+        midday.setSeconds(0);
+        midday.setMilliseconds(0);
+        return (midday.getTime() - new Date().getTime()) /1000/60;
+    }
+
+    minutesUntil8AM() {
+        let midday = new Date();
+        midday.setHours(8);
+        midday.setMinutes(0);
+        midday.setSeconds(0);
+        midday.setMilliseconds(0);
+        let eightAM = (midday.getTime() - new Date().getTime()) /1000/60;
+        if (CURRENT_HOUR_24 > 8) {
+            eightAM = eightAM + 1440;
+        }
+        return (eightAM)
+    }
+
+    formattedTime(time) {
+        let hours = Math.floor(time / 60)
+        let mins = Math.ceil(time % 60);
+        let hourText = (hours === 1) ? " Hour" : " Hours";
+        let minuteText = (mins === 1) ? " Minute" : " Minutes";
+        return (hours + hourText + " " + mins + minuteText)
+    }
+
+    choresTimers() {
+        let midnight = this.minutesUntilMidnight();
+        let turnipTime = this.formattedTime(this.minutesUntil8AM())
+        if ( 8 < CURRENT_HOUR_24 && CURRENT_HOUR_24 < 12) {
+            turnipTime = this.formattedTime(this.minutesUntilMidday())
+        }
+        $('#chores-time').text(this.formattedTime(midnight));
+        $('#turnip-time').text(turnipTime)
+    }
+}
+
+class Fish extends TabActions {
+    constructor(name, received, elements, active, prev) {
+        super(name, received, elements, active, prev);
+
+        $(document).ready(() => {
+            this.onTabIconClick();
+        })
+    }
+
+    onTabIconClick() {
+        let self = this; // Allows access to class using "this" inside nested function
+        $('.fish-container').bind('click', function() {
+            if (prevTab === "chores") {
+                $('#search').css('display', 'flex');
+                $('.search-wrapper').css('justify-content', 'flex-start');
+                $('#chores-timer-wrapper').css('display', 'none');
+            }
+            console.log("hi")
+            clearSearch("bugs");
+            setActiveTab("fish");
+            this.active = tabs.FISH;
+            if (this.receivedState === receivedState.NONE && mode === "available") {
+                self.getAvailableFish();
+            } else if (this.receivedState !== receivedState.ALL && mode === "all") {
+                self.getAllFish();
+            }
+        });
+    }
+
+    async getAllFish() {
+        let self = this;
+        console.log("get All fish")
+        let modalTempList = {};
+        $.getJSON('/fish/all', function(data) {
+            let $elementsToAppend = []
+            let $elem = $("#fish-data-wrapper");
+            let count = 0;
+            $.each(data, function(k, v) {
+                if (!self.elements.includes(k)) {
+                    let fishElem = self.createFishHTMLElement(k, v, count);
+                    self.elements.push(k);
+                    $elementsToAppend.push(fishElem)
+                    modalTempList[k] = v;
+                    count++;
+                }
+            });
+            $elem.append($elementsToAppend);
+            for (let i=0; i<this.elements.length; i++) {
+                addModalToElement(this.elements[i], modalTempList[this.elements[i]], "fish");
+            }
+            $('.wrapper-skeleton').remove();
+        })
+    }
+
+    async getAvailableFish() {
+        console.log("getAvailFish")
+        let modalTempList = {};
+        let date = new Date();
+        let m = date.getMonth()+1;
+        let h = date.getHours();
+        let data = await $.ajax({
+            url: '/fish/available',
+            dataType: 'json',
+            headers: {
+                hour: h,
+                month: m
+            }
+        })
+        let $elementsToAppend = [];
+        let $elem = $('#fish-data-wrapper');
+        let count = 0;
+        $.each(data, (k, v) => {
+            let fishElem = this.createFishHTMLElement(k, v, count);
+            if (!this.elements.includes(k)) {
+                this.elements.push(k);
+            }
+            $elementsToAppend.push(fishElem);
+            modalTempList[k] = v;
+            count++
+        })
+        $elem.append($elementsToAppend);
+        for (let i=0; i<this.elements.length; i++) {
+            addModalToElement(this.elements[i], modalTempList[this.elements[i]], "fish");
+        }
+        $('.wrapper-skeleton').remove();
+    }
+
+    createFishHTMLElement(k, v, count) {
+        let config = new CritterHtmlConfig(k, v);
+        let loading = (count <= 5) ? 'auto': 'lazy'
+
+        return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title': config.tooltip}).append([
+            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
+            $('<div/>', {'class': 'critter-data'}).append([
+                $('<div/>', {'class': 'name-container critter-name'}).append(
+                    $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
+                    $('<div/>', {'id': k+'-modal-button', 'class': 'modal-button'})
+                ),
+                $('<div/>', {'class': 'critter-divider'}),
+                $('<div/>', {'class': 'data-grid'}).append([
+                    config.locationHTML,
+                    $('<div/>', {'class': 'bell-container icon-text'}).append([
+                        $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
+                        $('<div/>', {'class': 'data-text', 'text': v.price})
+                    ]),
+                    config.timeHTML,
+                    $('<div/>', {'class': 'shadow-container icon-text'}).append([
+                        $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/shadow.svg'}),
+                        $('<div/>', {'class': 'data-text', 'text': v.shadow})
+                    ])
+                ])
+            ])
+        ])
+    }
+}
+
+class Bugs extends TabActions {
+    constructor(name, received, elements, active, prev) {
+        super(name, received, elements, active, prev);
+
+        $(document).ready(() => {
+            this.onTabIconClick();
+        })
+    }
+
+    onTabIconClick() { //bugs tab click
+        let self = this;
+        $('.bugs-container, #bug-icon').click(async function () {
+            self.makeTabIconActive();
+            self.showTab();
+            if (prevTab === "chores") {
+                $('#search').css('display', 'flex');
+                $('.search-wrapper').css('justify-content', 'flex-start');
+                $('#chores-timer-wrapper').css('display', 'none');
+            }
+            if (gotBugs === false && mode === "available") {
+                getAvailableBugs();
+            } else if (gotBugs !== "all" && mode === "all") {
+                getAllBugs();
+            }
+            tabs.BUGS.showTab()
+            clearSearch("fish");
+            prevTab = "bugs"
+
+            gotBugs = true;
+        })
+    }
+}
+
+class Villagers extends TabActions {
+    constructor(name, received, elements, active, prev) {
+        super(name, received, elements, active, prev);
+    }
+}
+
+const receivedState = {
+    NONE: "none",
+    AVAILABLE: "available",
+    ALL: "all"
+}
+
+const tabs = {
+    CHORES: new Chores("chores", receivedState.NONE, [], false, false),
+    FISH: new Fish("fish", receivedState.NONE, [], true, true),
+    BUGS: new Bugs("bugs",receivedState.NONE, [], false, false),
+    VILLAGERS: new Villagers("villagers", receivedState.NONE, [], false, false)
+}
+
+
+
+function setActiveTab(inputTab) {
+    tabs.FISH.hideTab()
+    tabs.BUGS.showTab()
+    let test = [tabs.CHORES, tabs.FISH, tabs.BUGS, tabs.VILLAGERS];
+    for (let i=0; i<test.length; i++) {
+        console.log(inputTab, test[i])
+    }
+}
+
+
+function getPrevTab() {
+    let out = false;
+    Object.entries(tabs).map(entry => {
+        if (entry[1].prev) {
+            out = entry;
+        }
+    })
+    return out;
+}
+
+
+function getActiveTab() {
+    for (let tab in tabs) {
+        if (tab.active) {
+            return tab;
+        }
+    }
+}
+
+
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
 */
@@ -93,7 +462,6 @@ $(function() {
     $('#modal-close-container').click(() => {
         document.getElementById("critter-modal").style.display ="none";
         document.getElementById("cover").style.display ="none";
-        //document.documentElement.style.overflowY = "hidden";
     });
 })
 
@@ -226,35 +594,9 @@ $(() => {
     })
 })
 
-
-
 /*
-CHORES FUNCTIONS -----------------------------------------------------------------
+CHORES CLASS -----------------------------------------------------------------
 */
-
-$(() =>  {  //Chores tab click
-    $('.chores-container').bind('click', async function() {
-        if (gotChores === false) {
-            setInterval(choresTimers, 1000);
-            let data = await getUserData("chores");
-            loadMobileChores(data);
-            gotChores = true;
-        }
-
-        hidePrevTab();
-        setPrevTabIconInactive();
-        prevTab = "chores";
-        choresTimers();
-        setActiveTab("chores");
-        setActiveTabIcon("chores");
-        showTab("chores");
-        $('#search').css('display', 'none');
-        $('.search-wrapper').css('justify-content', 'center');
-        $('#chores-timer-wrapper').css('display', 'flex');
-    });
-
-});
-
 
 class Chore {
     constructor(name, increase, choreTotal, animTime, startValue, startCount) {
@@ -267,7 +609,7 @@ class Chore {
         this.animTime = animTime;
         this.addClickHandler();
         this.setCounter();
-        this.initalBarLength();
+        this.initialBarLength();
     }
 
     setCounter() {
@@ -300,7 +642,7 @@ class Chore {
         }
     }
 
-    initalBarLength() {
+    initialBarLength() {
         this.barElem.animate([
             {width: 0 + "%"},
             {width: this.width + "%"}
@@ -321,84 +663,6 @@ class Chore {
         this.width = this.width + this.increase;
     }
 
-}
-
-function loadMobileChores(data) {
-
-    //Setting the values from user data
-    let chores = {'rocks': 0, 'fossils': 0, 'money-rock': 0, 'diy': 0, 'glow': 0, 'turnips': 0};
-    for (let chore in chores) {
-        if (chore in data) {
-            chores[chore] = data[chore]
-        } else {
-            updateJSON("chores", chore, 0);
-        }
-    }
-
-    var rocks = new Chore("rocks", 20, 5, 200, chores['rocks']*20, chores['rocks']);
-    var fossils = new Chore("fossils", 20, 5, 200, chores['fossils']*20 ,chores['fossils']);
-    var moneyRock = new Chore("money-rock", 100, 1, 200, chores['money-rock'], chores['money-rock']);
-    var diy = new Chore("diy", 100, 1, 200, chores['diy']*100, chores['diy']);
-    var glow = new Chore("glow", 100, 1, 200, chores['glow']*100 ,chores['glow']);
-
-    let turnipsCount  = chores['turnips'];
-    if (amPm === "PM" && turnipsCount === 0) {
-        turnipsCount = 1;
-    }
-    let turnipsLength = turnipsCount * 50;
-
-    var turnips = new Chore("turnips", 50, 2, 200, turnipsLength, turnipsCount);
-}
-
-
-
-function minutesUntilMidnight() {
-    var midnight = new Date();
-    midnight.setHours(24);
-    midnight.setMinutes(0);
-    midnight.setSeconds(0);
-    midnight.setMilliseconds(0);
-    return (midnight.getTime() - new Date().getTime()) /1000/60;
-}
-
-function minutesUntilMidday() {
-    var midday = new Date();
-    midday.setHours(12);
-    midday.setMinutes(0);
-    midday.setSeconds(0);
-    midday.setMilliseconds(0);
-    return (midday.getTime() - new Date().getTime()) /1000/60;
-}
-
-function minutesUntil8AM() {
-    var midday = new Date();
-    midday.setHours(8);
-    midday.setMinutes(0);
-    midday.setSeconds(0);
-    midday.setMilliseconds(0);
-    var eightAM = (midday.getTime() - new Date().getTime()) /1000/60;
-    if (CURRENT_HOUR_24 > 8) {
-        eightAM = eightAM + 1440;
-    }
-    return (eightAM)
-}
-
-function formattedTime(time) {
-    var hours = Math.floor(time / 60)
-    var mins = Math.ceil(time % 60);
-    var hourText = (hours === 1) ? " Hour" : " Hours";
-    var minuteText = (mins === 1) ? " Minute" : " Minutes";
-    return (hours + hourText + " " + mins + minuteText)
-}
-
-function choresTimers() {
-    var midnight = minutesUntilMidnight();
-    var turnipTime = formattedTime(minutesUntil8AM())
-    if ( 8 < CURRENT_HOUR_24 && CURRENT_HOUR_24 < 12) {
-        turnipTime = formattedTime(minutesUntilMidday())
-    }
-    $('#chores-time').text(formattedTime(midnight));
-    $('#turnip-time').text(turnipTime)
 }
 
 /*
@@ -567,7 +831,7 @@ class CritterHtmlConfig {
 
 
 function addModalToElement(k, data, critter) {
-    document.getElementById(k.id+'-modal-button').addEventListener("click", function(event) {
+    document.getElementById(k+'-modal-button').addEventListener("click", function(event) {
         event.stopPropagation();
         createModal(k, data, critter)
     });
@@ -583,151 +847,12 @@ function clearSearch(tab) {
 
 }
 
-/*
-FISH FUNCTIONS -----------------------------------------------------------------
-*/
-
-$(function() {  //Fish tab click
-    $('.fish-container').bind('click', function() {
-        if (prevTab === "chores") {
-            $('#search').css('display', 'flex');
-            $('.search-wrapper').css('justify-content', 'flex-start');
-            $('#chores-timer-wrapper').css('display', 'none');
-        }
-
-        hidePrevTab();
-        setPrevTabIconInactive();
-        prevTab = "fish"
-        clearSearch("bugs");
-        setActiveTab("fish");
-        setActiveTabIcon("fish");
-        showTab("fish");
-        if (gotFish === false) {
-            createSkeletonHTML("fish");
-            if (mode === "available") {
-                getAvailableFish();
-                gotFish = "available";
-            } else {
-                getAllFish();
-                gotFish = true;
-            }
-        }
-    });
-    return false;
-});
-
-
-function createFishHTMLElement(k, v, count) {
-    let config = new CritterHtmlConfig(k, v);
-    let loading = (count <= 5) ? 'auto': 'lazy'
-
-    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title': config.tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
-            $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'name-container critter-name'}).append(
-                    $('<div/>', {'class': 'critter-name', 'text':v.name_formatted}),
-                    $('<div/>', {'id': k+'-modal-button', 'class': 'modal-button'})
-                ),
-            $('<div/>', {'class': 'critter-divider'}),
-            $('<div/>', {'class': 'data-grid'}).append([
-                config.locationHTML,
-                $('<div/>', {'class': 'bell-container icon-text'}).append([
-                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
-                    $('<div/>', {'class': 'data-text', 'text': v.price})
-                ]),
-                config.timeHTML,
-                $('<div/>', {'class': 'shadow-container icon-text'}).append([
-                    $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/shadow.svg'}),
-                    $('<div/>', {'class': 'data-text', 'text': v.shadow})
-                ])
-            ])
-            ])
-        ])
-}
-
-async function getAllFish() {
-    let modalTempList = {};
-    $.getJSON('/fish/all', function(data) {
-        let $elementsToAppend = []
-        let $elem = $("#fish-data-wrapper");
-        let count = 0;
-        $.each(data, function(k, v) {
-            if (!fishElements.includes(k)) {
-                let fishElem = createFishHTMLElement(k, v, count);
-                fishElements[k] = fishElem;
-                $elementsToAppend.push(fishElem)
-                modalTempList[k] = v;
-                count++;
-            }
-        });
-        $elem.append($elementsToAppend);
-        for (let i=0; i<fishElements.length; i++) {
-            addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
-        }
-        $('.wrapper-skeleton').remove();
-    })
-}
-
-async function getAvailableFish() {
-    let modalTempList = {};
-    let date = new Date();
-    let m = date.getMonth()+1;
-    let h = date.getHours();
-    let data = await $.ajax({
-        url: '/fish/available',
-        dataType: 'json',
-        headers: {
-            hour: h,
-            month: m
-        }
-    })
-    let $elementsToAppend = [];
-    let $elem = $('#fish-data-wrapper');
-    let count = 0;
-    $.each(data, (k, v) => {
-        let fishElem = createFishHTMLElement(k, v, count);
-        if (!fishElements.includes[k]) {
-            fishElements[k] = fishElem;
-        }
-        $elementsToAppend.push(fishElem);
-        modalTempList[k] = v;
-        count++
-    })
-    $elem.append($elementsToAppend);
-    for (let i=0; i<fishElements.length; i++) {
-        addModalToElement(fishElements[i][0], modalTempList[fishElements[i][0].id], "fish");
-    }
-    $('.wrapper-skeleton').remove();
-}
-
 
 /*
 BUGS FUNCTIONS -----------------------------------------------------------------
 */
 
-$(function() { //bugs tab click
-    $('.bugs-container, #bug-icon').click(async function() {
-        setActiveTab("bugs");
-        setActiveTabIcon("bugs");
-        if (prevTab === "chores") {
-            $('#search').css('display', 'flex');
-            $('.search-wrapper').css('justify-content', 'flex-start');
-            $('#chores-timer-wrapper').css('display', 'none');
-        }
-        if (gotBugs === false && mode === "available") {
-            getAvailableBugs();
-        } else {
-            getAllBugs();
-        }
-        showTab("bugs");
-        hidePrevTab();
-        setPrevTabIconInactive();
-        clearSearch("fish");
-        prevTab = "bugs"
 
-        gotBugs = true;
-    })
-})
 
 
 function createBugsHTMLElement(k, v, count) {
@@ -757,23 +882,26 @@ function createBugsHTMLElement(k, v, count) {
 async function getAllBugs() {
     console.log("getAll")
     let modalTempList = {};
-    $.getJSON('/bugs/all', function(data) {
+    let $elem = $("#bugs-data-wrapper");
+    await $.getJSON('/bugs/all', function(data) {
         var $elementsToAppend = [];
-        var $elem = $("#bugs-data-wrapper");
         let count = 0;
         $.each(data, function(k, v) {
-            let bugsElem = createBugsHTMLElement(k, v, count);
-            bugsElements.push(bugsElem);
-            $elementsToAppend.push(bugsElem);
-            modalTempList[k] = v;
-            count++;
-        });
+            if (!bugsElements.includes(k)) {
+                let bugsElem = createBugsHTMLElement(k, v, count);
+                bugsElements.push(k);
+                $elementsToAppend.push(bugsElem);
+                modalTempList[k] = v;
+                count++;
+            }
+        })
         $elem.append($elementsToAppend);
-        for (var i=0; i<bugsElements.length; i++) {
-            addModalToElement(bugsElements[i][0], modalTempList[bugsElements[i][0].id], "bugs");
-        }
-        $('.wrapper-skeleton').remove();
     })
+    bugsElements.sort();
+    for (let i=0; i<bugsElements.length; i++) {
+        document.getElementById(bugsElements[i]).style.order = i;
+    }
+
 }
 
 async function getAvailableBugs() {
@@ -795,8 +923,8 @@ async function getAvailableBugs() {
     let count = 0;
     $.each(data, (k, v) => {
         let bugsElem = createBugsHTMLElement(k, v, count);
-        if (!bugsElements.includes[k]) {
-            bugsElements[k] = bugsElem;
+        if (!bugsElements.includes(k)) {
+            bugsElements.push(k);
         }
         $elementsToAppend.push(bugsElem);
         modalTempList[k] = v;
@@ -804,7 +932,7 @@ async function getAvailableBugs() {
     })
     $elem.append($elementsToAppend);
     for (let i=0; i<bugsElements.length; i++) {
-        addModalToElement(bugsElements[i][0], modalTempList[bugsElements[i][0].id], "bugs");
+        addModalToElement(bugsElements[i], modalTempList[bugsElements[i]], "bugs");
     }
     $('.wrapper-skeleton').remove();
 }
@@ -816,7 +944,7 @@ BIRTHDAY FUNCTIONS -------------------------------------------------------------
 
 $(function() { //Birthdays tab click
     $('.villagers-container').bind('click', function() {
-        if (prevTab == "chores") {
+        if (prevTab === "chores") {
             $('#search').css('display', 'flex');
             $('.search-wrapper').css('justify-content', 'flex-start');
             $('#chores-timer-wrapper').css('display', 'none');
@@ -1002,17 +1130,8 @@ function setHemisphereIcon(hemisphere) {
     }
 };
 
-/*
-TAB VIEW FUNCTIONS -----------------------------------------------------------------
-*/
 
-async function hidePrevTab() {
-    $('#' + prevTab + '-tab').css('display', 'none');
-}
 
-async function showTab(tab) {
-    $('#' + tab + '-tab').css('display', 'flex');
-};
 
 
 /*
@@ -1025,15 +1144,9 @@ async function setPrevTabIconInactive() {
 
 async function setActiveTabIcon(tab) {
    makeTabIconActive(tab);
-};
-
-function makeTabIconActive(tab) {
-    $('.' + tab + '-icon').css('opacity', '1');
 }
 
-function makeTabIconInactive(tab) {
-    $('.' + tab + '-icon').css('opacity', '0.5');
-}
+
 
 /*
 SEARCH BOX -----------------------------------------------------------------
@@ -1062,43 +1175,6 @@ $(document).ready( () => {
 /*
 SHOW ALL CHECK BOX -----------------------------------------------------------------
 */
-
-async function showAll(tab) {
-    let $elemChildren = $("#" + tab + "-data-wrapper").children();
-    for (let i=0; i < $elemChildren.length; i++) {
-        $("#" + $elemChildren[i].id).removeClass('_all_filter');
-    }
-}
-
-async function showAvailable(tab) {
-    let date = new Date();
-    let h = date.getHours();
-    let m = date.getMonth()+1;
-    let $alreadyChecked = [];
-    let $elemChildren = $("#" + tab + "-data-wrapper").children();
-    $.ajax({
-        url: '/' + tab + '/available',
-        dataType: 'json',
-        headers: {
-            hour: h,
-            month: m
-        },
-        success: function(data) {
-            $.each(data, function(k, v) {
-                for (let i=0; i < $elemChildren.length; i++) {
-                    if (k === $elemChildren[i].id) {
-                        $("#" + $elemChildren[i].id).removeClass('_all_filter');
-                        $alreadyChecked.push($elemChildren[i].id);
-                        break;
-                    } else if (!$alreadyChecked.includes($elemChildren[i].id)) {
-                        $("#" + $elemChildren[i].id).addClass('_all_filter');
-                    }
-                }
-            })
-        }
-    })
-};
-
 
 $(document).ready( () => {
     $('#availiable-checkbox').on('click', function() {
@@ -1129,32 +1205,29 @@ $(document).ready(() => {
 
     allButton.click(() => {
         cover.css('display', 'none');
-        showAll("fish").then(() => showAll("bugs"));
         selected.text('All');
         availableButton.css('order', '1');
         allButton.css('order', '0');
         allArrow.css('display', 'flex');
         availableArrow.css('display', 'none');
         if (mode === "available") {
-            mode = "all";
+            tabs.FISH.showAll();
+            tabs.BUGS.showAll();
         }
-        if (gotFish !== false) {
-            getAllFish();
-        }
-        if (gotBugs !== false) {
-            getAllBugs();
-        }
-
+        mode = "all";
     })
 
     availableButton.click(() => {
-        showAvailable("fish").then(() => showAvailable("bugs"));
         cover.css('display', 'none');
         selected.text('Available');
         availableButton.css('order', '0');
         allButton.css('order', '1');
         availableArrow.css('display', 'flex');
         allArrow.css('display', 'none');
+        if (mode === "all") {
+            tabs.FISH.showAvailable();
+            tabs.BUGS.showAvailable();
+        }
         mode = "available";
     })
 
@@ -1238,15 +1311,6 @@ function datetime() {
 
 function isMobile() {
      return /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-
-}
-
-function getActiveTab() {
-    return ACTIVE_TAB;
-}
-
-function setActiveTab(tab) {
-    ACTIVE_TAB = tab;
 }
 
 async function createSkeletonHTML(tab) {
@@ -1381,6 +1445,6 @@ $(async function() {
     }
     createSkeletonHTML("fish");
     datetime();
-    await getAvailableFish();
-    showTab("fish");
+    tabs.FISH.getAvailableFish();
+    tabs.FISH.showTab();
 })
