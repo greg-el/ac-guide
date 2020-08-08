@@ -1,10 +1,6 @@
-let gotFish = false;
-let gotBugs = false;
 let gotVillagers = false;
 let gotChores = false;
 let prevTab = "fish"
-let fishElements = [];
-let bugsElements = [];
 let d = new Date();
 let CURRENT_HOUR_24 = d.getHours()
 let CURRENT_HOUR = CURRENT_HOUR_24 % 12 ? CURRENT_HOUR_24 % 12 : 12;
@@ -55,6 +51,13 @@ class TabActions {
         return output
     }
 
+    sortTabElements() {
+        this.elements.sort();
+        for (let i=0; i<this.elements.length; i++) {
+            document.getElementById(this.elements[i]).style.order = i;
+        }
+    }
+
     makeTabIconActive() {
         this.tabIcon.css('opacity', '1');
         this.disableOtherTabIcons();
@@ -73,18 +76,20 @@ class TabActions {
         }
     }
 
-    showTab() {
+    makeTabActive() {
         this.tabElem.css('display', 'flex');
         this.hideOtherTabs();
+        this.makeTabIconActive();
 
     }
 
     async showAll() {
+        if (this.receivedState === receivedState.ALL) //TODO this
         let $elemChildren = $("#" + this.name + "-data-wrapper").children();
-
         for (let i=0; i < $elemChildren.length; i++) {
             $("#" + $elemChildren[i].id).removeClass('_all_filter');
         }
+
     }
 
     async showAvailable() {
@@ -221,7 +226,6 @@ class Chores extends TabActions {
 class Fish extends TabActions {
     constructor(name, received, elements, active, prev) {
         super(name, received, elements, active, prev);
-
         $(document).ready(() => {
             this.onTabIconClick();
         })
@@ -242,12 +246,12 @@ class Fish extends TabActions {
             } else if (this.receivedState !== receivedState.ALL && mode === "all") {
                 self.getAllFish();
             }
+            self.makeTabActive();
         });
     }
 
     async getAllFish() {
         let self = this;
-        console.log("get All fish")
         let modalTempList = {};
         $.getJSON('/fish/all', function(data) {
             let $elementsToAppend = []
@@ -263,15 +267,17 @@ class Fish extends TabActions {
                 }
             });
             $elem.append($elementsToAppend);
-            for (let i=0; i<this.elements.length; i++) {
-                addModalToElement(this.elements[i], modalTempList[this.elements[i]], "fish");
+            for (let i=0; i<self.elements.length; i++) {
+                addModalToElement(self.elements[i], modalTempList[self.elements[i]], "fish");
             }
             $('.wrapper-skeleton').remove();
-        })
+        }).then(
+            () => {this.sortTabElements()}
+        )
+
     }
 
     async getAvailableFish() {
-        console.log("getAvailFish")
         let modalTempList = {};
         let date = new Date();
         let m = date.getMonth()+1;
@@ -335,28 +341,107 @@ class Fish extends TabActions {
 class Bugs extends TabActions {
     constructor(name, received, elements, active, prev) {
         super(name, received, elements, active, prev);
-
         $(document).ready(() => {
             this.onTabIconClick();
         })
     }
 
-    onTabIconClick() { //bugs tab click
+    onTabIconClick() {
         let self = this;
         $('.bugs-container, #bug-icon').click(async function () {
-            self.makeTabIconActive();
-            self.showTab();
             if (prevTab === "chores") {
                 $('#search').css('display', 'flex');
                 $('.search-wrapper').css('justify-content', 'flex-start');
                 $('#chores-timer-wrapper').css('display', 'none');
             }
-            if (gotBugs === false && mode === "available") {
-                getAvailableBugs();
-            } else if (gotBugs !== "all" && mode === "all") {
-                getAllBugs();
+            if (self.receivedState === receivedState.NONE && mode === "available") {
+                self.getAvailableBugs();
+            } else if (self.receivedState !== receivedState.ALL && mode === "all") {
+                self.getAllBugs();
+            }
+            self.makeTabActive();
+        })
+    }
+
+    createBugsHTMLElement(k, v, count) {
+        let config = new CritterHtmlConfig(k, v);
+        let loading = (count <= 5) ? 'auto': 'lazy'
+
+        return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title':config.tooltip}).append([
+            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
+            $('<div/>', {'class': 'critter-data'}).append([
+                $('<div/>', {'class': 'name-container critter-name'}).append(
+                    $('<div/>', {'class': 'critter-name', 'text':config.name_formatted}),
+                    $('<div/>', {'id': k+'-modal-button', 'class': 'modal-button'})
+                ),
+                $('<div/>', {'class': 'critter-divider'}),
+                $('<div/>', {'class': 'data-grid'}).append([
+                    config.locationHTML,
+                    $('<div/>', {'class': 'bell-container icon-text'}).append([
+                        $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
+                        $('<div/>', {'class': 'data-text', 'text': v.price})
+                    ]),
+                    config.timeHTML
+                ])
+            ])
+        ])
+    }
+
+    async getAllBugs() {
+        let self = this;
+        let modalTempList = {};
+        let $elem = $("#bugs-data-wrapper");
+        await $.getJSON('/bugs/all', function(data) {
+            let $elementsToAppend = [];
+            let count = 0;
+            $.each(data, function(k, v) {
+                if (!self.elements.includes(k)) {
+                    let bugsElem = self.createBugsHTMLElement(k, v, count);
+                    self.elements.push(k);
+                    $elementsToAppend.push(bugsElem);
+                    modalTempList[k] = v;
+                    count++;
+                }
+            })
+            $elem.append($elementsToAppend);
+        })
+        self.elements.sort();
+        for (let i=0; i<self.elements.length; i++) {
+            document.getElementById(self.elements[i]).style.order = i;
+        }
+    }
+
+    async getAvailableBugs() {
+        let self = this;
+        let modalTempList = {};
+        let date = new Date();
+        let m = date.getMonth()+1;
+        let h = date.getHours();
+        let data = await $.ajax({
+            url: '/bugs/available',
+            dataType: 'json',
+            headers: {
+                hour: h,
+                month: m
             }
         })
+        let $elementsToAppend = [];
+        let $elem = $('#bugs-data-wrapper');
+        let count = 0;
+        $.each(data, (k, v) => {
+            let bugsElem = self.createBugsHTMLElement(k, v, count);
+            if (!self.elements.includes(k)) {
+                self.elements.push(k);
+            }
+            $elementsToAppend.push(bugsElem);
+            modalTempList[k] = v;
+            count++
+        })
+        $elem.append($elementsToAppend);
+        for (let i=0; i<self.elements.length; i++) {
+            addModalToElement(self.elements[i], modalTempList[self.elements[i]], "bugs");
+        }
+        $('.wrapper-skeleton').remove();
     }
 }
 
@@ -378,38 +463,6 @@ const tabs = {
     FISH: new Fish("FISH", receivedState.NONE, [], true, true),
     BUGS: new Bugs("BUGS", receivedState.NONE, [], false, false),
     VILLAGERS: new Villagers("BUGS", receivedState.NONE, [], false, false)
-}
-
-
-
-
-function setActiveTab(inputTab) {
-    tabs.FISH.hideTab()
-    tabs.BUGS.showTab()
-    let test = [tabs.CHORES, tabs.FISH, tabs.BUGS, tabs.VILLAGERS];
-    for (let i=0; i<test.length; i++) {
-        console.log(inputTab, test[i])
-    }
-}
-
-
-function getPrevTab() {
-    let out = false;
-    Object.entries(tabs).map(entry => {
-        if (entry[1].prev) {
-            out = entry;
-        }
-    })
-    return out;
-}
-
-
-function getActiveTab() {
-    for (let tab in tabs) {
-        if (tab.active) {
-            return tab;
-        }
-    }
 }
 
 
@@ -875,96 +928,6 @@ function clearSearch(tab) {
 
 }
 
-
-/*
-BUGS FUNCTIONS -----------------------------------------------------------------
-*/
-
-
-
-
-function createBugsHTMLElement(k, v, count) {
-    let config = new CritterHtmlConfig(k, v);
-    let loading = (count <= 5) ? 'auto': 'lazy'
-
-    return $('<div/>', {'class': 'critter-wrapper ', 'id':k, 'title':config.tooltip}).append([
-            $('<img/>', {'class': 'critter-icon', 'loading': loading, 'src':config.icon}),
-            $('<div/>', {'class': 'critter-data'}).append([
-                $('<div/>', {'class': 'name-container critter-name'}).append(
-                    $('<div/>', {'class': 'critter-name', 'text':config.name_formatted}),
-                    $('<div/>', {'id': k+'-modal-button', 'class': 'modal-button'})
-                ),
-                    $('<div/>', {'class': 'critter-divider'}),
-                    $('<div/>', {'class': 'data-grid'}).append([
-                        config.locationHTML,
-                        $('<div/>', {'class': 'bell-container icon-text'}).append([
-                            $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/bell.svg'}),
-                            $('<div/>', {'class': 'data-text', 'text': v.price})
-                            ]),
-                        config.timeHTML
-                    ])
-                ])
-            ])
-}
-
-async function getAllBugs() {
-    console.log("getAll")
-    let modalTempList = {};
-    let $elem = $("#bugs-data-wrapper");
-    await $.getJSON('/bugs/all', function(data) {
-        var $elementsToAppend = [];
-        let count = 0;
-        $.each(data, function(k, v) {
-            if (!bugsElements.includes(k)) {
-                let bugsElem = createBugsHTMLElement(k, v, count);
-                bugsElements.push(k);
-                $elementsToAppend.push(bugsElem);
-                modalTempList[k] = v;
-                count++;
-            }
-        })
-        $elem.append($elementsToAppend);
-    })
-    bugsElements.sort();
-    for (let i=0; i<bugsElements.length; i++) {
-        document.getElementById(bugsElements[i]).style.order = i;
-    }
-
-}
-
-async function getAvailableBugs() {
-    console.log("getAvail")
-    let modalTempList = {};
-    let date = new Date();
-    let m = date.getMonth()+1;
-    let h = date.getHours();
-    let data = await $.ajax({
-        url: '/bugs/available',
-        dataType: 'json',
-        headers: {
-            hour: h,
-            month: m
-        }
-    })
-    let $elementsToAppend = [];
-    let $elem = $('#bugs-data-wrapper');
-    let count = 0;
-    $.each(data, (k, v) => {
-        let bugsElem = createBugsHTMLElement(k, v, count);
-        if (!bugsElements.includes(k)) {
-            bugsElements.push(k);
-        }
-        $elementsToAppend.push(bugsElem);
-        modalTempList[k] = v;
-        count++
-    })
-    $elem.append($elementsToAppend);
-    for (let i=0; i<bugsElements.length; i++) {
-        addModalToElement(bugsElements[i], modalTempList[bugsElements[i]], "bugs");
-    }
-    $('.wrapper-skeleton').remove();
-}
-
 /*
 BIRTHDAY FUNCTIONS -----------------------------------------------------------------
 */
@@ -998,14 +961,14 @@ $(function() { //Birthdays tab click
 
 function generateVillagerHTML(k, v) {
     var genderIcon = './static/image/icons/svg/female.svg';
-    if (v.gender == "m") {
+    if (v.gender === "m") {
         genderIcon = './static/image/icons/svg/male.svg';
-    };
+    }
 
     var icon = "./static/image/villagers/" + v.name + ".webp";
     if (isIOS) {
         icon = "./static/image/villagers/png/" + v.name + ".png";
-    };
+    }
 
 
     return $('<div/>', {'class': 'critter-wrapper', 'id':v.name}).append([
@@ -1033,13 +996,13 @@ function generateVillagerHTML(k, v) {
                 ])
             ])
         ])
-};
+}
 
 
 async function getVillagers() {
-    var date = new Date();
-    var m = date.getMonth()+1;
-    var d = date.getDate();
+    let date = new Date();
+    let m = date.getMonth()+1;
+    let d = date.getDate();
     $.ajax({
         url: '/villagers-sorted',
         dataType: 'json',
@@ -1091,10 +1054,10 @@ function getCookie(cname) {
     var ca = document.cookie.split(';');
     for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0) == ' ') {
+        while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) == 0) {
+        if (c.indexOf(name) === 0) {
             return c.substring(name.length, c.length);
         }
     }
@@ -1156,25 +1119,7 @@ function setHemisphereIcon(hemisphere) {
     } else {
         console.log("Can't change hemisphere button");
     }
-};
-
-
-
-
-
-/*
-TAB ICON FUNCTIONS -----------------------------------------------------------------
-*/
-
-async function setPrevTabIconInactive() {
-    makeTabIconInactive(prevTab)
 }
-
-async function setActiveTabIcon(tab) {
-   makeTabIconActive(tab);
-}
-
-
 
 /*
 SEARCH BOX -----------------------------------------------------------------
@@ -1474,5 +1419,5 @@ $(async function() {
     createSkeletonHTML("fish");
     datetime();
     tabs.FISH.getAvailableFish();
-    tabs.FISH.showTab();
+    tabs.FISH.makeTabActive();
 })
