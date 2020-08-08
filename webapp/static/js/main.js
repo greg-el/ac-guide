@@ -84,10 +84,9 @@ class TabActions {
     }
 
     async showAll() {
-        if (this.receivedState === receivedState.ALL) //TODO this
         let $elemChildren = $("#" + this.name + "-data-wrapper").children();
         for (let i=0; i < $elemChildren.length; i++) {
-            $("#" + $elemChildren[i].id).removeClass('_all_filter');
+            $("#" + $elemChildren[i].id).addClass('_all_filter');
         }
 
     }
@@ -97,16 +96,16 @@ class TabActions {
         let h = date.getHours();
         let m = date.getMonth()+1;
         let $alreadyChecked = [];
-        let $elemChildren = $("#" + this.name + "-data-wrapper").children();
+        let $elemChildren = $("#" + this.name.toLowerCase() + "-data-wrapper").children();
         let data = await $.ajax({
-            url: '/' + this.name + '/available',
+            url: '/' + this.name.toLowerCase() + '/available',
             dataType: 'json',
             headers: {
                 hour: h,
                 month: m
             }
         });
-        $.each(data, function(k, v) {
+        $.each(data, k=>  {
             for (let i=0; i < $elemChildren.length; i++) {
                 if (k === $elemChildren[i].id) {
                     $("#" + $elemChildren[i].id).removeClass('_all_filter');
@@ -242,15 +241,15 @@ class Fish extends TabActions {
             clearSearch("bugs");
             this.active = tabs.FISH;
             if (this.receivedState === receivedState.NONE && mode === "available") {
-                self.getAvailableFish();
+                self.getAvailable();
             } else if (this.receivedState !== receivedState.ALL && mode === "all") {
-                self.getAllFish();
+                self.getAll();
             }
             self.makeTabActive();
         });
     }
 
-    async getAllFish() {
+    async getAll() {
         let self = this;
         let modalTempList = {};
         $.getJSON('/fish/all', function(data) {
@@ -277,7 +276,7 @@ class Fish extends TabActions {
 
     }
 
-    async getAvailableFish() {
+    async getAvailable() {
         let modalTempList = {};
         let date = new Date();
         let m = date.getMonth()+1;
@@ -355,9 +354,9 @@ class Bugs extends TabActions {
                 $('#chores-timer-wrapper').css('display', 'none');
             }
             if (self.receivedState === receivedState.NONE && mode === "available") {
-                self.getAvailableBugs();
+                self.getAvailable();
             } else if (self.receivedState !== receivedState.ALL && mode === "all") {
-                self.getAllBugs();
+                self.getAll();
             }
             self.makeTabActive();
         })
@@ -387,7 +386,7 @@ class Bugs extends TabActions {
         ])
     }
 
-    async getAllBugs() {
+    async getAll() {
         let self = this;
         let modalTempList = {};
         let $elem = $("#bugs-data-wrapper");
@@ -411,7 +410,7 @@ class Bugs extends TabActions {
         }
     }
 
-    async getAvailableBugs() {
+    async getAvailable() {
         let self = this;
         let modalTempList = {};
         let date = new Date();
@@ -465,6 +464,13 @@ const tabs = {
     VILLAGERS: new Villagers("BUGS", receivedState.NONE, [], false, false)
 }
 
+function getActiveTab() {
+    Object.keys(tabs).map(k => {
+        if (tabs[k].active === true) {
+            return tabs[k];
+        }
+    })
+}
 
 /*
 FIREBASE FUNCTIONS -----------------------------------------------------------------
@@ -493,7 +499,7 @@ $(document).ready(async function() {
 
 $(document).ready(function() {
     $('#logout').click(function() {
-            $.post("/session-logout");
+        $.post("/session-logout");
     })
     $('#mobile-logout-link').click(() => {
         $.post("/session-logout");
@@ -1184,8 +1190,12 @@ $(document).ready(() => {
         allArrow.css('display', 'flex');
         availableArrow.css('display', 'none');
         if (mode === "available") {
-            tabs.FISH.showAll();
-            tabs.BUGS.showAll();
+            if (tabs.FISH.receivedState === receivedState.ALL &&
+                tabs.BUGS.receivedState === receivedState.ALL) {
+                getActiveTab().showAll();
+            } else {
+                getActiveTab().getAll();
+            }
         }
         mode = "all";
     })
@@ -1418,6 +1428,6 @@ $(async function() {
     }
     createSkeletonHTML("fish");
     datetime();
-    tabs.FISH.getAvailableFish();
+    tabs.FISH.getAvailable();
     tabs.FISH.makeTabActive();
 })
