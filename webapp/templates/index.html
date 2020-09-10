@@ -86,27 +86,14 @@
                 </div>
             </div>
         </div>
-        <div id="header-container">
-            <div id="datetime-container">
-                <div id="time-container">
-                    <div class="time-style" id="time">0:00</div>
-                    <div class="time-style" id="ampm">AM</div>
-                </div>
-                <div id="time-divider"></div>
-                <div id="date-container">
-                    <object id="day"></object>
-                    <div id="date">01 Jan</div>
-                </div>
-            </div>
-            <div id="header"><span id="new">New</span><span id="horizons">Horizons</span></div>
-        </div>
         <div id="page-wrapper">
-            <div id="login-container">
-                <a href="{{ url_for('login') }}" id="login-link">Login</a>
-                <a href=# id="logout" style="display:none">Logout</a>
-            </div>
-
             <div id="mobile-settings" class="modal" style="display: none">
+                <div id="hemisphere-container">
+                    <a href=# id="hemisphere-button">
+                        <img class="hemisphere-icon" id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
+                        <img class="hemisphere-icon" id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
+                    </a>
+                </div>
                 <div id="mobile-settings-close"></div>
                 <div id="mobile-login-link" class="mobile-login">
                     <div id="mobile-login-text" class="mobile-login">Login</div>
@@ -120,39 +107,18 @@
                     <div id="signal"></div>
                     <div id="nook"></div>
                     <div id="mobile-date"></div>
+                    <div id="datetime-container">
+                        <div id="time-container">
+                            <div class="time-style" id="time">0:00</div>
+                            <div class="time-style" id="ampm">AM</div>
+                        </div>
+                        <div id="time-divider"></div>
+                        <div id="date-container">
+                            <object id="day"></object>
+                            <div id="date">01 Jan</div>
+                        </div>
+                    </div>
                     <div id="cog"></div>
-                </div>
-                <div id="tab-bar">
-                    <div id="tabs-container">
-                        <div class="chores-container tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon chores-icon" data="{{ url_for('static', filename = 'image/bar/clipboard.svg') }}" style="opacity: 0.5;"></object>
-                        </div>
-                        <div id="fish-container" class="tab-container">
-                            <object class="tab-icon fish-icon" data="{{ url_for('static', filename = 'image/bar/fish.svg') }}" ></object>
-                        </div>
-                        <div id="bugs-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon bugs-icon" data="{{ url_for('static', filename = 'image/bar/butterfly.svg') }}" style="opacity: 0.5;"></object>
-                        </div>
-                        <div id="villagers-container" class="tab-container" style="background-color: #5CB9AD;">
-                            <object class="tab-icon villager-icon" data="{{ url_for('static', filename = 'image/bar/cake.svg') }}" style="opacity: 0.5"></object>
-                        </div>
-                    </div>
-                    <div id="filter-wrapper">
-                        <div id="available-toggle-wrapper" class="checkbox-wrapper">
-                            <input type="checkbox" id="availiable-checkbox" class="checkbox">
-                            <div class="checkbox-text">Show Only Availiable</div>
-                        </div>
-                        <div id="ticked-toggle-wrapper" class="checkbox-wrapper">
-                            <input type="checkbox" id="caught-checkbox" class="checkbox">
-                            <div class="checkbox-text">Hide Caught</div>
-                        </div>
-                    </div>
-                    <div id="hemisphere-container">
-                        <a href=# id="hemisphere-button">
-                            <img class="hemisphere-icon" id="nhemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/nhem-small.png') }}" style="display:block;">
-                            <img class="hemisphere-icon" id="shemisphere-icon" src="{{ url_for('static', filename = 'image/hemispheres/shem-small.png') }}">
-                        </a>
-                    </div>
                 </div>
                 <div class="search-filter-wrapper">
                     <div id="mobile-search-button" class="sf-button">

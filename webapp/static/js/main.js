@@ -231,7 +231,7 @@ class Fish extends TabActions {
     }
 
     onTabIconClick() {
-        let self = this; // Allows access to class using "this" inside nested function
+        let self = this; // Allows access to instance using "self" in place of "this" inside nested function
         $('.fish-container').bind('click', function() {
             if (prevTab === "chores") {
                 $('#search').css('display', 'flex');
@@ -804,12 +804,12 @@ class CritterHtmlConfig {
         } else {
             let startTime = this.time[0];
             let endTime = this.time[this.time.length - 1];
-            const startAMPM = startTime >= 12 ? "PM" : "AM";
+            let startAMPM = startTime >= 12 ? "PM" : "AM";
             startTime = startTime % 12
             startTime = startTime ? startTime : 12;
             let finalStart = startTime + startAMPM;
 
-            let endAMPM = endTime >= 12 ? "PM" : "AM";
+            let endAMPM = endTime >= 12 ? "PM": "AM";
             endTime = endTime % 12
             endTime = endTime ? endTime : 12;
             let finalEnd = endTime+1 + endAMPM;
@@ -819,13 +819,25 @@ class CritterHtmlConfig {
             if (this.altTime === false) {
                 this.timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
                     $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
-                    $('<div/>', {'class': 'data-text', 'text': finalTime})
+                    $('<div/>', {'class': 'time-formatter'}).append([
+                        $('<div/>', {'class': 'time-num', 'text': startTime}),
+                        $('<div/>', {'class': 'time-am-pm', 'text': startAMPM}),
+                        $('<div/>', {'text': ' - '}),
+                        $('<div/>', {'class': 'time-num', 'text': endTime}),
+                        $('<div/>', {'class': 'time-am-pm', 'text': endAMPM}),  
+                    ])
                 ])
             } else {
                 this.timeHTML = $('<div/>', {'class': 'time-container icon-text'}).append([
                     $('<img/>', {'class': 'icon', 'src': './static/image/icons/svg/timer.svg'}),
                     $('<div/>', {'class': 'time-container-mod'}).append([
-                        $('<div/>', {'class': 'data-text', 'text': finalTime}),
+                        $('<div/>', {'class': 'time-formatter'}).append([
+                            $('<div/>', {'class': 'time-num', 'text': startTime}),
+                            $('<div/>', {'class': 'time-am-pm', 'text': startAMPM}),
+                            $('<div/>', {'text': ' - '}),
+                            $('<div/>', {'class': 'time-num', 'text': endTime}),
+                            $('<div/>', {'class': 'time-am-pm', 'text': endAMPM}),   
+                        ]),
                         $('<div/>', {'class': 'data-text', 'text': this.altTime})
                     ])
                 ])
@@ -895,7 +907,6 @@ class CritterHtmlConfig {
     }
 
     getAltCritterTime() {
-        let finalTime = "";
         if (this.time.length === 24) {
             this.altTime = "All Day";
         } else {
