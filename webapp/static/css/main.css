@@ -921,7 +921,12 @@ a {
     }
 
     #tab-mobile-bar {
+        justify-content: center;
         height: 5vw;
+    }
+
+    .tab-mobile-container {
+        width:10%;
     }
 
     .critter-icon {
