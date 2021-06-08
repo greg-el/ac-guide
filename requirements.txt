@@ -30,7 +30,7 @@ Mako==1.1.2
 MarkupSafe==1.1.1
 msgpack==1.0.0
 pg8000==1.15.2
-Pillow==7.1.2
+Pillow==8.2.0
 protobuf==3.11.3
 psycopg2==2.8.5
 pyasn1==0.4.8
